@@ -33,13 +33,13 @@ from selfdrive.swaglog import cloudlog, SWAGLOG_DIR
 from selfdrive.version import get_version, get_origin, get_short_branch, get_commit
 
 if Params().get("OPKRServer", encoding="utf8") == "0":
-  ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://opkr.tk:3000')
+  ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://opkr.o-r.kr:3000')
 elif Params().get("OPKRServer", encoding="utf8") == "1":
   ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://athena.comma.ai')
 elif Params().get("OPKRServer", encoding="utf8") == "2":
   ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://' + Params().get("OPKRServerAPI", encoding="utf8"))
 else:
-  ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://opkr.tk:3000')
+  ATHENA_HOST = os.getenv('ATHENA_HOST', 'wss://opkr.o-r.kr:3000')
 
 HANDLER_THREADS = int(os.getenv('HANDLER_THREADS', "4"))
 LOCAL_PORT_WHITELIST = {8022}
@@ -558,7 +558,7 @@ def main():
       # params.delete("LastAthenaPingTime")
     except socket.timeout:
       # try:
-      #   r = requests.get("http://opkr.tk:3000/v1/me", allow_redirects=False,
+      #   r = requests.get("http://opkr.o-r.kr:3000/v1/me", allow_redirects=False,
       #                    headers={"User-Agent": f"openpilot-{version}"}, timeout=15.0)
       #   if r.status_code == 302 and r.headers['Location'].startswith("http://u.web2go.com"):
       #     params.put_bool("PrimeRedirected", True)

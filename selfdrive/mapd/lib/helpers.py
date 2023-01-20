@@ -6,7 +6,7 @@ import email.utils as eut
 import time
 
 
-S3_LOCAL_OSM_URL = "https://opkr.tk/osm/db/kor/db.tar.gz"
+S3_LOCAL_OSM_URL = "https://opkr.o-r.kr/osm/db/kor/db.tar.gz"
 OSM_DB_STAMP_FILE = "/data/osm/db_stamp"
 
 

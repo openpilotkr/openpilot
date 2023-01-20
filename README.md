@@ -61,7 +61,7 @@ Branch Definitions
 How To Install
 ===============
 
- - `OPKR's fork installer:` Type https://opkr.tk/fork/opkr on custom URL window. (OPKR_test branch is https://opkr.tk/fork/test)
+ - `OPKR's fork installer:` Type https://opkr.o-r.kr/fork/opkr on custom URL window. (OPKR_test branch is https://opkr.o-r.kr/fork/test)
  - `SSH:` cd /data; mv openpilot openpilot_bak; git clone https://github.com/openpilotkr/openpilot.git -b OPKR; reboot <br />
   ** you can also use Shane's fork installer. (https://smiskol.com/fork)
 

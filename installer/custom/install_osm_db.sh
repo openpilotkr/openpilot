@@ -10,7 +10,7 @@ export GZ_MAP_FILE=${OSM_DIR}/${GZ_MAP_FILE_NAME}
 cd $OSM_DIR
 
 # Download map file
-wget https://opkr.tk/osm/db/kor/${GZ_MAP_FILE_NAME}
+wget https://opkr.o-r.kr/osm/db/kor/${GZ_MAP_FILE_NAME}
 
 if [ "$?" != 0 ]; then
   echo "Error downloading map file"

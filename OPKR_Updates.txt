@@ -1,5 +1,9 @@
 ☞ Use two fingers to scroll down ☜
 
+2023-01-20
+- MaxSpeed Sync as RoadLimitSpeed+Offset(Ext Navi)
+- Auto Gap by Speed Toggle(Press Gap button 5times)
+- Api URL Change
 2022-11-23
 - Changeable Cruise Gap by Speed
 2022-11-15
