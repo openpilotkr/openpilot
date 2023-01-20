@@ -1,0 +1,67 @@
+☞ Use two fingers to scroll down ☜
+
+2022-11-23
+- Changeable Cruise Gap by Speed
+2022-11-15
+- Do Not Disturb Mode(Off Screen and Sound)
+- Depart Chime based on E2E Model
+2022-09-07
+- Early Slowdown with Gap 4
+- Fix darkscreen on Settings
+2022-08-26
+- Add French Language
+- Navi App Change from Mappy to iNavi
+- Set Default API to OPKR
+- Nuclear Grade model
+2022-08-17
+- Add Korean Language
+- Add Arabic Language(You can PR to add more)
+  (need to add and edit two files,
+   selfdrive/assets/addon/lang/events/<txt file>,
+   selfdrive/ui/translations/<ts file>)
+- Add lane change blocking tweak
+2022-07-27
+- More visible UI from Atom
+- Better laneless model for now(current Comma model)
+- Add blocking lane change when not necessary
+- Add current codes for C2 device
+- Add Variable Cruise(Cruise buttom spamming) Factor
+2022-06-21
+- Add EV Car Main Battery Level
+- Add Arabic Language to device
+- Show traffic signal from model
+2022-06-18
+- Rocket league model
+2022-06-09
+- Add restore button to get back old commits
+- Better visual effect for BSM from Hoya&Atom
+- Show git log detail on update page
+2022-06-03
+- added VC & opkr long stopping distance adjustment
+  (distance car start slowing down for stopped lead car).
+2022-05-29
+- LKAS On/Off Toggle(Holding Gap Button for 1 sec) while SCC
+2022-05-27
+- Multiple Lateral Control by Speed or Angle
+2022-05-26
+- New model with better laneless
+2022-05-24
+- Hybrid Lateral Control by ATOM
+2022-05-21
+- vehicle name/spec update, ★You must reselect car in Developer Menu
+2022-05-18
+- joint model
+2022-05-16
+- Might be fixed cal&loc issue after current update
+- Add event to avoid collision at low speed when SCC is not activated
+2022-05-10
+- Add electric motor speed(maybe?)
+2022-05-03
+- Add wakeup music on unsleep mode
+2022-05-02
+- Add transmission gear number and Gruise Gap
+2022-05-01
+- Change 10unit to 100unit of Torque friction.
+  ★★★You must ensure the value again.
+2022-04-29
+- Add updates infomation

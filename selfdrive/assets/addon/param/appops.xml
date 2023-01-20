@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<app-ops>
+<pkg n="root">
+<uid n="0" p="false" />
+</pkg>
+<pkg n="android">
+<uid n="1000" p="true">
+<op n="11" ns="POST_NOTIFICATION" dm="0" t="1635726293342" pu="0" ac="2" />
+<op n="24" ns="SYSTEM_ALERT_WINDOW" dm="3" r="1635818925341" ic="60" />
+<op n="32" ns="TAKE_AUDIO_FOCUS" dm="0" t="1635818683690" pu="0" ac="32" />
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635818931673" d="932" ac="1425" />
+<op n="62" ns="GET_ACCOUNTS" dm="0" t="1635818782099" pu="0" ac="272" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782110" pu="0" ac="680" />
+</uid>
+</pkg>
+<pkg n="com.android.keychain">
+<uid n="1000" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818782479" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818782479" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.android.settings">
+<uid n="1000" p="true">
+<op n="10" ns="WIFI_SCAN" dm="0" t="1635818962942" pu="0" ac="84" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818777448" pu="0" ac="141" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818777448" pu="0" ac="141" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782059" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.qualcomm.fastdormancy">
+<uid n="1000" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818782299" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818782299" pu="0" ac="136" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782299" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.qualcomm.timeservice">
+<uid n="1000" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818847200" pu="0" ac="45" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818847200" pu="0" ac="45" />
+</uid>
+</pkg>
+<pkg n="com.android.development">
+<uid n="1000" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818969652" pu="0" ac="1" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818969652" pu="0" ac="1" />
+</uid>
+</pkg>
+<pkg n="com.qti.qualcomm.datastatusnotification">
+<uid n="1001" p="false">
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782118" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="org.codeaurora.ims">
+<uid n="1001" p="true">
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635818781523" d="3" ac="903" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818780572" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818780572" pu="0" ac="136" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782110" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.qualcomm.qcrilmsgtunnel">
+<uid n="1001" p="true">
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635818782960" d="1" ac="931" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818780047" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818780048" pu="0" ac="136" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782113" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.android.phone">
+<uid n="1001" p="true">
+<op n="14" ns="READ_SMS" dm="0" t="1635818780329" ac="272" />
+<op n="15" ns="WRITE_SMS" dm="1" r="1635818782881" ic="3968" />
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635819042426" d="3" ac="3022" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818777869" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818777869" pu="0" ac="136" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782104" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.android.bluetooth">
+<uid n="1002" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1386236253" pu="0" ac="2" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1386236253" pu="0" ac="2" />
+</uid>
+</pkg>
+<pkg n="media">
+<uid n="1013" p="false">
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635819051668" d="3117" ac="25" />
+</uid>
+</pkg>
+<pkg n="com.android.externalstorage">
+<uid n="10000" p="true">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818775793" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818775793" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.android.defcontainer">
+<uid n="10001" p="true">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818666065" pu="0" ac="23" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818666065" pu="0" ac="23" />
+</uid>
+</pkg>
+<pkg n="com.android.packageinstaller">
+<uid n="10006" p="true">
+<op n="11" ns="POST_NOTIFICATION" dm="0" t="1635818666036" pu="0" ac="5" />
+<op n="45" ns="TOAST_WINDOW" dm="0" t="1635818670085" d="3988" ac="5" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818656214" pu="0" ac="7" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818656214" pu="0" ac="7" />
+</uid>
+</pkg>
+<pkg n="ai.comma.plus.neossetup">
+<uid n="10007" p="true">
+<op n="0" ns="COARSE_LOCATION" dm="0" />
+<op n="1" ns="FINE_LOCATION" dm="0" t="1386244989" pu="0" ac="1" />
+<op n="10" ns="WIFI_SCAN" dm="0" t="1386244989" pu="0" ac="1" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1386239039" pu="0" ac="14" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1386239039" pu="0" ac="14" />
+</uid>
+</pkg>
+<pkg n="com.android.systemui">
+<uid n="10009" p="true">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818777468" pu="0" ac="138" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818777468" pu="0" ac="138" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782102" pu="0" ac="272" />
+</uid>
+</pkg>
+<pkg n="com.android.documentsui">
+<uid n="10014" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818660205" pu="0" ac="5" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818660205" pu="0" ac="5" />
+</uid>
+</pkg>
+<pkg n="com.android.smspush">
+<uid n="10016" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818779986" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818779986" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.qualcomm.embms">
+<uid n="10017" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818782286" pu="0" ac="272" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818782286" pu="0" ac="272" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782136" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.qualcomm.shutdownlistner">
+<uid n="10018" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818683812" pu="0" ac="32" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818683812" pu="0" ac="32" />
+</uid>
+</pkg>
+<pkg n="com.android.inputmethod.latin">
+<uid n="10021" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818777551" pu="0" ac="136" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818777551" pu="0" ac="136" />
+<op n="62" ns="GET_ACCOUNTS" dm="0" t="1635818778665" pu="0" ac="136" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782710" pu="0" ac="136" />
+</uid>
+</pkg>
+<pkg n="com.gmd.hidesoftkeys">
+<uid n="10022" p="false">
+<op n="3" ns="VIBRATE" dm="0" t="1635818977336" d="20" ac="5" />
+<op n="11" ns="POST_NOTIFICATION" dm="0" t="1635818948625" pu="0" ac="3" />
+<op n="23" ns="WRITE_SETTINGS" m="1" />
+<op n="24" ns="SYSTEM_ALERT_WINDOW" dm="3" r="1635818976919" ic="7" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818819507" pu="0" ac="2" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818819507" pu="0" ac="2" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782720" pu="0" ac="1" />
+<op n="68" ns="SU" m="0" t="1635818940328" r="1635818940332" d="117344" ac="1" />
+</uid>
+</pkg>
+<pkg n="com.mixplorer">
+<uid n="10024" p="false">
+<op n="11" ns="POST_NOTIFICATION" dm="0" t="1635815682302" pu="0" ac="7" />
+<op n="32" ns="TAKE_AUDIO_FOCUS" dm="0" t="1635745211666" pu="0" ac="1" />
+<op n="36" ns="AUDIO_MEDIA_VOLUME" dm="0" t="1635745211457" pu="0" ac="1" />
+<op n="45" ns="TOAST_WINDOW" dm="0" t="1635815684306" d="1999" ac="7" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635818780527" pu="0" ac="3142" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635818780527" pu="0" ac="3142" />
+<op n="65" ns="BOOT_COMPLETED" dm="0" t="1635818782858" pu="0" ac="110" />
+<op n="68" ns="SU" m="0" t="1635815653196" d="106862" ac="1" />
+</uid>
+</pkg>
+<pkg n="com.opkr.maphack">
+<uid n="10026" p="false">
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635674182615" pu="0" ac="1" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635674182615" pu="0" ac="1" />
+</uid>
+</pkg>
+<pkg n="com.waze">
+<uid n="10027" p="false">
+<op n="0" ns="COARSE_LOCATION" dm="0" />
+<op n="2" ns="GPS" dm="0" t="1635777675016" d="29080" ac="7" />
+<op n="11" ns="POST_NOTIFICATION" dm="0" t="1635674275180" pu="0" ac="8" />
+<op n="24" ns="SYSTEM_ALERT_WINDOW" m="0" />
+<op n="40" ns="WAKE_LOCK" dm="0" t="1635777644629" d="2" ac="4" />
+<op n="41" ns="MONITOR_LOCATION" dm="0" t="1635777675013" d="29083" ac="7" />
+<op n="42" ns="MONITOR_HIGH_POWER_LOCATION" dm="0" t="1635777675013" d="29083" ac="7" />
+<op n="59" ns="READ_EXTERNAL_STORAGE" dm="0" t="1635777645661" pu="0" ac="12" />
+<op n="60" ns="WRITE_EXTERNAL_STORAGE" dm="0" t="1635777645661" pu="0" ac="12" />
+</uid>
+</pkg>
+</app-ops>

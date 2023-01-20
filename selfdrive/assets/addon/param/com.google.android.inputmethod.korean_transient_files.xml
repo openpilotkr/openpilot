@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <set name="file.keyboard_def_cache_0e2936f40630dee3a01273d8eafc2ad1">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+    </set>
+    <set name="file.keyboard_def_cache_aaf5e42631af8ac83b4655028fe2b099">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+    </set>
+    <set name="file.keyboard_def_cache_2e765cc206d4b7cc554bb709d518f1f6">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+    </set>
+    <set name="file.keyboard_def_cache_429cdf9b8e2ee1284ae56e97282f112f">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+    </set>
+    <set name="file.keyboard_def_cache_0492682b9bd8902886a748e222f052e5">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+    </set>
+    <set name="file.keyboard_def_cache_75371e4d06ee4ab1be4aaf2a69d203a2">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+    </set>
+    <set name="file.keyboard_def_cache_cc5d8d6900558198170cbbbea8a1ed98">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+    </set>
+    <set name="file.keyboard_def_cache_364e857f82f32fdffdf890af0c9ef9e6">
+        <string>metadata.package_version:1.5.4.153024338-armeabi-v7a_1541212</string>
+        <string>metadata.delete_on_package_upgrade:true</string>
+        <string>metadata.os_version:23_1629064091000</string>
+        <string>metadata.delete_on_os_upgrade:true</string>
+    </set>
+</map>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <boolean name="enable_auto_capitalization" value="true" />
+    <boolean name="pref_key_allow_download_with_metered_network" value="false" />
+    <boolean name="enable_share_snippets" value="true" />
+    <string name="korean_keyboard_type">ko_2_bulsik</string>
+    <boolean name="enable_suggest_emojis" value="true" />
+    <long name="daily_ping_task_next_run_time" value="1635864828121" />
+    <boolean name="USER_SELECTED_KEYBOARD" value="true" />
+    <boolean name="enable_sound_on_keypress" value="false" />
+    <boolean name="enable_voice_input" value="true" />
+    <string name="ACTIVE_IME.SOFT.ko">ko_2_bulsik</string>
+    <string name="key_long_press_delay">300</string>
+    <string name="additional_keyboard_theme"></string>
+    <boolean name="enable_shortcuts_dictionary" value="true" />
+    <string name="ACTIVE_LANGUAGE_-1901779940">en</string>
+    <boolean name="enable_user_metrics" value="false" />
+    <boolean name="import_user_contacts" value="false" />
+    <int name="contacts_first_time_delay_millis" value="60000" />
+    <boolean name="autocorrect_consonant_conflict" value="true" />
+    <int name="HAD_FIRST_RUN" value="2" />
+    <boolean name="pref_gesture_preview_trail" value="true" />
+    <int name="download_notification_visibility" value="2" />
+    <string name="keyboard_height_ratio">1.0</string>
+    <boolean name="switch_to_other_imes" value="true" />
+    <string name="ACTIVE_IME.SOFT.en">en_qwerty</string>
+    <boolean name="enable_scrub_move" value="true" />
+    <string name="one_handed_mode">0</string>
+    <int name="pref_key_access_points_hint_shown_times" value="0" />
+    <boolean name="enable_handwriting_feedback" value="false" />
+    <long name="pref_key_access_points_hint_shown_timestamp" value="1635831744325" />
+    <boolean name="sync" value="false" />
+    <boolean name="show_launcher_icon" value="true" />
+    <boolean name="enable_emoji_alt_physical_key" value="true" />
+    <boolean name="enable_auto_space_smart_punctuation" value="true" />
+    <boolean name="block_offensive_words" value="true" />
+    <boolean name="enable_orientation_aware_preference" value="false" />
+    <string name="ACTIVE_IME.SOFT.und-Latn-x-password">password</string>
+    <int name="contacts_retry_from_failure_interval_millis" value="28800000" />
+    <boolean name="enable_scrub_delete" value="false" />
+    <string name="keyboard_slide_sensitivity_ratio">1.0</string>
+    <boolean name="show_language_switch_key" value="true" />
+    <boolean name="pref_key_save_non_prime_keyboard_type" value="true" />
+    <boolean name="pref_key_use_personalized_dicts" value="true" />
+    <boolean name="show_english_keyboard" value="true" />
+    <boolean name="pref_key_auto_correction" value="true" />
+    <boolean name="enable_vibrate_on_keypress" value="true" />
+    <boolean name="enable_popup_on_keypress" value="true" />
+    <boolean name="next_word_prediction" value="true" />
+    <boolean name="credentials_valid" value="false" />
+    <boolean name="enable_english_prediction" value="true" />
+    <boolean name="enable_gesture_input" value="true" />
+    <boolean name="hide_english_keyboard" value="false" />
+    <boolean name="always_true" value="true" />
+    <boolean name="enable_spell_correction" value="false" />
+    <int name="contacts_task_delay_millis" value="1800000" />
+    <boolean name="pref_key_allow_download_with_battery" value="true" />
+    <boolean name="enable_incremental_gesture_input" value="true" />
+    <boolean name="enable_one_tap_to_search" value="true" />
+    <boolean name="enable_double_space_period" value="true" />
+    <int name="korean_10key_timeout_milliseconds" value="2000" />
+    <boolean name="enable_auto_language_switching" value="true" />
+    <boolean name="allow_get_location" value="true" />
+    <boolean name="always_false" value="false" />
+    <long name="daily_ping_task_last_run_time" value="1635836028118" />
+    <boolean name="enable_gesture_auto_commit" value="false" />
+    <boolean name="show_suggestions" value="true" />
+    <boolean name="pref_show_recent_emoji_in_symbol_keyboard" value="false" />
+    <long name="english_periodical_task_next_run_time" value="1635901451421" />
+    <boolean name="enable_spatial_model" value="true" />
+    <int name="contacts_regular_import_interval_millis" value="86400000" />
+</map>

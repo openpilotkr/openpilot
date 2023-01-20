@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="button1">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Settings&quot;,&quot;data&quot;:&quot;com.android.settings#com.android.settings.Settings&quot;}</string>
+    <boolean name="trigger_hide_in_fullscreen" value="false" />
+    <int name="quick_bar_size" value="50" />
+    <boolean name="attempt_hide_soft_keys" value="true" />
+    <int name="quick_bar_spacing" value="50" />
+    <int name="quick_bar_trigger_position" value="50" />
+    <boolean name="side_mode" value="false" />
+    <string name="ring4">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;MAPPY&quot;,&quot;data&quot;:&quot;com.mnsoft.mappyobn#com.mnsoft.offboardnavi.intro.MappyIntroActivity&quot;}</string>
+    <boolean name="hideSoftKeys" value="true" />
+    <boolean name="hideStatusBar" value="true" />
+    <set name="auto_hide_options">
+        <string>SCREEN</string>
+        <string>BUTTON1A</string>
+        <string>BUTTON3</string>
+        <string>QUICK_BAR</string>
+        <string>BUTTON1</string>
+        <string>BUTTON2</string>
+        <string>BUTTON4</string>
+        <string>BUTTON5A</string>
+        <string>BUTTON5</string>
+    </set>
+    <boolean name="googleNowOnTap" value="false" />
+    <boolean name="R.xml.quick_bar_pref_layout" value="false" />
+    <boolean name="softKeysNotificationInvisible" value="false" />
+    <boolean name="soft_keys_hidden" value="false" />
+    <string name="button3">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;MiX&quot;,&quot;data&quot;:&quot;com.mixplorer#com.mixplorer.activities.BrowseActivity&quot;}</string>
+    <string name="ring2">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
+    <boolean name="trigger_high_priority" value="false" />
+    <int name="button_vibration" value="20" />
+    <boolean name="R.xml.settings_pref_layout" value="false" />
+    <string name="trigger_theme">INVISIBLE</string>
+    <int name="quick_bar_trigger_sensitivity" value="4" />
+    <boolean name="softKeysWarning" value="false" />
+    <int name="quick_bar_autohide_delay_ms" value="1000" />
+    <string name="ring3">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
+    <boolean name="spoofSoftKeysDetection" value="true" />
+    <string name="trigger_mode">TOUCH</string>
+    <boolean name="start_on_boot" value="true" />
+    <long name="lastIapQuery" value="1635824445223" />
+    <int name="quick_bar_trigger_width" value="80" />
+    <string name="button5a">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Waze&quot;,&quot;data&quot;:&quot;com.waze#com.waze.FreeMapAppActivity&quot;}</string>
+    <boolean name="R.xml.purchase_pref_layout" value="false" />
+    <string name="button5">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Auto Hide Soft Keys&quot;,&quot;data&quot;:&quot;com.gmd.hidesoftkeys#com.gmd.hidesoftkeys.MainActivity&quot;}</string>
+    <string name="ring5">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
+    <string name="navigation_mode">QUICK_BAR</string>
+    <string name="button4">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;아이나비 에어&quot;,&quot;data&quot;:&quot;com.thinkware.inaviair#com.thinkware.inaviair.UIActivity&quot;}</string>
+    <boolean name="R.xml.trigger_pref_layout" value="false" />
+</map>
