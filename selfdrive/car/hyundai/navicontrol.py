@@ -165,7 +165,7 @@ class NaviControl():
     v_ego_mph = CS.out.vEgo * CV.MS_TO_MPH
     if self.navi_sel in (0, 1):
       self.liveNaviData = sm['liveNaviData']
-    elif self.navi_sel == 3:
+    elif self.navi_sel in (2, 3):
       self.liveNaviData = sm['liveENaviData']
     else:
       self.liveNaviData = sm['liveNaviData']
@@ -293,7 +293,7 @@ class NaviControl():
           self.onSpeedControl = True
         else:
           self.onSpeedControl = False
-      elif CS.safety_sign > 21 and self.stock_navi_info_enabled and not (CS.map_enabled or self.navi_sel == 3):  # cat stock navi speedlimit
+      elif CS.safety_sign > 21 and self.stock_navi_info_enabled and not (CS.map_enabled or self.navi_sel in (2,3)):  # cat stock navi speedlimit
         self.onSpeedBumpControl = False
         self.onSpeedBumpControl2 = False
         self.map_speed_dist = max(0, CS.safety_dist - int(interp(CS.safety_sign, [30,110], [20,70])))

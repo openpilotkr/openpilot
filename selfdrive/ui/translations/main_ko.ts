@@ -2611,7 +2611,7 @@
     <message>
         <location filename="../qt/widgets/opkr.cc" line="5869"/>
         <source>Select the navigation you want to use.(iNavi/Mappy/Waze/TMap/None)</source>
-        <translation>사용할 네비게이션을 선택합니다.(아이나비/맵피/웨이즈/티맵/없음), 티맵의 경우 OPKR Connect 어플과 함께 별도 단말기로 실행해야 합니다.</translation>
+        <translation>사용할 네비게이션을 선택합니다.(아이나비/맵피/웨이즈/티맵/없음), 웨이즈나 티맵의 경우 OPKR Connect 어플과 함께 별도 단말기로 실행해야 합니다.</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="5925"/>
