@@ -382,6 +382,18 @@ static void update_state(UIState *s) {
     scene.liveENaviData.eopkrposroadname = lme_data.getPosRoadName();
     scene.liveENaviData.eopkrishighway = lme_data.getIsHighway();
     scene.liveENaviData.eopkristunnel = lme_data.getIsTunnel();
+    if (scene.OPKR_Debug) {
+      scene.liveENaviData.eopkr0 = lme_data.getOpkr0();
+      scene.liveENaviData.eopkr1 = lme_data.getOpkr1();
+      scene.liveENaviData.eopkr2 = lme_data.getOpkr2();
+      scene.liveENaviData.eopkr3 = lme_data.getOpkr3();
+      scene.liveENaviData.eopkr4 = lme_data.getOpkr4();
+      scene.liveENaviData.eopkr5 = lme_data.getOpkr5();
+      scene.liveENaviData.eopkr6 = lme_data.getOpkr6();
+      scene.liveENaviData.eopkr7 = lme_data.getOpkr7();
+      scene.liveENaviData.eopkr8 = lme_data.getOpkr8();
+      scene.liveENaviData.eopkr9 = lme_data.getOpkr9();
+    }
   }
   if (sm.updated("liveMapData")) {
     scene.live_map_data = sm["liveMapData"].getLiveMapData();
@@ -570,6 +582,7 @@ static void update_status(UIState *s) {
     s->scene.lateralControlMethod = std::stoi(params.get("LateralControlMethod"));
     s->scene.do_not_disturb_mode = std::stoi(params.get("DoNotDisturbMode"));
     s->scene.depart_chime_at_resume = params.getBool("DepartChimeAtResume");
+    s->scene.OPKR_Debug = params.getBool("OPKRDebug");
 
     if (s->scene.autoScreenOff > 0) {
       s->scene.nTime = s->scene.autoScreenOff * 60 * UI_FREQ;

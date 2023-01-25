@@ -258,6 +258,7 @@ typedef struct UIScene {
   int do_not_disturb_mode;
   bool depart_chime_at_resume;
   int comma_stock_ui;
+  bool OPKR_Debug;
 
   cereal::DeviceState::Reader deviceState;
   cereal::CarState::Reader car_state;
@@ -343,6 +344,16 @@ typedef struct UIScene {
     std::string eopkrposroadname;
     bool eopkrishighway;
     bool eopkristunnel;
+    std::string eopkr0;
+    std::string eopkr1;
+    std::string eopkr2;
+    std::string eopkr3;
+    std::string eopkr4;
+    std::string eopkr5;
+    std::string eopkr6;
+    std::string eopkr7;
+    std::string eopkr8;
+    std::string eopkr9;
   } liveENaviData;
 
   struct _LiveMapData

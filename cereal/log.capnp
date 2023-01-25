@@ -1772,6 +1772,16 @@ struct LiveENaviData {
   posRoadName @11 :Text;
   isHighway @12 :Bool;
   isTunnel @13 :Bool;
+  opkr0 @14 :Text;
+  opkr1 @15 :Text;
+  opkr2 @16 :Text;
+  opkr3 @17 :Text;
+  opkr4 @18 :Text;
+  opkr5 @19 :Text;
+  opkr6 @20 :Text;
+  opkr7 @21 :Text;
+  opkr8 @22 :Text;
+  opkr9 @23 :Text;
 }
 
 struct LiveMapDataDEPRECATED {

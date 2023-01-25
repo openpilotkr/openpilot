@@ -22,6 +22,18 @@ def navid_thread(end_event, nv_queue):
   sign_type = 0
   turn_info = 0
   turn_distance = 0
+  road_limit_speed = 0
+  link_length = 0
+  current_link_angle = 0
+  next_link_angle = 0
+  pos_road_name = ""
+  is_highway = 0
+  is_tunnel = 0
+
+  OPKR_Debug = Params().get_bool("OPKRDebug")
+  if OPKR_Debug:
+    opkr0 = opkr1 = opkr2 = opkr3 = opkr4 = opkr5 = opkr6 = opkr7 = opkr8 = opkr9 = ""
+
 
   ip_add = ""
   ip_bind = False
@@ -54,6 +66,9 @@ def navid_thread(end_event, nv_queue):
       pos_road_name = ""
       is_highway = 0
       is_tunnel = 0
+
+      if OPKR_Debug:
+        opkr0 = opkr1 = opkr2 = opkr3 = opkr4 = opkr5 = opkr6 = opkr7 = opkr8 = opkr9 = ""
 
       context = zmq.Context()
       socket = context.socket(zmq.SUB)
@@ -112,6 +127,38 @@ def navid_thread(end_event, nv_queue):
           arr = line.split('opkristunnel: ')
           is_tunnel = arr[1]
 
+        if OPKR_Debug:
+          if "opkr0" in line:
+            arr = line.split('opkr0: ')
+            opkr0 = arr[1]
+          if "opkr1" in line:
+            arr = line.split('opkr1: ')
+            opkr1 = arr[1]
+          if "opkr2" in line:
+            arr = line.split('opkr2: ')
+            opkr2 = arr[1]
+          if "opkr3" in line:
+            arr = line.split('opkr3: ')
+            opkr3 = arr[1]
+          if "opkr4" in line:
+            arr = line.split('opkr4: ')
+            opkr4 = arr[1]
+          if "opkr5" in line:
+            arr = line.split('opkr5: ')
+            opkr5 = arr[1]
+          if "opkr6" in line:
+            arr = line.split('opkr6: ')
+            opkr6 = arr[1]
+          if "opkr7" in line:
+            arr = line.split('opkr7: ')
+            opkr7 = arr[1]
+          if "opkr8" in line:
+            arr = line.split('opkr8: ')
+            opkr8 = arr[1]
+          if "opkr9" in line:
+            arr = line.split('opkr9: ')
+            opkr9 = arr[1]
+
       navi_msg = messaging.new_message('liveENaviData')
       navi_msg.liveENaviData.speedLimit = int(spd_limit)
       navi_msg.liveENaviData.safetyDistance = float(safety_distance)
@@ -126,6 +173,18 @@ def navid_thread(end_event, nv_queue):
       navi_msg.liveENaviData.posRoadName = str(pos_road_name)
       navi_msg.liveENaviData.isHighway = bool(int(is_highway))
       navi_msg.liveENaviData.isTunnel = bool(int(is_tunnel))
+
+      if OPKR_Debug:
+        navi_msg.liveENaviData.opkr0 = str(opkr0)
+        navi_msg.liveENaviData.opkr1 = str(opkr1)
+        navi_msg.liveENaviData.opkr2 = str(opkr2)
+        navi_msg.liveENaviData.opkr3 = str(opkr3)
+        navi_msg.liveENaviData.opkr4 = str(opkr4)
+        navi_msg.liveENaviData.opkr5 = str(opkr5)
+        navi_msg.liveENaviData.opkr6 = str(opkr6)
+        navi_msg.liveENaviData.opkr7 = str(opkr7)
+        navi_msg.liveENaviData.opkr8 = str(opkr8)
+        navi_msg.liveENaviData.opkr9 = str(opkr9)
       pm.send('liveENaviData', navi_msg)
 
     count += 1

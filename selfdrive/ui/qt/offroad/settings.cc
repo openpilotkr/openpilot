@@ -585,6 +585,7 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new DebugUiOneToggle());
   layout->addWidget(new DebugUiTwoToggle());
   layout->addWidget(new DebugUiThreeToggle());
+  layout->addWidget(new OPKRDebug());
   layout->addWidget(new ShowErrorToggle());
   layout->addWidget(new LongLogToggle());
   layout->addWidget(new PrebuiltToggle());
@@ -609,7 +610,6 @@ DeveloperPanel::DeveloperPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new CarSelectCombo());
 
   layout->addWidget(new CPandaGroup());
-
 }
 
 TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent) {

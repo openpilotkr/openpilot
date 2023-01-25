@@ -322,120 +322,133 @@ static void ui_draw_debug(UIState *s) {
 
   
   nvgFillColor(s->vg, COLOR_WHITE_ALPHA(125));
-  if (scene.nDebugUi2) {
-    //if (scene.gpsAccuracyUblox != 0.00) {
-    //  nvgFontSize(s->vg, 34);
-    //  ui_print(s, 28, 28, "LAT／LON: %.5f／%.5f", scene.latitudeUblox, scene.longitudeUblox);
-    //}
-    if (scene.mapbox_running) {
-      nvgFontSize(s->vg, 40);
-    } else {
+  if (scene.OPKR_Debug) {
+    ui_print(s, ui_viz_rx, ui_viz_ry+240, "0:%s", scene.liveENaviData.eopkr0.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+280, "1:%s", scene.liveENaviData.eopkr1.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+320, "2:%s", scene.liveENaviData.eopkr2.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+360, "3:%s", scene.liveENaviData.eopkr3.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+400, "4:%s", scene.liveENaviData.eopkr4.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+440, "5:%s", scene.liveENaviData.eopkr5.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+480, "6:%s", scene.liveENaviData.eopkr6.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+520, "7:%s", scene.liveENaviData.eopkr7.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+560, "8:%s", scene.liveENaviData.eopkr8.c_str()); 
+    ui_print(s, ui_viz_rx, ui_viz_ry+600, "9:%s", scene.liveENaviData.eopkr9.c_str()); 
+  } else {
+    if (scene.nDebugUi2) {
+      //if (scene.gpsAccuracyUblox != 0.00) {
+      //  nvgFontSize(s->vg, 34);
+      //  ui_print(s, 28, 28, "LAT／LON: %.5f／%.5f", scene.latitudeUblox, scene.longitudeUblox);
+      //}
+      if (scene.mapbox_running) {
+        nvgFontSize(s->vg, 40);
+      } else {
+        nvgFontSize(s->vg, 50);
+      }
+      //ui_print(s, ui_viz_rx, ui_viz_ry, "Live Parameters");
+      //ui_print(s, ui_viz_rx, ui_viz_ry+200, "%.0f", scene.ctrl_speed);
+      ui_print(s, ui_viz_rx, ui_viz_ry+240, "SR:%.2f", scene.liveParams.steerRatio);
+      //ui_print(s, ui_viz_rx, ui_viz_ry+100, "AOfs:%.2f", scene.liveParams.angleOffset);
+      ui_print(s, ui_viz_rx, ui_viz_ry+280, "AA:%.2f", scene.liveParams.angleOffsetAverage);
+      ui_print(s, ui_viz_rx, ui_viz_ry+320, "SF:%.2f", scene.liveParams.stiffnessFactor);
+
+      ui_print(s, ui_viz_rx, ui_viz_ry+360, "AD:%.2f", scene.steer_actuator_delay);
+      ui_print(s, ui_viz_rx, ui_viz_ry+400, "OS:%.2f", abs(scene.output_scale));
+      ui_print(s, ui_viz_rx, ui_viz_ry+440, "%.2f|%.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
+      ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.1f/%.1fm", scene.lateralPlan.dProb, scene.lateralPlan.laneWidth); // High dProb is more related to LaneLine, Low is Laneless
+      ui_print(s, ui_viz_rx, ui_viz_ry+520, "%.1f/%.1f/%.1f/%.1f/%.1f/%.1f", std::clamp<float>(1.0 - scene.road_edge_stds[0], 0.0, 1.0), scene.lane_line_probs[0], scene.lane_line_probs[1], scene.lane_line_probs[2], scene.lane_line_probs[3], std::clamp<float>(1.0 - scene.road_edge_stds[1], 0.0, 1.0));
+      // const std::string stateStrings[] = {"disabled", "preEnabled", "enabled", "softDisabling"};
+      // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
+      //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
+      if (!scene.nDebugUi3) {
+        if (scene.navi_select == 3) {
+          if (scene.liveENaviData.eopkrsafetysign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "CS:%d", scene.liveENaviData.eopkrsafetysign);
+          if (scene.liveENaviData.eopkrspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+600, "SL:%d/DS:%.0f", scene.liveENaviData.eopkrspeedlimit, scene.liveENaviData.eopkrsafetydist);
+          if (scene.liveENaviData.eopkrturninfo) ui_print(s, ui_viz_rx, ui_viz_ry+640, "TI:%d/DT:%.0f", scene.liveENaviData.eopkrturninfo, scene.liveENaviData.eopkrdisttoturn);
+          if (scene.liveENaviData.eopkrroadlimitspeed > 0 && scene.liveENaviData.eopkrroadlimitspeed < 200) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RS:%d", scene.liveENaviData.eopkrroadlimitspeed);
+          if (scene.liveENaviData.eopkrishighway || scene.liveENaviData.eopkristunnel) ui_print(s, ui_viz_rx, ui_viz_ry+720, "H:%d/T:%d", scene.liveENaviData.eopkrishighway, scene.liveENaviData.eopkristunnel);
+          //if (scene.liveENaviData.eopkrlinklength || scene.liveENaviData.eopkrcurrentlinkangle || scene.liveENaviData.eopkrnextlinkangle) ui_print(s, ui_viz_rx, ui_viz_ry+840, "L:%d/C:%d/N:%d", scene.liveENaviData.eopkrlinklength, scene.liveENaviData.eopkrcurrentlinkangle, scene.liveENaviData.eopkrnextlinkangle);
+        } else if (scene.map_is_running) {
+          if (scene.liveNaviData.opkrroadsign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "RS:%d", scene.liveNaviData.opkrroadsign);
+          if (scene.liveNaviData.opkrspeedsign) ui_print(s, ui_viz_rx, ui_viz_ry+600, "CS:%d", scene.liveNaviData.opkrspeedsign);
+          if (scene.liveNaviData.opkrspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "SL:%d", scene.liveNaviData.opkrspeedlimit);
+          if (scene.liveNaviData.opkrspeedlimitdist) ui_print(s, ui_viz_rx, ui_viz_ry+680, "DS:%.0f", scene.liveNaviData.opkrspeedlimitdist);
+          if (scene.liveNaviData.opkrturninfo) ui_print(s, ui_viz_rx, ui_viz_ry+720, "TI:%d", scene.liveNaviData.opkrturninfo);
+          if (scene.liveNaviData.opkrdisttoturn) ui_print(s, ui_viz_rx, ui_viz_ry+760, "DT:%.0f", scene.liveNaviData.opkrdisttoturn);
+        } else if (!scene.map_is_running && (*s->sm)["carState"].getCarState().getSafetySign() > 19) {
+          ui_print(s, ui_viz_rx, ui_viz_ry+560, "SL:%.0f", (*s->sm)["carState"].getCarState().getSafetySign());
+          ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%.0f", (*s->sm)["carState"].getCarState().getSafetyDist());
+        }
+      }
+    if (scene.nDebugUi3) {
+      ui_print(s, ui_viz_rx, ui_viz_ry+560, "0: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
+      scene.longitudinalPlan.lead0[0], scene.longitudinalPlan.lead0[1], scene.longitudinalPlan.lead0[2], scene.longitudinalPlan.lead0[3], scene.longitudinalPlan.lead0[4],
+      scene.longitudinalPlan.lead0[5], scene.longitudinalPlan.lead0[6], scene.longitudinalPlan.lead0[7], scene.longitudinalPlan.lead0[8], scene.longitudinalPlan.lead0[9],
+      scene.longitudinalPlan.lead0[10], scene.longitudinalPlan.lead0[11], scene.longitudinalPlan.lead0[12]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+600, "1: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
+      scene.longitudinalPlan.lead1[0], scene.longitudinalPlan.lead1[1], scene.longitudinalPlan.lead1[2], scene.longitudinalPlan.lead1[3], scene.longitudinalPlan.lead1[4],
+      scene.longitudinalPlan.lead1[5], scene.longitudinalPlan.lead1[6], scene.longitudinalPlan.lead1[7], scene.longitudinalPlan.lead1[8], scene.longitudinalPlan.lead1[9],
+      scene.longitudinalPlan.lead1[10], scene.longitudinalPlan.lead1[11], scene.longitudinalPlan.lead1[12]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+640, "C: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
+      scene.longitudinalPlan.cruisetg[0], scene.longitudinalPlan.cruisetg[1], scene.longitudinalPlan.cruisetg[2], scene.longitudinalPlan.cruisetg[3], scene.longitudinalPlan.cruisetg[4],
+      scene.longitudinalPlan.cruisetg[5], scene.longitudinalPlan.cruisetg[6], scene.longitudinalPlan.cruisetg[7], scene.longitudinalPlan.cruisetg[8], scene.longitudinalPlan.cruisetg[9],
+      scene.longitudinalPlan.cruisetg[10], scene.longitudinalPlan.cruisetg[11], scene.longitudinalPlan.cruisetg[12]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+680, "X: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
+      scene.longitudinalPlan.e2ex[0], scene.longitudinalPlan.e2ex[1], scene.longitudinalPlan.e2ex[2], scene.longitudinalPlan.e2ex[3], scene.longitudinalPlan.e2ex[4],
+      scene.longitudinalPlan.e2ex[5], scene.longitudinalPlan.e2ex[6], scene.longitudinalPlan.e2ex[7], scene.longitudinalPlan.e2ex[8], scene.longitudinalPlan.e2ex[9],
+      scene.longitudinalPlan.e2ex[10], scene.longitudinalPlan.e2ex[11], scene.longitudinalPlan.e2ex[12]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+720, "S: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
+      scene.longitudinalPlan.stopline[0], scene.longitudinalPlan.stopline[1], scene.longitudinalPlan.stopline[2], scene.longitudinalPlan.stopline[3], scene.longitudinalPlan.stopline[4],
+      scene.longitudinalPlan.stopline[5], scene.longitudinalPlan.stopline[6], scene.longitudinalPlan.stopline[7], scene.longitudinalPlan.stopline[8], scene.longitudinalPlan.stopline[9],
+      scene.longitudinalPlan.stopline[10], scene.longitudinalPlan.stopline[11], scene.longitudinalPlan.stopline[12]);
+      ui_print(s, ui_viz_rx, ui_viz_ry+760, "P:%.1f", scene.longitudinalPlan.stopprob);
+    }
       nvgFontSize(s->vg, 50);
-    }
-    //ui_print(s, ui_viz_rx, ui_viz_ry, "Live Parameters");
-    //ui_print(s, ui_viz_rx, ui_viz_ry+200, "%.0f", scene.ctrl_speed);
-    ui_print(s, ui_viz_rx, ui_viz_ry+240, "SR:%.2f", scene.liveParams.steerRatio);
-    //ui_print(s, ui_viz_rx, ui_viz_ry+100, "AOfs:%.2f", scene.liveParams.angleOffset);
-    ui_print(s, ui_viz_rx, ui_viz_ry+280, "AA:%.2f", scene.liveParams.angleOffsetAverage);
-    ui_print(s, ui_viz_rx, ui_viz_ry+320, "SF:%.2f", scene.liveParams.stiffnessFactor);
-
-    ui_print(s, ui_viz_rx, ui_viz_ry+360, "AD:%.2f", scene.steer_actuator_delay);
-    ui_print(s, ui_viz_rx, ui_viz_ry+400, "OS:%.2f", abs(scene.output_scale));
-    ui_print(s, ui_viz_rx, ui_viz_ry+440, "%.2f|%.2f", scene.lateralPlan.lProb, scene.lateralPlan.rProb);
-    ui_print(s, ui_viz_rx, ui_viz_ry+480, "%.1f/%.1fm", scene.lateralPlan.dProb, scene.lateralPlan.laneWidth); // High dProb is more related to LaneLine, Low is Laneless
-    ui_print(s, ui_viz_rx, ui_viz_ry+520, "%.1f/%.1f/%.1f/%.1f/%.1f/%.1f", std::clamp<float>(1.0 - scene.road_edge_stds[0], 0.0, 1.0), scene.lane_line_probs[0], scene.lane_line_probs[1], scene.lane_line_probs[2], scene.lane_line_probs[3], std::clamp<float>(1.0 - scene.road_edge_stds[1], 0.0, 1.0));
-    // const std::string stateStrings[] = {"disabled", "preEnabled", "enabled", "softDisabling"};
-    // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
-    //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
-    if (!scene.nDebugUi3) {
-      if (scene.navi_select == 3) {
-        if (scene.liveENaviData.eopkrsafetysign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "CS:%d", scene.liveENaviData.eopkrsafetysign);
-        if (scene.liveENaviData.eopkrspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+600, "SL:%d/DS:%.0f", scene.liveENaviData.eopkrspeedlimit, scene.liveENaviData.eopkrsafetydist);
-        if (scene.liveENaviData.eopkrturninfo) ui_print(s, ui_viz_rx, ui_viz_ry+640, "TI:%d/DT:%.0f", scene.liveENaviData.eopkrturninfo, scene.liveENaviData.eopkrdisttoturn);
-        if (scene.liveENaviData.eopkrroadlimitspeed > 0 && scene.liveENaviData.eopkrroadlimitspeed < 200) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RS:%d", scene.liveENaviData.eopkrroadlimitspeed);
-        if (scene.liveENaviData.eopkrishighway || scene.liveENaviData.eopkristunnel) ui_print(s, ui_viz_rx, ui_viz_ry+720, "H:%d/T:%d", scene.liveENaviData.eopkrishighway, scene.liveENaviData.eopkristunnel);
-        //if (scene.liveENaviData.eopkrlinklength || scene.liveENaviData.eopkrcurrentlinkangle || scene.liveENaviData.eopkrnextlinkangle) ui_print(s, ui_viz_rx, ui_viz_ry+840, "L:%d/C:%d/N:%d", scene.liveENaviData.eopkrlinklength, scene.liveENaviData.eopkrcurrentlinkangle, scene.liveENaviData.eopkrnextlinkangle);
-      } else if (scene.map_is_running) {
-        if (scene.liveNaviData.opkrroadsign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "RS:%d", scene.liveNaviData.opkrroadsign);
-        if (scene.liveNaviData.opkrspeedsign) ui_print(s, ui_viz_rx, ui_viz_ry+600, "CS:%d", scene.liveNaviData.opkrspeedsign);
-        if (scene.liveNaviData.opkrspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "SL:%d", scene.liveNaviData.opkrspeedlimit);
-        if (scene.liveNaviData.opkrspeedlimitdist) ui_print(s, ui_viz_rx, ui_viz_ry+680, "DS:%.0f", scene.liveNaviData.opkrspeedlimitdist);
-        if (scene.liveNaviData.opkrturninfo) ui_print(s, ui_viz_rx, ui_viz_ry+720, "TI:%d", scene.liveNaviData.opkrturninfo);
-        if (scene.liveNaviData.opkrdisttoturn) ui_print(s, ui_viz_rx, ui_viz_ry+760, "DT:%.0f", scene.liveNaviData.opkrdisttoturn);
-      } else if (!scene.map_is_running && (*s->sm)["carState"].getCarState().getSafetySign() > 19) {
-        ui_print(s, ui_viz_rx, ui_viz_ry+560, "SL:%.0f", (*s->sm)["carState"].getCarState().getSafetySign());
-        ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%.0f", (*s->sm)["carState"].getCarState().getSafetyDist());
-      }
-    }
-  if (scene.nDebugUi3) {
-    ui_print(s, ui_viz_rx, ui_viz_ry+560, "0: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
-     scene.longitudinalPlan.lead0[0], scene.longitudinalPlan.lead0[1], scene.longitudinalPlan.lead0[2], scene.longitudinalPlan.lead0[3], scene.longitudinalPlan.lead0[4],
-     scene.longitudinalPlan.lead0[5], scene.longitudinalPlan.lead0[6], scene.longitudinalPlan.lead0[7], scene.longitudinalPlan.lead0[8], scene.longitudinalPlan.lead0[9],
-     scene.longitudinalPlan.lead0[10], scene.longitudinalPlan.lead0[11], scene.longitudinalPlan.lead0[12]);
-    ui_print(s, ui_viz_rx, ui_viz_ry+600, "1: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
-     scene.longitudinalPlan.lead1[0], scene.longitudinalPlan.lead1[1], scene.longitudinalPlan.lead1[2], scene.longitudinalPlan.lead1[3], scene.longitudinalPlan.lead1[4],
-     scene.longitudinalPlan.lead1[5], scene.longitudinalPlan.lead1[6], scene.longitudinalPlan.lead1[7], scene.longitudinalPlan.lead1[8], scene.longitudinalPlan.lead1[9],
-     scene.longitudinalPlan.lead1[10], scene.longitudinalPlan.lead1[11], scene.longitudinalPlan.lead1[12]);
-    ui_print(s, ui_viz_rx, ui_viz_ry+640, "C: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
-     scene.longitudinalPlan.cruisetg[0], scene.longitudinalPlan.cruisetg[1], scene.longitudinalPlan.cruisetg[2], scene.longitudinalPlan.cruisetg[3], scene.longitudinalPlan.cruisetg[4],
-     scene.longitudinalPlan.cruisetg[5], scene.longitudinalPlan.cruisetg[6], scene.longitudinalPlan.cruisetg[7], scene.longitudinalPlan.cruisetg[8], scene.longitudinalPlan.cruisetg[9],
-     scene.longitudinalPlan.cruisetg[10], scene.longitudinalPlan.cruisetg[11], scene.longitudinalPlan.cruisetg[12]);
-    ui_print(s, ui_viz_rx, ui_viz_ry+680, "X: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
-     scene.longitudinalPlan.e2ex[0], scene.longitudinalPlan.e2ex[1], scene.longitudinalPlan.e2ex[2], scene.longitudinalPlan.e2ex[3], scene.longitudinalPlan.e2ex[4],
-     scene.longitudinalPlan.e2ex[5], scene.longitudinalPlan.e2ex[6], scene.longitudinalPlan.e2ex[7], scene.longitudinalPlan.e2ex[8], scene.longitudinalPlan.e2ex[9],
-     scene.longitudinalPlan.e2ex[10], scene.longitudinalPlan.e2ex[11], scene.longitudinalPlan.e2ex[12]);
-    ui_print(s, ui_viz_rx, ui_viz_ry+720, "S: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f",
-     scene.longitudinalPlan.stopline[0], scene.longitudinalPlan.stopline[1], scene.longitudinalPlan.stopline[2], scene.longitudinalPlan.stopline[3], scene.longitudinalPlan.stopline[4],
-     scene.longitudinalPlan.stopline[5], scene.longitudinalPlan.stopline[6], scene.longitudinalPlan.stopline[7], scene.longitudinalPlan.stopline[8], scene.longitudinalPlan.stopline[9],
-     scene.longitudinalPlan.stopline[10], scene.longitudinalPlan.stopline[11], scene.longitudinalPlan.stopline[12]);
-    ui_print(s, ui_viz_rx, ui_viz_ry+760, "P:%.1f", scene.longitudinalPlan.stopprob);
-  }
-    nvgFontSize(s->vg, 50);
-    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+      nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
 
-    char const* szLaCMethod = nullptr;
-    char const* szLaCMethodCur = nullptr;
-    switch( scene.lateralControlMethod  )
-      {
-        case  0: szLaCMethod = "PID"; break;
-        case  1: szLaCMethod = "INDI"; break;
-        case  2: szLaCMethod = "LQR"; break;
-        case  3: szLaCMethod = "TORQUE"; break;
-        case  4: szLaCMethod = "MULTI"; break;
-      }
-    switch( (int)scene.multi_lat_selected  )
-      {
-        case  0: szLaCMethodCur = "PID"; break;
-        case  1: szLaCMethodCur = "INDI"; break;
-        case  2: szLaCMethodCur = "LQR"; break;
-        case  3: szLaCMethodCur = "TORQUE"; break;
-      }
-    if ( !scene.animated_rpm )
-    {
-      if( szLaCMethod )
-          ui_print(s, ui_viz_rx_center, bdr_s+295, szLaCMethod );
-      if (scene.lateralControlMethod == 4) {
-        if( szLaCMethodCur )
-            ui_print(s, ui_viz_rx_center, bdr_s+330, szLaCMethodCur );
+      char const* szLaCMethod = nullptr;
+      char const* szLaCMethodCur = nullptr;
+      switch( scene.lateralControlMethod  )
+        {
+          case  0: szLaCMethod = "PID"; break;
+          case  1: szLaCMethod = "INDI"; break;
+          case  2: szLaCMethod = "LQR"; break;
+          case  3: szLaCMethod = "TORQUE"; break;
+          case  4: szLaCMethod = "MULTI"; break;
         }
-    } else {
-      if( szLaCMethod )
-          ui_print(s, ui_viz_rx_center, bdr_s+320, szLaCMethod );
-      if (scene.lateralControlMethod == 4) {
-        if( szLaCMethodCur )
-            ui_print(s, ui_viz_rx_center, bdr_s+355, szLaCMethodCur );
+      switch( (int)scene.multi_lat_selected  )
+        {
+          case  0: szLaCMethodCur = "PID"; break;
+          case  1: szLaCMethodCur = "INDI"; break;
+          case  2: szLaCMethodCur = "LQR"; break;
+          case  3: szLaCMethodCur = "TORQUE"; break;
         }
-    }
-    nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-    if (scene.osm_enabled) {
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+280, "SLA:%.0f", scene.liveMapData.ospeedLimitAhead);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+320, "SLAD:%.0f", scene.liveMapData.ospeedLimitAheadDistance);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+360, "TSL:%.0f", scene.liveMapData.oturnSpeedLimit);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+400, "TSLED:%.0f", scene.liveMapData.oturnSpeedLimitEndDistance);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+440, "TSLS:%d", scene.liveMapData.oturnSpeedLimitSign);
-      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+480, "TCO:%.2f", -scene.lateralPlan.totalCameraOffset);
+      if ( !scene.animated_rpm )
+      {
+        if( szLaCMethod )
+            ui_print(s, ui_viz_rx_center, bdr_s+295, szLaCMethod );
+        if (scene.lateralControlMethod == 4) {
+          if( szLaCMethodCur )
+              ui_print(s, ui_viz_rx_center, bdr_s+330, szLaCMethodCur );
+          }
+      } else {
+        if( szLaCMethod )
+            ui_print(s, ui_viz_rx_center, bdr_s+320, szLaCMethod );
+        if (scene.lateralControlMethod == 4) {
+          if( szLaCMethodCur )
+              ui_print(s, ui_viz_rx_center, bdr_s+355, szLaCMethodCur );
+          }
+      }
+      nvgTextAlign(s->vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+      if (scene.osm_enabled) {
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+240, "SL:%.0f", scene.liveMapData.ospeedLimit);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+280, "SLA:%.0f", scene.liveMapData.ospeedLimitAhead);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+320, "SLAD:%.0f", scene.liveMapData.ospeedLimitAheadDistance);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+360, "TSL:%.0f", scene.liveMapData.oturnSpeedLimit);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+400, "TSLED:%.0f", scene.liveMapData.oturnSpeedLimitEndDistance);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+440, "TSLS:%d", scene.liveMapData.oturnSpeedLimitSign);
+        ui_print(s, ui_viz_rx+(scene.mapbox_running ? 150:200), ui_viz_ry+480, "TCO:%.2f", -scene.lateralPlan.totalCameraOffset);
+      }
     }
   }
   if (scene.cal_view) {
