@@ -5866,7 +5866,7 @@ void GetOffAlert::refresh() {
   }
 }
 
-OPKRNaviSelect::OPKRNaviSelect() : AbstractControl(tr("Navigation Select"), tr("Select the navigation you want to use.(iNavi/Mappy/Waze/TMap/None)"), "../assets/offroad/icon_shell.png") {
+OPKRNaviSelect::OPKRNaviSelect() : AbstractControl(tr("Navigation Select"), tr("Select the navigation you want to use.(None/Mappy/iNavi/Waze/TMapE/WazeE)"), "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -5900,7 +5900,7 @@ OPKRNaviSelect::OPKRNaviSelect() : AbstractControl(tr("Navigation Select"), tr("
     int value = str.toInt();
     value = value - 1;
     if (value <= -1) {
-      value = 4;
+      value = 5;
     }
     QString values = QString::number(value);
     params.put("OPKRNaviSelect", values.toStdString());
@@ -5910,7 +5910,7 @@ OPKRNaviSelect::OPKRNaviSelect() : AbstractControl(tr("Navigation Select"), tr("
     auto str = QString::fromStdString(params.get("OPKRNaviSelect"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 5) {
+    if (value >= 6) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -5919,19 +5919,19 @@ OPKRNaviSelect::OPKRNaviSelect() : AbstractControl(tr("Navigation Select"), tr("
   });
   refresh();
 }
+
 void OPKRNaviSelect::refresh() {
   QString option = QString::fromStdString(params.get("OPKRNaviSelect"));
-  if (option == "0") {
-    label.setText(tr("iNavi"));
-  } else if (option == "1") {
-    label.setText(tr("Mappy"));
-  } else if (option == "2") {
-    label.setText(tr("Waze"));
-  } else if (option == "3") {
-    label.setText(tr("TMap"));
-  } else {
-    label.setText(tr("None"));
-  }}
+  if (option == "0") {label.setText(tr("None"));
+  } else if (option == "1") {label.setText(tr("Mappy"));
+  } else if (option == "2") {label.setText(tr("iNavi"));
+  } else if (option == "3") {label.setText(tr("Waze"));
+  } else if (option == "4") {label.setText(tr("TMap_E"));
+  } else if (option == "5") {label.setText(tr("Waze_E"));
+  }
+}
+
+
 OPKRServerSelect::OPKRServerSelect() : AbstractControl(tr("API Server"), tr("Set API server to OPKR/Comma/User's"), "../assets/offroad/icon_shell.png") {
   btn1.setStyleSheet(R"(
     padding: 0;

@@ -349,11 +349,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
     effect2.play();
     QUIState::ui_state.scene.map_is_running = !QUIState::ui_state.scene.map_is_running;
     if (QUIState::ui_state.scene.map_is_running) {
-      if (QUIState::ui_state.scene.navi_select == 0) {
-        QProcess::execute("am start com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
-      } else if (QUIState::ui_state.scene.navi_select == 1) {
+      if (QUIState::ui_state.scene.navi_select == 1) {
         QProcess::execute("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
       } else if (QUIState::ui_state.scene.navi_select == 2) {
+        QProcess::execute("am start com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
+      } else if (QUIState::ui_state.scene.navi_select == 3) {
         QProcess::execute("am start com.waze/com.waze.MainActivity");
       }
       QUIState::ui_state.scene.map_on_top = true;
@@ -361,11 +361,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
       QUIState::ui_state.scene.map_on_overlay = false;
       Params().putBool("OpkrMapEnable", true);
     } else {
-      if (QUIState::ui_state.scene.navi_select == 0) {
-        QProcess::execute("pkill com.thinkware.inaviair");
-      } else if (QUIState::ui_state.scene.navi_select == 1) {
+      if (QUIState::ui_state.scene.navi_select == 1) {
         QProcess::execute("pkill com.mnsoft.mappyobn");
       } else if (QUIState::ui_state.scene.navi_select == 2) {
+        QProcess::execute("pkill com.thinkware.inaviair");
+      } else if (QUIState::ui_state.scene.navi_select == 3) {
         QProcess::execute("pkill com.waze");
       }
       QUIState::ui_state.scene.map_on_top = false;

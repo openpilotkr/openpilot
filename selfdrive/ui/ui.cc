@@ -501,10 +501,12 @@ static void update_status(UIState *s) {
       s->scene.map_on_top = true;
       s->scene.map_on_overlay = false;
       params.putBool("OpkrMapEnable", true);
-      if (s->scene.navi_select == 0) {
-        system("am start com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
-      } else if (s->scene.navi_select == 1) {
+      if (s->scene.navi_select == 1) {
         system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
+      } else if (s->scene.navi_select == 2) {
+        system("am start com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
+      } else if (s->scene.navi_select == 3) {
+        system("am start com.waze/com.waze.MainActivity");
       }
     } else if (s->sm->frame - s->scene.started_frame > 20*UI_FREQ) {
       s->scene.navi_on_boot = true;

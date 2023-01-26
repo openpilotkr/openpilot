@@ -119,7 +119,7 @@ int main() {
       {
         res.distanceToTurn = atoi( entry.message );
       }
-      else if( nDelta_nsec > 10000 && naviSel == 0)
+      else if( nDelta_nsec > 10000 && naviSel == 2)
       {
         res.tv_sec = entry.tv_sec;
         res.tv_nsec = tv_nsec;

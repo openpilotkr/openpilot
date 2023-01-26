@@ -13,7 +13,7 @@ EnableOSM = Params().get_bool('OSMEnable') or Params().get_bool('OSMSpeedLimitEn
 EnableMapbox = Params().get_bool('MapboxEnabled')
 EnableShutdownD = Params().get_bool('C2WithCommaPower')
 EnableRTShield = Params().get_bool('RTShield')
-EnableExternalNavi = Params().get("OPKRNaviSelect", encoding="utf8") == "2" or Params().get("OPKRNaviSelect", encoding="utf8") == "3"
+EnableExternalNavi = Params().get("OPKRNaviSelect", encoding="utf8") == "4" or Params().get("OPKRNaviSelect", encoding="utf8") == "5"
 
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),

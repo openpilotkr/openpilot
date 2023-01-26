@@ -174,7 +174,7 @@ def manager_init() -> None:
     ("OSMCustomSpeedLimitC", "30,40,50,60,70,90"),
     ("OSMCustomSpeedLimitT", "30,40,65,72,80,95"),
     ("StockNaviSpeedEnabled", "0"),
-    ("OPKRNaviSelect", "4"),
+    ("OPKRNaviSelect", "0"),
     ("dp_atl", "1"),
     ("E2ELong", "0"),
     ("GoogleMapEnabled", "0"),

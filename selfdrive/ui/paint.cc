@@ -360,7 +360,7 @@ static void ui_draw_debug(UIState *s) {
       // ui_print(s, ui_viz_rx, ui_viz_ry+520, "%s", stateStrings[(int)(*s->sm)["controlsState"].getControlsState().getState()].c_str());
       //ui_print(s, ui_viz_rx, ui_viz_ry+800, "A:%.5f", scene.accel_sensor2);
       if (!scene.nDebugUi3) {
-        if (scene.navi_select == 3) {
+        if (scene.navi_select > 3) {
           if (scene.liveENaviData.eopkrsafetysign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "CS:%d", scene.liveENaviData.eopkrsafetysign);
           if (scene.liveENaviData.eopkrspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+600, "SL:%d/DS:%.0f", scene.liveENaviData.eopkrspeedlimit, scene.liveENaviData.eopkrsafetydist);
           if (scene.liveENaviData.eopkrturninfo) ui_print(s, ui_viz_rx, ui_viz_ry+640, "TI:%d/DT:%.0f", scene.liveENaviData.eopkrturninfo, scene.liveENaviData.eopkrdisttoturn);
@@ -501,19 +501,19 @@ static void ui_draw_vision_maxspeed_org(UIState *s) {
   int limitspeedcamera = s->scene.limitSpeedCamera;
 
   if (s->scene.cruiseAccStatus ) {
-    if (s->scene.navi_select != 3 || (s->scene.navi_select == 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
+    if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.ctrl_speed+1.5);
     } else {
       s->scene.is_speed_over_limit = false;
     }
   } else {
-    if (s->scene.navi_select != 3 || (s->scene.navi_select == 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
+    if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.limitSpeedCamera+1.5);
     } else {
       s->scene.is_speed_over_limit = false;
     }
   }
-  if ((s->scene.navi_select == 3 && (s->scene.mapSign == 20 || s->scene.mapSign == 21))) {
+  if (((s->scene.navi_select > 0 && s->scene.navi_select < 4) && (s->scene.mapSign == 20 || s->scene.mapSign == 21))) {
     limitspeedcamera = 0;
   }
 
@@ -574,19 +574,19 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
   //if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
   float cruise_speed = round(s->scene.vSetDis);
   if (s->scene.cruiseAccStatus) {
-    if (s->scene.navi_select != 3 || (s->scene.navi_select == 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
+    if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.ctrl_speed+1.5);
     } else {
       s->scene.is_speed_over_limit = false;
     }
   } else {
-    if (s->scene.navi_select != 3 || (s->scene.navi_select == 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
+    if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > limitspeedcamera+1.5);
     } else {
       s->scene.is_speed_over_limit = false;
     }
   }
-  if ((s->scene.navi_select == 3 && (s->scene.mapSign == 20 || s->scene.mapSign == 21))) {
+  if ((s->scene.navi_select > 3 && (s->scene.mapSign == 20 || s->scene.mapSign == 21))) {
     limitspeedcamera = 0;
   }
 
@@ -1583,13 +1583,13 @@ static void ui_draw_vision_header(UIState *s) {
     if (s->scene.controls_state.getEnabled()) {
       ui_draw_standstill(s);
     }
-    if (s->scene.navi_select == 0 || s->scene.navi_select == 1 || s->scene.navi_select == 2 || s->scene.mapbox_running) {
+    if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || s->scene.mapbox_running) {
       draw_safetysign(s);
-    } else if (s->scene.navi_select == 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21)) {
+    } else if (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21)) {
       draw_safetysign(s);
     }
     draw_compass(s);
-    if (s->scene.navi_select == 0 || s->scene.navi_select == 1 || s->scene.navi_select == 2 || s->scene.navi_select == 3 || s->scene.mapbox_running) {
+    if (s->scene.navi_select > 0 || s->scene.mapbox_running) {
       draw_navi_button(s);
     }
     if (s->scene.end_to_end) {

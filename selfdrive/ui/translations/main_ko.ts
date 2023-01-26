@@ -2610,33 +2610,38 @@
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="5869"/>
-        <source>Select the navigation you want to use.(iNavi/Mappy/Waze/TMap/None)</source>
-        <translation>사용할 네비게이션을 선택합니다.(아이나비/맵피/웨이즈/티맵/없음), 웨이즈나 티맵의 경우 OPKR Connect 어플과 함께 별도 단말기로 실행해야 합니다.</translation>
+        <source>Select the navigation you want to use.(None/Mappy/iNavi/Waze/TMapE/WazeE)</source>
+        <translation>사용할 네비게이션을 선택합니다.(없음/맵피/아이나비/웨이즈/외부티맵/외부웨이즈), 외부 티맵이나 외부 웨이즈의 경우 OPKR Connect 어플과 함께 별도 단말기로 실행해야 합니다.</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="5925"/>
-        <source>iNavi</source>
-        <translation>아이나비</translation>
+        <source>None</source>
+        <translation>없음</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5927"/>
+        <location filename="../qt/widgets/opkr.cc" line="5926"/>
         <source>Mappy</source>
         <translation>맵피</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5929"/>
+        <location filename="../qt/widgets/opkr.cc" line="5927"/>
+        <source>iNavi</source>
+        <translation>아이나비</translation>
+    </message>
+    <message>
+        <location filename="../qt/widgets/opkr.cc" line="5928"/>
         <source>Waze</source>
         <translation>웨이즈</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5931"/>
-        <source>TMap</source>
-        <translation>티맵</translation>
+        <location filename="../qt/widgets/opkr.cc" line="5929"/>
+        <source>TMapE</source>
+        <translation>E티맵</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5933"/>
-        <source>None</source>
-        <translation>없음</translation>
+        <location filename="../qt/widgets/opkr.cc" line="5930"/>
+        <source>WazeE</source>
+        <translation>E웨이즈</translation>
     </message>
 </context>
 <context>
