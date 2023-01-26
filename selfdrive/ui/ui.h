@@ -327,6 +327,16 @@ typedef struct UIScene {
     float opkrcurveangle;
     int   opkrturninfo;
     float opkrdisttoturn;
+    std::string opkr0;
+    std::string opkr1;
+    std::string opkr2;
+    std::string opkr3;
+    std::string opkr4;
+    std::string opkr5;
+    std::string opkr6;
+    std::string opkr7;
+    std::string opkr8;
+    std::string opkr9;
   } liveNaviData;
 
   struct _LiveENaviData

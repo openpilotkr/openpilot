@@ -365,6 +365,18 @@ static void update_state(UIState *s) {
     scene.liveNaviData.opkrcurveangle = lm_data.getRoadCurvature();
     scene.liveNaviData.opkrturninfo = lm_data.getTurnInfo();
     scene.liveNaviData.opkrdisttoturn = lm_data.getDistanceToTurn();
+    if (scene.OPKR_Debug) {
+      scene.liveNaviData.opkr0 = lm_data.getOpkr0();
+      scene.liveNaviData.opkr1 = lm_data.getOpkr1();
+      scene.liveNaviData.opkr2 = lm_data.getOpkr2();
+      scene.liveNaviData.opkr3 = lm_data.getOpkr3();
+      scene.liveNaviData.opkr4 = lm_data.getOpkr4();
+      scene.liveNaviData.opkr5 = lm_data.getOpkr5();
+      scene.liveNaviData.opkr6 = lm_data.getOpkr6();
+      scene.liveNaviData.opkr7 = lm_data.getOpkr7();
+      scene.liveNaviData.opkr8 = lm_data.getOpkr8();
+      scene.liveNaviData.opkr9 = lm_data.getOpkr9();
+    }
   }
   if (sm.updated("liveENaviData")) {
     scene.live_enavi_data = sm["liveENaviData"].getLiveENaviData();
