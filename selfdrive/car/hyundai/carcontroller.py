@@ -544,7 +544,7 @@ class CarController():
           self.cruise_gap_prev = CS.cruiseGapSet
           self.cruise_gap_set_init = True
         # gap adjust to 1 for fast start
-        elif 110 < self.standstill_fault_reduce_timer and CS.cruiseGapSet != 1.0 and self.opkr_autoresume and self.opkr_cruisegap_auto_adj and (not self.gap_by_spd_on or not self.gap_by_spd_on_sw_trg):
+        elif 110 < self.standstill_fault_reduce_timer and CS.cruiseGapSet != 1.0 and self.opkr_autoresume and self.opkr_cruisegap_auto_adj and not self.gap_by_spd_on:
           can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST)) if not self.longcontrol \
             else can_sends.append(create_clu11(self.packer, frame, CS.clu11, Buttons.GAP_DIST, clu11_speed, CS.CP.sccBus))
           self.resume_cnt += 1
@@ -567,7 +567,7 @@ class CarController():
       self.cut_in_control = self.NC.cutInControl
       self.driver_scc_set_control = self.NC.driverSccSetControl
       btn_signal = self.NC.update(CS, path_plan)
-      if self.opkr_cruisegap_auto_adj and (not self.gap_by_spd_on or not self.gap_by_spd_on_sw_trg):
+      if self.opkr_cruisegap_auto_adj and not self.gap_by_spd_on:
         # gap restore
         if self.switch_timer > 0:
           self.switch_timer -= 1
