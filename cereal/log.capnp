@@ -1755,6 +1755,17 @@ struct LiveNaviData {
 
   mapValid @8 :Bool;
   mapEnable @9 :Int32;
+
+  opkr0 @10 :Text;
+  opkr1 @11 :Text;
+  opkr2 @12 :Text;
+  opkr3 @13 :Text;
+  opkr4 @14 :Text;
+  opkr5 @15 :Text;
+  opkr6 @16 :Text;
+  opkr7 @17 :Text;
+  opkr8 @18 :Text;
+  opkr9 @19 :Text;
 }
 
 struct LiveENaviData {

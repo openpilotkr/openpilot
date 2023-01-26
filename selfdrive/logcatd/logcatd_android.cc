@@ -23,6 +23,16 @@ typedef struct LiveNaviDataResult {
       //int  mapEnable;    // bool;
       long  tv_sec;
       long  tv_nsec;
+      std::string opkr_0 = "";
+      std::string opkr_1 = "";
+      std::string opkr_2 = "";
+      std::string opkr_3 = "";
+      std::string opkr_4 = "";
+      std::string opkr_5 = "";
+      std::string opkr_6 = "";
+      std::string opkr_7 = "";
+      std::string opkr_8 = "";
+      std::string opkr_9 = "";
 } LiveNaviDataResult;
 
 
@@ -33,6 +43,7 @@ int main() {
   float tv_nsec2;
   bool  sBump = false;
   int   naviSel = std::stoi(Params().get("OPKRNaviSelect"));
+  bool  OPKR_Debug = Params().getBool("OPKRDebug");
 
   ExitHandler do_exit;
   PubMaster pm({"liveNaviData"});
@@ -82,7 +93,33 @@ int main() {
       nDelta_nsec = tv_nsec - res.tv_nsec;
       //nDelta = entry.tv_sec - res.tv_sec;
 
-      if( strcmp( entry.tag, "opkrspddist" ) == 0 )
+      if (OPKR_Debug)
+      {
+        res.tv_sec = entry.tv_sec;
+        res.tv_nsec = tv_nsec;
+        if( strcmp( entry.tag, "opkr0" ) == 0 ) {
+          res.opkr_0 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr1" ) == 0 ) {
+          res.opkr_1 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr2" ) == 0 ) {
+          res.opkr_2 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr3" ) == 0 ) {
+          res.opkr_3 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr4" ) == 0 ) {
+          res.opkr_4 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr5" ) == 0 ) {
+          res.opkr_5 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr6" ) == 0 ) {
+          res.opkr_6 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr7" ) == 0 ) {
+          res.opkr_7 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr8" ) == 0 ) {
+          res.opkr_8 = entry.message;
+        } else if ( strcmp( entry.tag, "opkr9" ) == 0 ) {
+          res.opkr_9 = entry.message;
+        }
+      }
+      else if( strcmp( entry.tag, "opkrspddist" ) == 0 )
       {
         res.tv_sec = entry.tv_sec;
         res.tv_nsec = tv_nsec;
@@ -166,6 +203,19 @@ int main() {
       framed.setTs( res.tv_sec );
       //framed.setMapEnable( res.mapEnable );
       //framed.setMapValid( res.mapValid );
+
+      if (OPKR_Debug) {
+        framed.setOpkr0( res.opkr_0 );
+        framed.setOpkr1( res.opkr_1 );
+        framed.setOpkr2( res.opkr_2 );
+        framed.setOpkr3( res.opkr_3 );
+        framed.setOpkr4( res.opkr_4 );
+        framed.setOpkr5( res.opkr_5 );
+        framed.setOpkr6( res.opkr_6 );
+        framed.setOpkr7( res.opkr_7 );
+        framed.setOpkr8( res.opkr_8 );
+        framed.setOpkr9( res.opkr_9 );
+      }
 
     /*
     iNavi Road signtype
