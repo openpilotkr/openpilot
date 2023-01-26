@@ -406,11 +406,11 @@ void HomeWindow::mousePressEvent(QMouseEvent* e)
     }
     effect3.setVolume(volume3);
     effect3.play();
-    if (QUIState::ui_state.scene.navi_select == 0) {
-      QProcess::execute("am start --activity-task-on-home com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
-    } else if (QUIState::ui_state.scene.navi_select == 1) {
+    if (QUIState::ui_state.scene.navi_select == 1) {
       QProcess::execute("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
     } else if (QUIState::ui_state.scene.navi_select == 2) {
+      QProcess::execute("am start --activity-task-on-home com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
+    } else if (QUIState::ui_state.scene.navi_select == 3) {
       QProcess::execute("am start --activity-task-on-home com.waze/com.waze.MainActivity");
     }
     QUIState::ui_state.scene.map_on_top = true;
