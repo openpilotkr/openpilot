@@ -1477,7 +1477,7 @@ static void draw_navi_button(UIState *s) {
     nvgText(s->vg,btn_xc1,btn_yc+17,"Search",NULL);
   } else {
     if (s->scene.liveENaviData.eopkrconalive) {
-      nvgText(s->vg,btn_xc1,btn_yc,"TMAP",NULL);
+      nvgText(s->vg,btn_xc1,btn_yc,"ENAV",NULL);
     } else {
       nvgText(s->vg,btn_xc1,btn_yc,"NAVI",NULL);
     }

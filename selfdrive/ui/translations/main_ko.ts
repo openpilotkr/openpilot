@@ -4129,4 +4129,17 @@
         <translation>크루즈속도를 도로제한속도에 오프셋 값을 더해 최대 제한 속도를 설정합니다.</translation>
     </message>
 </context>
+<context>
+    <name>OPKRDebug</name>
+    <message>
+        <location filename="../qt/widgets/opkr.h" line="976"/>
+        <source>OPKR Debug Mode</source>
+        <translation>OPKR 디버그 모드</translation>
+    </message>
+    <message>
+        <location filename="../qt/widgets/opkr.h" line="976"/>
+        <source>Run OPKR Debug Mode</source>
+        <translation>OPKR 디버그 모드를 실행합니다.</translation>
+    </message>
+</context>
 </TS>

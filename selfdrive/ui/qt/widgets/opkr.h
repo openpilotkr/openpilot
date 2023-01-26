@@ -973,7 +973,7 @@ class OPKRDebug : public ToggleControl {
   Q_OBJECT
 
 public:
-  OPKRDebug() : ToggleControl(tr("OPKR Debug Mode"), tr("OPKR Debug Mode"), "../assets/offroad/icon_shell.png", Params().getBool("OPKRDebug")) {
+  OPKRDebug() : ToggleControl(tr("OPKR Debug Mode"), tr("Run OPKR Debug Mode"), "../assets/offroad/icon_shell.png", Params().getBool("OPKRDebug")) {
     QObject::connect(this, &OPKRDebug::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("OPKRDebug", status);

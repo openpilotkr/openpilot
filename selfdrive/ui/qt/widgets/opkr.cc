@@ -5926,8 +5926,8 @@ void OPKRNaviSelect::refresh() {
   } else if (option == "1") {label.setText(tr("Mappy"));
   } else if (option == "2") {label.setText(tr("iNavi"));
   } else if (option == "3") {label.setText(tr("Waze"));
-  } else if (option == "4") {label.setText(tr("TMap_E"));
-  } else if (option == "5") {label.setText(tr("Waze_E"));
+  } else if (option == "4") {label.setText(tr("TMapE"));
+  } else if (option == "5") {label.setText(tr("WazeE"));
   }
 }
 
