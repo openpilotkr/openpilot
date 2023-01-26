@@ -394,6 +394,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CruiseGapBySpdGap", PERSISTENT},
     {"CruiseSetwithRoadLimitSpeedEnabled", PERSISTENT},
     {"CruiseSetwithRoadLimitSpeedOffset", PERSISTENT},
+    {"OPKRDebug", PERSISTENT},
 };
 
 } // namespace
