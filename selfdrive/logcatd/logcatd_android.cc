@@ -23,16 +23,6 @@ typedef struct LiveNaviDataResult {
       //int  mapEnable;    // bool;
       long  tv_sec;
       long  tv_nsec;
-      std::string opkr0 = "";
-      std::string opkr1 = "";
-      std::string opkr2 = "";
-      std::string opkr3 = "";
-      std::string opkr4 = "";
-      std::string opkr5 = "";
-      std::string opkr6 = "";
-      std::string opkr7 = "";
-      std::string opkr8 = "";
-      std::string opkr9 = "";
 } LiveNaviDataResult;
 
 
@@ -43,7 +33,6 @@ int main() {
   float tv_nsec2;
   bool  sBump = false;
   int   naviSel = std::stoi(Params().get("OPKRNaviSelect"));
-  bool  OPKR_Debug = Params().get_bool("OPKRDebug");
 
   ExitHandler do_exit;
   PubMaster pm({"liveNaviData"});
@@ -93,31 +82,7 @@ int main() {
       nDelta_nsec = tv_nsec - res.tv_nsec;
       //nDelta = entry.tv_sec - res.tv_sec;
 
-      if (OPKR_Debug)
-      {
-        if( strcmp( entry.tag, "opkr0" ) == 0 ) {
-          res.opkr0 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr1" ) == 0 ) {
-          res.opkr1 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr2" ) == 0 ) {
-          res.opkr2 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr3" ) == 0 ) {
-          res.opkr3 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr4" ) == 0 ) {
-          res.opkr4 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr5" ) == 0 ) {
-          res.opkr5 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr6" ) == 0 ) {
-          res.opkr6 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr7" ) == 0 ) {
-          res.opkr7 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr8" ) == 0 ) {
-          res.opkr8 = entry.message;
-        } else if ( strcmp( entry.tag, "opkr9" ) == 0 ) {
-          res.opkr9 = entry.message;
-        }
-      }
-      else if( strcmp( entry.tag, "opkrspddist" ) == 0 )
+      if( strcmp( entry.tag, "opkrspddist" ) == 0 )
       {
         res.tv_sec = entry.tv_sec;
         res.tv_nsec = tv_nsec;
@@ -199,18 +164,6 @@ int main() {
       framed.setTurnInfo( res.turnInfo );  // int;
       framed.setDistanceToTurn( res.distanceToTurn );  // Float32;
       framed.setTs( res.tv_sec );
-      if (OPKR_Debug) {
-        framed.setOpkr0( res.opkr0 );
-        framed.setOpkr1( res.opkr1 );
-        framed.setOpkr2( res.opkr2 );
-        framed.setOpkr3( res.opkr3 );
-        framed.setOpkr4( res.opkr4 );
-        framed.setOpkr5( res.opkr5 );
-        framed.setOpkr6( res.opkr6 );
-        framed.setOpkr7( res.opkr7 );
-        framed.setOpkr8( res.opkr8 );
-        framed.setOpkr9( res.opkr9 );
-      }
       //framed.setMapEnable( res.mapEnable );
       //framed.setMapValid( res.mapValid );
 
