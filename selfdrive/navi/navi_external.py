@@ -148,61 +148,61 @@ def navid_thread(end_event, nv_queue):
         if OPKR_Debug:
           try:
             if "opkr0" in line:
-              arr = line.split('opkr0: ')
+              arr = line.split('opkr0   : ')
               opkr_0 = arr[1]
           except:
             pass
           try:
             if "opkr1" in line:
-              arr = line.split('opkr1: ')
+              arr = line.split('opkr1   : ')
               opkr_1 = arr[1]
           except:
             pass
           try:
             if "opkr2" in line:
-              arr = line.split('opkr2: ')
+              arr = line.split('opkr2   : ')
               opkr_2 = arr[1]
           except:
             pass
           try:
             if "opkr3" in line:
-              arr = line.split('opkr3: ')
+              arr = line.split('opkr3   : ')
               opkr_3 = arr[1]
           except:
             pass
           try:
             if "opkr4" in line:
-              arr = line.split('opkr4: ')
+              arr = line.split('opkr4   : ')
               opkr_4 = arr[1]
           except:
             pass
           try:
             if "opkr5" in line:
-              arr = line.split('opkr5: ')
+              arr = line.split('opkr5   : ')
               opkr_5 = arr[1]
           except:
             pass
           try:
             if "opkr6" in line:
-              arr = line.split('opkr6: ')
+              arr = line.split('opkr6   : ')
               opkr_6 = arr[1]
           except:
             pass
           try:
             if "opkr7" in line:
-              arr = line.split('opkr7: ')
+              arr = line.split('opkr7   : ')
               opkr_7 = arr[1]
           except:
             pass
           try:
             if "opkr8" in line:
-              arr = line.split('opkr8: ')
+              arr = line.split('opkr8   : ')
               opkr_8 = arr[1]
           except:
             pass
           try:
             if "opkr9" in line:
-              arr = line.split('opkr9: ')
+              arr = line.split('opkr9   : ')
               opkr_9 = arr[1]
           except:
             pass
