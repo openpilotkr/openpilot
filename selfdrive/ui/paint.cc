@@ -384,14 +384,14 @@ static void ui_draw_debug(UIState *s) {
           if (scene.liveNaviData.wazealertid) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d", scene.liveNaviData.wazealertid);
           if (scene.liveNaviData.wazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%d", scene.liveNaviData.wazealertdistance);
           if (scene.liveNaviData.wazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "RS:%d", scene.liveNaviData.wazeroadspeedlimit);
-          if (scene.liveNaviData.wazeroadname) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveNaviData.wazeroadname);
+          if (scene.liveNaviData.wazeroadname) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveNaviData.wazeroadname.c_str());
           if (scene.liveNaviData.wazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveNaviData.wazenavsign);
           if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+720, "ND:%d", scene.liveNaviData.wazenavdistance);
         } else if (scene.navi_select == 5) {
           if (scene.liveENaviData.ewazealertid) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d", scene.liveENaviData.ewazealertid);
           if (scene.liveENaviData.ewazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "DS:%d", scene.liveENaviData.ewazealertdistance);
           if (scene.liveENaviData.ewazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "RS:%d", scene.liveENaviData.ewazeroadspeedlimit);
-          if (scene.liveENaviData.ewazeroadname) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveENaviData.ewazeroadname);
+          if (scene.liveENaviData.ewazeroadname) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveENaviData.ewazeroadname.c_str());
           if (scene.liveENaviData.ewazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveENaviData.ewazenavsign);
           if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+720, "ND:%d", scene.liveENaviData.ewazenavdistance);
         } else if (scene.map_is_running) {
