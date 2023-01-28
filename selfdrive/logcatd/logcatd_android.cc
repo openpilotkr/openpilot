@@ -134,12 +134,13 @@ int main() {
       }
       else if (naviSel == 3) {
         if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
-          std::size_t found1=entry.message.find("icon_report_speedlimit");
-          std::size_t found2=entry.message.find("icon_report_camera");
-          std::size_t found3=entry.message.find("icon_report_speedcam");
-          std::size_t found4=entry.message.find("icon_report_police");
-          std::size_t found5=entry.message.find("icon_report_hazard");
-          std::size_t found6=entry.message.find("icon_report_traffic");
+          std::string opkr_log_msg = entry.message;
+          std::size_t found1=opkr_log_msg.find("icon_report_speedlimit");
+          std::size_t found2=opkr_log_msg.find("icon_report_camera");
+          std::size_t found3=opkr_log_msg.find("icon_report_speedcam");
+          std::size_t found4=opkr_log_msg.find("icon_report_police");
+          std::size_t found5=opkr_log_msg.find("icon_report_hazard");
+          std::size_t found6=opkr_log_msg.find("icon_report_traffic");
           if (found1!=std::string::npos) {
             res.waze_AlertId = 1;
           } else if (found2!=std::string::npos) {
@@ -154,7 +155,8 @@ int main() {
             res.waze_AlertId = 4;
           }
         } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
-          strcpy(str, entry.message.c_str());
+          std::string opkr_log_msg2 = entry.message;
+          strcpy(str, opkr_log_msg2.c_str());
           for(int i=0; i<strlen(str); i++){
             if(str[i] > 47 && str[i] < 58) num = num*10 + str[i]-48;		
         	}
