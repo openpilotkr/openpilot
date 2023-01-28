@@ -9,6 +9,8 @@
 #include "selfdrive/common/util.h"
 #include "selfdrive/common/params.h"
 
+#include <string>
+
 
 // atom
 typedef struct LiveNaviDataResult {
@@ -23,6 +25,14 @@ typedef struct LiveNaviDataResult {
       //int  mapEnable;    // bool;
       long  tv_sec;
       long  tv_nsec;
+
+      int waze_AlertId = 0;
+      int waze_AlertDistance = 0;
+      int waze_RoadSpeedLimit = 0;
+      std::string waze_RoadName = "";
+      int waze_NavSign = 0;
+      int waze_NavDistance = 0;
+
       std::string opkr_0 = "";
       std::string opkr_1 = "";
       std::string opkr_2 = "";
@@ -44,6 +54,9 @@ int main() {
   bool  sBump = false;
   int   naviSel = std::stoi(Params().get("OPKRNaviSelect"));
   bool  OPKR_Debug = Params().getBool("OPKRDebug");
+
+	char str[50];
+	int num = 0;
 
   ExitHandler do_exit;
   PubMaster pm({"liveNaviData"});
@@ -117,6 +130,44 @@ int main() {
           res.opkr_8 = entry.message;
         } else if ( strcmp( entry.tag, "opkr9" ) == 0 ) {
           res.opkr_9 = entry.message;
+        }
+      }
+      else if (naviSel == 3) {
+        if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
+	        if (entry.message.find("icon_report_speedlimit") != string::npos) {
+            res.waze_AlertId = 1;
+          } else if (entry.message.find("icon_report_camera") != string::npos) {
+            res.waze_AlertId = 1;
+          } else if (entry.message.find("icon_report_speedcam") != string::npos) {
+            res.waze_AlertId = 1;
+          } else if (entry.message.find("icon_report_police") != string::npos) {
+            res.waze_AlertId = 2;
+          } else if (entry.message.find("icon_report_hazard") != string::npos) {
+            res.waze_AlertId = 3;
+          } else if (entry.message.find("icon_report_traffic") != string::npos) {
+            res.waze_AlertId = 4;
+          }
+        } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
+          strcpy(str, entry.message.c_str());
+          for(int i=0; i<strlen(str); i++){
+            if(str[i] > 47 && str[i] < 58) num = num*10 + str[i]-48;		
+        	}
+          res.waze_AlertDistance = num;
+          res.tv_sec = entry.tv_sec;
+          res.tv_nsec = tv_nsec;
+        } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
+          res.waze_RoadSpeedLimit = atoi( entry.message );
+        } else if( strcmp( entry.tag, "opkrwazeroadname" ) == 0 ) {
+          res.waze_RoadName = entry.message;
+        } else if( strcmp( entry.tag, "opkrwazenavsign" ) == 0 ) {
+          res.waze_NavSign = atoi( entry.message );
+        } else if( strcmp( entry.tag, "opkrwazenavdist" ) == 0 ) {
+          res.waze_NavDistance = atoi( entry.message );
+        } else if( nDelta_nsec > 3000 ) {
+          res.tv_sec = entry.tv_sec;
+          res.tv_nsec = tv_nsec;
+          res.waze_AlertId = 0;
+          res.waze_AlertDistance = 0;
         }
       }
       else if( strcmp( entry.tag, "opkrspddist" ) == 0 )
@@ -215,6 +266,14 @@ int main() {
         framed.setOpkr7( res.opkr_7 );
         framed.setOpkr8( res.opkr_8 );
         framed.setOpkr9( res.opkr_9 );
+      }
+      if (naviSel == 3) {
+        framed.setWazeAlertId( res.waze_AlertId );
+        framed.setWazeAlertDistance( res.waze_AlertDistance );
+        framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
+        framed.setWazeRoadName( res.waze_RoadName );
+        framed.setWazeNavSign( res.waze_NavSign );
+        framed.setWazeNavDistance( res.waze_NavDistance );
       }
 
     /*

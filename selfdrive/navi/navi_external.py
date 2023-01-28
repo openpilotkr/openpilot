@@ -4,6 +4,7 @@ import queue
 import threading
 import time
 import subprocess
+import re
 
 import cereal.messaging as messaging
 from common.params import Params
@@ -51,6 +52,14 @@ def navid_thread(end_event, nv_queue):
 
   ip_count = int(len(Params().get("ExternalDeviceIP", encoding="utf8").split(',')))
 
+  navi_selection = int(Params().get("OPKRNaviSelect", encoding="utf8"))
+  if navi_selection == 5:
+    waze_alert_id = ""
+    waze_alert_distance = ""
+    waze_road_speed_limit = ""
+    waze_road_name = ""
+    waze_nav_sign = ""
+    waze_nav_distance = ""
 
   while not end_event.is_set():
     if not ip_bind:
@@ -75,6 +84,14 @@ def navid_thread(end_event, nv_queue):
       pos_road_name = ""
       is_highway = 0
       is_tunnel = 0
+
+      if navi_selection == 5:
+        waze_alert_id = ""
+        waze_alert_distance = ""
+        waze_road_speed_limit = ""
+        waze_road_name = ""
+        waze_nav_sign = ""
+        waze_nav_distance = ""
 
       if OPKR_Debug:
         opkr_0 = ""
@@ -144,6 +161,60 @@ def navid_thread(end_event, nv_queue):
         if "opkristunnel" in line:
           arr = line.split('opkristunnel: ')
           is_tunnel = arr[1]
+        if navi_selection == 5: # NAV unit should be metric. Do not use miles unit.(Distance factor is not detailed.)
+          if "opkrwazereportid" in line:
+            arr = line.split('opkrwazereportid: ')
+            try:
+              if "icon_report_speedlimit" in arr[1]:
+                waze_alert_id = 1
+              elif "icon_report_camera" in arr[1]:
+                waze_alert_id = 1
+              elif "icon_report_speedcam" in arr[1]:
+                waze_alert_id = 1
+              elif "icon_report_police" in arr[1]:
+                waze_alert_id = 2
+              elif "icon_report_hazard" in arr[1]:
+                waze_alert_id = 3
+              elif "icon_report_traffic" in arr[1]:
+                waze_alert_id = 4
+            except:
+              pass
+          if "opkrwazealertdist" in line:
+            arr = line.split('opkrwazealertdist: ')
+            try:
+              if arr[1] is None or arr[1] == "":
+                waze_alert_distance = 0
+              else:
+                waze_alert_distance = re.sub(r'[^0-9]', '', arr[1])
+            except:
+              pass
+          if "opkrwazeroadspdlimit" in line:
+            arr = line.split('opkrwazeroadspdlimit: ')
+            try:
+              if arr[1] == "-1"
+                waze_road_speed_limit = 0
+              else:
+                waze_road_speed_limit = arr[1]
+            except:
+              pass
+          if "opkrwazeroadname" in line: # route should be set.
+            arr = line.split('opkrwazeroadname: ')
+            try:
+              waze_road_name = arr[1]
+            except:
+              pass
+          if "opkrwazenavsign" in line: # route should be set.
+            arr = line.split('opkrwazenavsign: ')
+            try:
+              waze_nav_sign = arr[1]
+            except:
+              pass
+          if "opkrwazenavdist" in line: # route should be set.
+            arr = line.split('opkrwazenavdist: ')
+            try:
+              waze_nav_distance = arr[1]
+            except:
+              pass
 
         if OPKR_Debug:
           try:
@@ -233,6 +304,15 @@ def navid_thread(end_event, nv_queue):
         navi_msg.liveENaviData.opkr7 = str(opkr_7)
         navi_msg.liveENaviData.opkr8 = str(opkr_8)
         navi_msg.liveENaviData.opkr9 = str(opkr_9)
+
+      if navi_selection == 5:
+        navi_msg.liveENaviData.wazeReportId = int(waze_alert_id)
+        navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
+        navi_msg.liveENaviData.wazeRoadSpeedLimit = int(waze_road_speed_limit)
+        navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
+        navi_msg.liveENaviData.wazeNavSign = str(hex(waze_nav_sign))
+        navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)
+
       pm.send('liveENaviData', navi_msg)
 
     count += 1

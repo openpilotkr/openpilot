@@ -1766,6 +1766,13 @@ struct LiveNaviData {
   opkr7 @17 :Text;
   opkr8 @18 :Text;
   opkr9 @19 :Text;
+
+  wazeAlertId @20 :Int8;
+  wazeAlertDistance @21 :Int32;
+  wazeRoadSpeedLimit @22 :Int32;
+  wazeRoadName @23 :Text;
+  wazeNavSign @24 :Int64;
+  wazeNavDistance @25 :Int32;
 }
 
 struct LiveENaviData {
