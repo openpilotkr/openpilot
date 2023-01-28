@@ -134,17 +134,17 @@ int main() {
       }
       else if (naviSel == 3) {
         if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
-	        if (entry.message.find("icon_report_speedlimit") != string::npos) {
+	        if (entry.message.find("icon_report_speedlimit") != std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_camera") != string::npos) {
+          } else if (entry.message.find("icon_report_camera") != std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_speedcam") != string::npos) {
+          } else if (entry.message.find("icon_report_speedcam") != std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_police") != string::npos) {
+          } else if (entry.message.find("icon_report_police") != std::string::npos) {
             res.waze_AlertId = 2;
-          } else if (entry.message.find("icon_report_hazard") != string::npos) {
+          } else if (entry.message.find("icon_report_hazard") != std::string::npos) {
             res.waze_AlertId = 3;
-          } else if (entry.message.find("icon_report_traffic") != string::npos) {
+          } else if (entry.message.find("icon_report_traffic") != std::string::npos) {
             res.waze_AlertId = 4;
           }
         } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
