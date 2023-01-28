@@ -337,6 +337,12 @@ typedef struct UIScene {
     std::string opkr7;
     std::string opkr8;
     std::string opkr9;
+    int wazealertid;
+    int wazealertdistance;
+    int wazeroadspeedlimit;
+    std::string wazeroadname;
+    int wazenavsign;
+    int wazenavdistance;
   } liveNaviData;
 
   struct _LiveENaviData
@@ -364,6 +370,12 @@ typedef struct UIScene {
     std::string eopkr7;
     std::string eopkr8;
     std::string eopkr9;
+    int ewazealertid;
+    int ewazealertdistance;
+    int ewazeroadspeedlimit;
+    std::string ewazeroadname;
+    int ewazenavsign;
+    int ewazenavdistance;
   } liveENaviData;
 
   struct _LiveMapData

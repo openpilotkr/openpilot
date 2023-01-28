@@ -377,6 +377,14 @@ static void update_state(UIState *s) {
       scene.liveNaviData.opkr8 = lm_data.getOpkr8();
       scene.liveNaviData.opkr9 = lm_data.getOpkr9();
     }
+    if (scene.navi_select == 3) {
+      scene.liveNaviData.wazealertid = lm_data.getWazeAlertId();
+      scene.liveNaviData.wazealertdistance = lm_data.getWazeAlertDistance();
+      scene.liveNaviData.wazeroadspeedlimit = lm_data.getWazeRoadSpeedLimit();
+      scene.liveNaviData.wazeroadname = lm_data.getWazeRoadName();
+      scene.liveNaviData.wazenavsign = lm_data.getWazeNavSign();
+      scene.liveNaviData.wazenavdistance = lm_data.getWazeNavDistance();
+    }
   }
   if (sm.updated("liveENaviData")) {
     scene.live_enavi_data = sm["liveENaviData"].getLiveENaviData();
@@ -405,6 +413,14 @@ static void update_state(UIState *s) {
       scene.liveENaviData.eopkr7 = lme_data.getOpkr7();
       scene.liveENaviData.eopkr8 = lme_data.getOpkr8();
       scene.liveENaviData.eopkr9 = lme_data.getOpkr9();
+    }
+    if (scene.navi_select == 5) {
+      scene.liveENaviData.ewazealertid = lme_data.getWazeAlertId();
+      scene.liveENaviData.ewazealertdistance = lme_data.getWazeAlertDistance();
+      scene.liveENaviData.ewazeroadspeedlimit = lme_data.getWazeRoadSpeedLimit();
+      scene.liveENaviData.ewazeroadname = lme_data.getWazeRoadName();
+      scene.liveENaviData.ewazenavsign = lme_data.getWazeNavSign();
+      scene.liveENaviData.ewazenavdistance = lme_data.getWazeNavDistance();
     }
   }
   if (sm.updated("liveMapData")) {

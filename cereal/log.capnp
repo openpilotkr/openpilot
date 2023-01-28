@@ -1800,6 +1800,12 @@ struct LiveENaviData {
   opkr7 @21 :Text;
   opkr8 @22 :Text;
   opkr9 @23 :Text;
+  wazeAlertId @24 :Int8;
+  wazeAlertDistance @25 :Int32;
+  wazeRoadSpeedLimit @26 :Int32;
+  wazeRoadName @27 :Text;
+  wazeNavSign @28 :Int64;
+  wazeNavDistance @29 :Int32;
 }
 
 struct LiveMapDataDEPRECATED {

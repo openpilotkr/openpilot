@@ -977,6 +977,11 @@ public:
     QObject::connect(this, &OPKRDebug::toggleFlipped, [=](int state) {
       bool status = state ? true : false;
       Params().putBool("OPKRDebug", status);
+      if (state) {
+        QUIState::ui_state.scene.OPKR_Debug = true;
+      } else {
+        QUIState::ui_state.scene.OPKR_Debug = false;
+      }
     });
   }
 };
