@@ -134,17 +134,23 @@ int main() {
       }
       else if (naviSel == 3) {
         if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
-	        if (entry.message.find("icon_report_speedlimit") != std::string::npos) {
+          std::size_t found1=entry.message.find("icon_report_speedlimit");
+          std::size_t found2=entry.message.find("icon_report_camera");
+          std::size_t found3=entry.message.find("icon_report_speedcam");
+          std::size_t found4=entry.message.find("icon_report_police");
+          std::size_t found5=entry.message.find("icon_report_hazard");
+          std::size_t found6=entry.message.find("icon_report_traffic");
+          if (found1!=std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_camera") != std::string::npos) {
+          } else if (found2!=std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_speedcam") != std::string::npos) {
+          } else if (found3!=std::string::npos) {
             res.waze_AlertId = 1;
-          } else if (entry.message.find("icon_report_police") != std::string::npos) {
+          } else if (found4!=std::string::npos) {
             res.waze_AlertId = 2;
-          } else if (entry.message.find("icon_report_hazard") != std::string::npos) {
+          } else if (found5!=std::string::npos) {
             res.waze_AlertId = 3;
-          } else if (entry.message.find("icon_report_traffic") != std::string::npos) {
+          } else if (found6!=std::string::npos) {
             res.waze_AlertId = 4;
           }
         } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
