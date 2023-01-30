@@ -968,7 +968,7 @@ class Controls:
     controlsState.alertTextMsg2 = self.log_alertTextMsg2
     controlsState.alertTextMsg3 = self.log_alertTextMsg3
     controlsState.osmOffSpdLimit = self.osm_waze_off_spdlimit
-    if self.osm_speedlimit_enabled or self.navi_selection in (3,5)::
+    if self.osm_speedlimit_enabled or self.navi_selection in (3,5):
       if self.map_enabled and self.navi_selection == 3 and int(self.sm['liveNaviData'].wazeRoadSpeedLimit):
         controlsState.limitSpeedCamera = int(round(self.sm['liveNaviData'].wazeRoadSpeedLimit))
         controlsState.limitSpeedCameraDist = float(self.sm['liveNaviData'].wazeAlertDistance)
