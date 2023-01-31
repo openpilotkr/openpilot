@@ -54,6 +54,7 @@ int main() {
   bool  sBump = false;
   int   naviSel = std::stoi(Params().get("OPKRNaviSelect"));
   bool  OPKR_Debug = Params().getBool("OPKRDebug");
+  bool  is_metric = Params().getBool("IsMetric");
 
 	char str[50];
 	int num = 0;
@@ -278,7 +279,11 @@ int main() {
       if (naviSel == 3) {
         framed.setWazeAlertId( res.waze_AlertId );
         framed.setWazeAlertDistance( res.waze_AlertDistance );
-        framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
+        if (is_metric) {
+          framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
+        } else {
+          framed.setWazeRoadSpeedLimit( round(res.waze_RoadSpeedLimit * 0.6213711922));
+        }
         framed.setWazeRoadName( res.waze_RoadName );
         framed.setWazeNavSign( res.waze_NavSign );
         framed.setWazeNavDistance( res.waze_NavDistance );
