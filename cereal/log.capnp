@@ -1773,6 +1773,7 @@ struct LiveNaviData {
   wazeRoadName @23 :Text;
   wazeNavSign @24 :Int64;
   wazeNavDistance @25 :Int32;
+  wazeCurrentSpeed @26 :Int32;
 }
 
 struct LiveENaviData {
@@ -1806,6 +1807,7 @@ struct LiveENaviData {
   wazeRoadName @27 :Text;
   wazeNavSign @28 :Int64;
   wazeNavDistance @29 :Int32;
+  wazeCurrentSpeed @30 :Int32;
 }
 
 struct LiveMapDataDEPRECATED {

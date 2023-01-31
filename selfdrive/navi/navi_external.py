@@ -59,6 +59,7 @@ def navid_thread(end_event, nv_queue):
     waze_alert_id = ""
     waze_alert_distance = ""
     waze_road_speed_limit = ""
+    waze_current_speed = ""
     waze_road_name = ""
     waze_nav_sign = ""
     waze_nav_distance = ""
@@ -91,6 +92,7 @@ def navid_thread(end_event, nv_queue):
         waze_alert_id = ""
         waze_alert_distance = ""
         waze_road_speed_limit = ""
+        waze_current_speed = ""
         waze_road_name = ""
         waze_nav_sign = ""
         waze_nav_distance = ""
@@ -197,6 +199,12 @@ def navid_thread(end_event, nv_queue):
                 waze_road_speed_limit = 0
               else:
                 waze_road_speed_limit = arr[1]
+            except:
+              pass
+          if "opkrwazecurrentspd" in line:
+            arr = line.split('opkrwazecurrentspd: ')
+            try:
+              waze_current_speed = arr[1]
             except:
               pass
           if "opkrwazeroadname" in line: # route should be set.
@@ -311,6 +319,7 @@ def navid_thread(end_event, nv_queue):
         navi_msg.liveENaviData.wazeReportId = int(waze_alert_id)
         navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
         navi_msg.liveENaviData.wazeRoadSpeedLimit = round(int(waze_road_speed_limit) * 0.6213711922) if not is_metric else int(waze_road_speed_limit)
+        navi_msg.liveENaviData.wazeCurrentSpeed = int(waze_current_speed)
         navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
         navi_msg.liveENaviData.wazeNavSign = str(hex(waze_nav_sign))
         navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)

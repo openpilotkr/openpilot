@@ -381,6 +381,7 @@ static void update_state(UIState *s) {
       scene.liveNaviData.wazealertid = lm_data.getWazeAlertId();
       scene.liveNaviData.wazealertdistance = lm_data.getWazeAlertDistance();
       scene.liveNaviData.wazeroadspeedlimit = lm_data.getWazeRoadSpeedLimit();
+      scene.liveNaviData.wazecurrentspeed = lm_data.getWazeCurrentSpeed();
       scene.liveNaviData.wazeroadname = lm_data.getWazeRoadName();
       scene.liveNaviData.wazenavsign = lm_data.getWazeNavSign();
       scene.liveNaviData.wazenavdistance = lm_data.getWazeNavDistance();
@@ -418,6 +419,7 @@ static void update_state(UIState *s) {
       scene.liveENaviData.ewazealertid = lme_data.getWazeAlertId();
       scene.liveENaviData.ewazealertdistance = lme_data.getWazeAlertDistance();
       scene.liveENaviData.ewazeroadspeedlimit = lme_data.getWazeRoadSpeedLimit();
+      scene.liveENaviData.ewazecurrentspeed = lme_data.getWazeCurrentSpeed();
       scene.liveENaviData.ewazeroadname = lme_data.getWazeRoadName();
       scene.liveENaviData.ewazenavsign = lme_data.getWazeNavSign();
       scene.liveENaviData.ewazenavdistance = lme_data.getWazeNavDistance();

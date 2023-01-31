@@ -340,6 +340,7 @@ typedef struct UIScene {
     int wazealertid;
     int wazealertdistance;
     int wazeroadspeedlimit;
+    int wazecurrentspeed;
     std::string wazeroadname;
     int wazenavsign;
     int wazenavdistance;
@@ -373,6 +374,7 @@ typedef struct UIScene {
     int ewazealertid;
     int ewazealertdistance;
     int ewazeroadspeedlimit;
+    int ewazecurrentspeed;
     std::string ewazeroadname;
     int ewazenavsign;
     int ewazenavdistance;

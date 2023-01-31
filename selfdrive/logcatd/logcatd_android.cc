@@ -32,6 +32,7 @@ typedef struct LiveNaviDataResult {
       std::string waze_RoadName = "";
       int waze_NavSign = 0;
       int waze_NavDistance = 0;
+      int waze_CurrentSpeed = 0;
 
       std::string opkr_0 = "";
       std::string opkr_1 = "";
@@ -166,6 +167,8 @@ int main() {
           res.tv_nsec = tv_nsec;
         } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
           res.waze_RoadSpeedLimit = atoi( entry.message );
+        } else if( strcmp( entry.tag, "opkrwazecurrentspd" ) == 0 ) {
+          res.waze_CurrentSpeed = atoi( entry.message );
         } else if( strcmp( entry.tag, "opkrwazeroadname" ) == 0 ) {
           res.waze_RoadName = entry.message;
         } else if( strcmp( entry.tag, "opkrwazenavsign" ) == 0 ) {
@@ -284,6 +287,7 @@ int main() {
         } else {
           framed.setWazeRoadSpeedLimit( round(res.waze_RoadSpeedLimit * 0.6213711922));
         }
+        framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         framed.setWazeRoadName( res.waze_RoadName );
         framed.setWazeNavSign( res.waze_NavSign );
         framed.setWazeNavDistance( res.waze_NavDistance );
