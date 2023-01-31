@@ -57,7 +57,7 @@ int main() {
   bool  OPKR_Debug = Params().getBool("OPKRDebug");
   bool  is_metric = Params().getBool("IsMetric");
 
-	char str[50];
+	char str[10];
 	int num = 0;
 
   ExitHandler do_exit;
@@ -163,6 +163,7 @@ int main() {
             if(str[i] > 47 && str[i] < 58) num = num*10 + str[i]-48;		
         	}
           res.waze_AlertDistance = num;
+          str[0] = '\0';
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
         } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
