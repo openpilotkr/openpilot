@@ -10,7 +10,7 @@
 #include "selfdrive/common/params.h"
 
 #include <string>
-
+#include <cmath>
 
 // atom
 typedef struct LiveNaviDataResult {
