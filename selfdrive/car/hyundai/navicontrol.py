@@ -188,7 +188,7 @@ class NaviControl():
           consider_speed = interp((v_ego_kph - self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1), [0, 50], [1, 1.8])
           min_control_dist = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 110], [40, 250])
           final_cam_decel_start_dist = cam_distance_calc*consider_speed*v_ego_kph * (1 + self.safetycam_decel_dist_gain*0.01)
-          if self.sm['liveNaviData'].wazeReportId == 2 and self.map_speed_dist != 0:
+          if self.sm['liveNaviData'].wazeAlertId == 2 and self.map_speed_dist != 0:
             spdTarget = self.map_speed
           elif 0 < self.map_speed and self.map_speed_dist != 0:
             if self.map_speed_dist < final_cam_decel_start_dist:
@@ -218,7 +218,7 @@ class NaviControl():
           consider_speed = interp((v_ego_kph - self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1), [0, 50], [1, 1.8])
           min_control_dist = interp(self.map_speed * CV.MPH_TO_KPH if CS.is_set_speed_in_mph else 1, [30, 110], [40, 250])
           final_cam_decel_start_dist = cam_distance_calc*consider_speed*v_ego_kph * (1 + self.safetycam_decel_dist_gain*0.01)
-          if self.sm['liveENaviData'].wazeReportId == 2 and self.map_speed_dist != 0:
+          if self.sm['liveENaviData'].wazeAlertId == 2 and self.map_speed_dist != 0:
             spdTarget = self.map_speed
           elif 0 < self.map_speed and self.map_speed_dist != 0:
             if self.map_speed_dist < final_cam_decel_start_dist:
