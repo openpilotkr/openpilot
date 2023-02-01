@@ -288,6 +288,11 @@ int main() {
         } else {
           framed.setWazeRoadSpeedLimit((int)round(res.waze_RoadSpeedLimit * 0.6213711922));
         }
+        if (is_metric) {
+          framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
+        } else {
+          framed.setWazeCurrentSpeed((int)round(res.waze_CurrentSpeed * 0.6213711922));
+        }
         framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         framed.setWazeRoadName( res.waze_RoadName );
         framed.setWazeNavSign( res.waze_NavSign );
