@@ -168,9 +168,10 @@ int main() {
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
         } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
-          if (entry.message == "-1") {
+          std::string opkr_log_msg3 = entry.message;
+          if (opkr_log_msg3 == "-1") {
             res.waze_RoadSpeedLimit = 0;
-          } else if (entry.message == "") {
+          } else if (opkr_log_msg3 == "") {
             res.waze_RoadSpeedLimit = 0;
           } else {
             res.waze_RoadSpeedLimit = atoi( entry.message );
