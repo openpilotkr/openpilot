@@ -611,7 +611,14 @@ class Controls:
         self.v_cruise_kph = int(self.sm['liveENaviData'].roadLimitSpeed) + self.cruise_road_limit_spd_offset
         self.v_cruise_kph_last = self.v_cruise_kph
       elif self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or (self.map_enabled and self.navi_selection in (3,5))) and self.osm_waze_off_spdlimit_init:
-        osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+        if self.map_enabled and self.navi_selection == 3:
+          osm_waze_speedlimit_ = round(self.sm['liveNaviData'].wazeRoadSpeedLimit)
+        elif self.map_enabled and self.navi_selection == 5:
+          osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
+        elif self.osm_speedlimit_enabled:
+          osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+        else:
+          osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
         osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset) if self.osm_waze_spdlimit_offset_option == 0 else \
          osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
         if CS.cruiseButtons == Buttons.GAP_DIST:
@@ -619,7 +626,7 @@ class Controls:
           self.osm_waze_off_spdlimit = False    
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
           self.osm_waze_off_spdlimit = True
-        elif round(self.sm['liveMapData'].speedLimit) > 21 and osm_waze_speedlimit != self.v_cruise_kph:
+        elif (self.sm['liveMapData'].speedLimit > 21 or self.sm['liveNaviData'].wazeRoadSpeedLimit > 0 or self.sm['liveENaviData'].wazeRoadSpeedLimit > 0) and osm_waze_speedlimit != self.v_cruise_kph:
           self.osm_waze_speedlimit = 255
           self.osm_waze_off_spdlimit_init = False
           self.v_cruise_kph = osm_waze_speedlimit
