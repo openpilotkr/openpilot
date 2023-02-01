@@ -57,7 +57,7 @@ int main() {
   bool  OPKR_Debug = Params().getBool("OPKRDebug");
   bool  is_metric = Params().getBool("IsMetric");
 
-	char str[];
+	char str[20];
 	int num = 0;
 
   ExitHandler do_exit;
@@ -158,7 +158,7 @@ int main() {
           }
         } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
           std::string opkr_log_msg2 = entry.message;
-          str = {'a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a'};
+          for(int i=0; i<20; i++) str[i] = 'a';
           num = 0;
           strcpy(str, opkr_log_msg2.c_str());
           for(int i=0; i<strlen(str); i++){
