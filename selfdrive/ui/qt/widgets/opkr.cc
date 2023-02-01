@@ -6571,7 +6571,7 @@ void AutoRESDelay::refresh() {
   btnplus.setText("+");
 }
 
-OSMCustomSpeedLimitUD::OSMCustomSpeedLimitUD() : AbstractControl(tr("OSMCustomSpeedLimit([SL] [TargetSpeed])"), tr("Set the offset speed according to speed limit of OSM. (interpolation value)"), "../assets/offroad/icon_shell.png") {
+OSMCustomSpeedLimitUD::OSMCustomSpeedLimitUD() : AbstractControl(tr("CustomSpeedLimit([SL] [TargetSpeed])"), tr("Set the offset speed according to speed limit of OSM or Waze. (interpolation value)"), "../assets/offroad/icon_shell.png") {
 }
 
 OSMCustomSpeedLimit::OSMCustomSpeedLimit() : AbstractControl("", "", "") {

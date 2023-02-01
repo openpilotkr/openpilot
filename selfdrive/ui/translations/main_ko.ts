@@ -2879,13 +2879,13 @@
     <name>OSMCustomSpeedLimitUD</name>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="6574"/>
-        <source>OSMCustomSpeedLimit([SL] [TargetSpeed])</source>
-        <translation>OSM임의속도제한([SL] [목표속도])</translation>
+        <source>CustomSpeedLimit([SL] [TargetSpeed])</source>
+        <translation>커스텀속도제한([SL] [목표속도])</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="6574"/>
-        <source>Set the offset speed according to speed limit of OSM. (interpolation value)</source>
-        <translation>OSM의 제한속도에 따른 오프셋 속도를 설정합니다.(중간값은 보간값)</translation>
+        <source>Set the offset speed according to speed limit of OSM or Waze. (interpolation value)</source>
+        <translation>OSM 혹은 Waze의 제한속도에 따른 오프셋 속도를 설정합니다.(중간값은 보간값)</translation>
     </message>
 </context>
 <context>
