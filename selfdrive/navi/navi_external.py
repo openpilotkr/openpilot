@@ -197,9 +197,12 @@ def navid_thread(end_event, nv_queue):
             try:
               if arr[1] == "-1":
                 waze_road_speed_limit = 0
+              elif arr[1] is None or arr[1] == "":
+                waze_road_speed_limit = 0
               else:
                 waze_road_speed_limit = arr[1]
             except:
+              waze_road_speed_limit = 0
               pass
           if "opkrwazecurrentspd" in line:
             arr = line.split('opkrwazecurrentspd: ')

@@ -168,7 +168,13 @@ int main() {
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
         } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
-          res.waze_RoadSpeedLimit = atoi( entry.message );
+          if (entry.message == "-1") {
+            res.waze_RoadSpeedLimit = 0;
+          } else if (entry.message == "") {
+            res.waze_RoadSpeedLimit = 0;
+          } else {
+            res.waze_RoadSpeedLimit = atoi( entry.message );
+          }
         } else if( strcmp( entry.tag, "opkrwazecurrentspd" ) == 0 ) {
           res.waze_CurrentSpeed = atoi( entry.message );
         } else if( strcmp( entry.tag, "opkrwazeroadname" ) == 0 ) {

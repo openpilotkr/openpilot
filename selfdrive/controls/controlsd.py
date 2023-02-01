@@ -626,11 +626,22 @@ class Controls:
           self.osm_waze_off_spdlimit = False    
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
           self.osm_waze_off_spdlimit = True
-        elif (self.sm['liveMapData'].speedLimit > 21 or self.sm['liveNaviData'].wazeRoadSpeedLimit > 0 or self.sm['liveENaviData'].wazeRoadSpeedLimit > 0) and osm_waze_speedlimit != self.v_cruise_kph:
-          self.osm_waze_speedlimit = 255
-          self.osm_waze_off_spdlimit_init = False
-          self.v_cruise_kph = osm_waze_speedlimit
-          self.v_cruise_kph_last = self.v_cruise_kph        
+        elif osm_waze_speedlimit != self.v_cruise_kph:
+          if self.map_enabled and self.navi_selection == 3 and self.sm['liveNaviData'].wazeRoadSpeedLimit > 21:
+            self.osm_waze_speedlimit = 255
+            self.osm_waze_off_spdlimit_init = False
+            self.v_cruise_kph = osm_waze_speedlimit
+            self.v_cruise_kph_last = self.v_cruise_kph
+          elif self.navi_selection == 5 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 21:
+            self.osm_waze_speedlimit = 255
+            self.osm_waze_off_spdlimit_init = False
+            self.v_cruise_kph = osm_waze_speedlimit
+            self.v_cruise_kph_last = self.v_cruise_kph
+          elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 21:
+            self.osm_waze_speedlimit = 255
+            self.osm_waze_off_spdlimit_init = False
+            self.v_cruise_kph = osm_waze_speedlimit
+            self.v_cruise_kph_last = self.v_cruise_kph
 
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
