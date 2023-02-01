@@ -533,6 +533,9 @@ static void ui_draw_vision_maxspeed_org(UIState *s) {
     } else {
       s->scene.is_speed_over_limit = false;
     }
+  } else if (!s->scene.cruiseAccStatus && (s->scene.navi_select == 3 || s->scene.navi_select == 5)) {
+    s->scene.is_speed_over_limit = false;
+    s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.ctrl_speed+1.5);
   } else {
     if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.limitSpeedCamera+1.5);
@@ -606,6 +609,9 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
     } else {
       s->scene.is_speed_over_limit = false;
     }
+  } else if (!s->scene.cruiseAccStatus && (s->scene.navi_select == 3 || s->scene.navi_select == 5)) {
+    s->scene.is_speed_over_limit = false;
+    s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > s->scene.ctrl_speed+1.5);
   } else {
     if ((s->scene.navi_select > 0 && s->scene.navi_select < 4) || (s->scene.navi_select > 3 && (s->scene.mapSign != 20 && s->scene.mapSign != 21))) {
       s->scene.is_speed_over_limit = limitspeedcamera > 21 && ((s->scene.car_state.getVEgo() * (s->scene.is_metric ? 3.6 : 2.2369363)) > limitspeedcamera+1.5);
@@ -644,7 +650,7 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
 
   const std::string cruise_speed_str = std::to_string((int)std::nearbyint(cruise_speed));
   if (s->scene.controls_state.getEnabled() && !s->scene.cruiseAccStatus && limitspeedcamera > 21) {
-    const std::string limitspeedcamera_str = std::to_string((int)std::nearbyint(limitspeedcamera));
+    const std::string limitspeedcamera_str = std::to_string((int)std::nearbyint(s->scene.ctrl_speed));
     ui_draw_text(s, rect.centerX(), bdr_s+165, limitspeedcamera_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
   } else if (cruise_speed >= 20 && s->scene.controls_state.getEnabled()) {
     ui_draw_text(s, rect.centerX(), bdr_s+165, cruise_speed_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
