@@ -6942,7 +6942,7 @@ void SpeedLaneWidth::refresh() {
   btn.setText(tr("EDIT"));
 }
 
-OPKRTopTextView::OPKRTopTextView() : AbstractControl(tr("Bottom Text View"), tr("Date/Time/OSM Street Name"), "../assets/offroad/icon_shell.png") {
+OPKRTopTextView::OPKRTopTextView() : AbstractControl(tr("Bottom Text View"), tr("Date/Time/StreetName"), "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -7012,16 +7012,16 @@ void OPKRTopTextView::refresh() {
     label.setText(tr("Time"));
     QUIState::ui_state.scene.top_text_view = 3;
   } else if (option == "4") {
-    label.setText(tr("Date+Time+OSM"));
+    label.setText(tr("Date+Time+Str"));
     QUIState::ui_state.scene.top_text_view = 4;
   } else if (option == "5") {
-    label.setText(tr("Date+OSM"));
+    label.setText(tr("Date+Str"));
     QUIState::ui_state.scene.top_text_view = 5;
   } else if (option == "6") {
-    label.setText(tr("Time+OSM"));
+    label.setText(tr("Time+Str"));
     QUIState::ui_state.scene.top_text_view = 6;
   } else {
-    label.setText(tr("OSM"));
+    label.setText(tr("StreetName"));
     QUIState::ui_state.scene.top_text_view = 7;
   }
 }

@@ -3033,8 +3033,8 @@
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="6945"/>
-        <source>Date/Time/OSM Street Name</source>
-        <translation>날짜/시간/OSM거리명</translation>
+        <source>Date/Time/StreetName</source>
+        <translation>날짜/시간/거리</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="7003"/>
@@ -3058,23 +3058,23 @@
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="7015"/>
-        <source>Date+Time+OSM</source>
-        <translation>날짜+시간+OSM</translation>
+        <source>Date+Time+Str</source>
+        <translation>날짜+시간+거리명</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="7018"/>
-        <source>Date+OSM</source>
-        <translation>날짜+OSM</translation>
+        <source>Date+Str</source>
+        <translation>날짜+거리명</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="7021"/>
-        <source>Time+OSM</source>
-        <translation>시간+OSM</translation>
+        <source>Time+Str</source>
+        <translation>시간+거리명</translation>
     </message>
     <message>
         <location filename="../qt/widgets/opkr.cc" line="7024"/>
-        <source>OSM</source>
-        <translation>OSM</translation>
+        <source>StreetName</source>
+        <translation>거리명</translation>
     </message>
 </context>
 <context>
