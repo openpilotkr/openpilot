@@ -286,7 +286,7 @@ int main() {
         if (is_metric) {
           framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
         } else {
-          framed.setWazeRoadSpeedLimit( round(res.waze_RoadSpeedLimit * 0.6213711922));
+          framed.setWazeRoadSpeedLimit((int)round(res.waze_RoadSpeedLimit * 0.6213711922));
         }
         framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         framed.setWazeRoadName( res.waze_RoadName );
