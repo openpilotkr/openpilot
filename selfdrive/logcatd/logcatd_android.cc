@@ -57,7 +57,7 @@ int main() {
   bool  OPKR_Debug = Params().getBool("OPKRDebug");
   bool  is_metric = Params().getBool("IsMetric");
 
-	char str[20];
+	char str[];
 	int num = 0;
 
   ExitHandler do_exit;
