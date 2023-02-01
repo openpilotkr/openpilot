@@ -1374,12 +1374,10 @@ static void draw_safetysign(UIState *s) {
       }
       opacity = safety_dist>600 ? 0 : (600 - safety_dist) * 0.425;
     } else {
-      if (safety_dist < 1000) {
-        snprintf(safetyDist, sizeof(safetyDist), "%.0fyd", safety_dist);
-      } else if (safety_dist < 10000) {
-        snprintf(safetyDist, sizeof(safetyDist), "%.2fmi", safety_dist/1000);
+      if ((safety_dist*3.28084) < 1000) {
+        snprintf(safetyDist, sizeof(safetyDist), "%.0fft", safety_dist*3.28084);
       } else {
-        snprintf(safetyDist, sizeof(safetyDist), "%.1fmi", safety_dist/1000);
+        snprintf(safetyDist, sizeof(safetyDist), "%.2fmi", safety_dist*0.000621);
       }
       opacity = safety_dist>600 ? 0 : (600 - safety_dist) * 0.425;
     }
