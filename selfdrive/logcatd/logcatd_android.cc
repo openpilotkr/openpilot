@@ -158,12 +158,13 @@ int main() {
           }
         } else if( strcmp( entry.tag, "opkrwazealertdist" ) == 0 ) {
           std::string opkr_log_msg2 = entry.message;
+          str[0] = '\0';
+          num = 0;
           strcpy(str, opkr_log_msg2.c_str());
           for(int i=0; i<strlen(str); i++){
             if(str[i] > 47 && str[i] < 58) num = num*10 + str[i]-48;		
         	}
           res.waze_AlertDistance = num;
-          str[0] = '\0';
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
         } else if( strcmp( entry.tag, "opkrwazeroadspdlimit" ) == 0 ) {
@@ -286,12 +287,12 @@ int main() {
         if (is_metric) {
           framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
         } else {
-          framed.setWazeRoadSpeedLimit((int)round(res.waze_RoadSpeedLimit * 0.6213711922));
+          framed.setWazeRoadSpeedLimit((int)round(res.waze_RoadSpeedLimit * 0.6214));
         }
         if (is_metric) {
           framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         } else {
-          framed.setWazeCurrentSpeed((int)round(res.waze_CurrentSpeed * 0.6213711922));
+          framed.setWazeCurrentSpeed((int)round(res.waze_CurrentSpeed * 0.6214));
         }
         framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         framed.setWazeRoadName( res.waze_RoadName );

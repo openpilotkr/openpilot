@@ -318,8 +318,8 @@ def navid_thread(end_event, nv_queue):
       if navi_selection == 5:
         navi_msg.liveENaviData.wazeReportId = int(waze_alert_id)
         navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
-        navi_msg.liveENaviData.wazeRoadSpeedLimit = round(int(waze_road_speed_limit) * 0.6213711922) if not is_metric else int(waze_road_speed_limit)
-        navi_msg.liveENaviData.wazeCurrentSpeed = round(int(waze_current_speed) * 0.6213711922) if not is_metric else int(waze_current_speed)
+        navi_msg.liveENaviData.wazeRoadSpeedLimit = round(int(waze_road_speed_limit) * 0.6214) if not is_metric else int(waze_road_speed_limit)
+        navi_msg.liveENaviData.wazeCurrentSpeed = round(int(waze_current_speed) * 0.6214) if not is_metric else int(waze_current_speed)
         navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
         navi_msg.liveENaviData.wazeNavSign = str(hex(waze_nav_sign))
         navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)
