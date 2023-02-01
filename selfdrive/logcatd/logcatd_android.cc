@@ -294,7 +294,6 @@ int main() {
         } else {
           framed.setWazeCurrentSpeed((int)round(res.waze_CurrentSpeed * 0.6214));
         }
-        framed.setWazeCurrentSpeed( res.waze_CurrentSpeed );
         framed.setWazeRoadName( res.waze_RoadName );
         framed.setWazeNavSign( res.waze_NavSign );
         framed.setWazeNavDistance( res.waze_NavDistance );
