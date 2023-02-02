@@ -1709,22 +1709,8 @@ void draw_datetime_osm_info_text(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  if (s->scene.navi_select == 4 && s->scene.liveMapData.ocurrentRoadName == "") {
-    const std::string road_name = s->scene.liveENaviData.eopkrposroadname;
-    const std::string ref_ = "";
-  } else if (s->scene.navi_select == 3) {
-    const std::string road_name = s->scene.liveNaviData.wazeroadname;
-    const std::string ref_ = "";
-  } else if (s->scene.navi_select == 5) {
-    const std::string road_name = s->scene.liveENaviData.ewazeroadname;
-    const std::string ref_ = "";
-  } else if (s->scene.osm_enabled) {
-    const std::string road_name = s->scene.liveMapData.ocurrentRoadName;
-    const std::string ref_ = s->scene.liveMapData.oref;
-  } else {
-    const std::string road_name = s->scene.liveMapData.ocurrentRoadName;
-    const std::string ref_ = s->scene.liveMapData.oref;
-  }
+  const std::string road_name = s->scene.liveNaviData.wazeroadname;
+  const std::string ref_ = s->scene.liveMapData.oref;
   std::string text_out = "";
   if (s->scene.top_text_view == 1) {
     snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
