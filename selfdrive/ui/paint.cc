@@ -1714,7 +1714,7 @@ void draw_datetime_osm_info_text(UIState *s) {
   if (s->scene.navi_select == 4 && s->scene.liveMapData.ocurrentRoadName == "") {
     road_name = s->scene.liveENaviData.eopkrposroadname;
   } else if (s->scene.navi_select == 3) {
-    road_name = s->scene.liveNaviData.wazeroadname;
+    road_name = str(s->scene.liveNaviData.wazeroadname);
   } else if (s->scene.navi_select == 5) {
     road_name = s->scene.liveENaviData.ewazeroadname;
   } else if (s->scene.osm_enabled) {

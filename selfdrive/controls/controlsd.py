@@ -255,6 +255,9 @@ class Controls:
     self.desired_angle_deg = 0
     self.navi_selection = int(Params().get("OPKRNaviSelect", encoding="utf8"))
 
+    self.osm_waze_custom_spdlimit_c = list(map(int, Params().get("OSMCustomSpeedLimitC", encoding="utf8").split(',')))
+    self.osm_waze_custom_spdlimit_t = list(map(int, Params().get("OSMCustomSpeedLimitT", encoding="utf8").split(',')))
+
   def auto_enable(self, CS):
     if self.state != State.enabled:
       if CS.cruiseState.available and CS.vEgo >= self.auto_enable_speed * CV.KPH_TO_MS and CS.gearShifter == GearShifter.drive and \
@@ -619,8 +622,12 @@ class Controls:
           osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
         else:
           osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
-        osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset) if self.osm_waze_spdlimit_offset_option == 0 else \
-         osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
+        if self.osm_waze_spdlimit_offset_option == 0:
+          osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset)
+        elif self.osm_waze_spdlimit_offset_option == 1:
+          osm_waze_speedlimit = osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
+        else:
+          osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
         if CS.cruiseButtons == Buttons.GAP_DIST:
           self.osm_waze_speedlimit = 255
           self.osm_waze_off_spdlimit = False    
