@@ -1709,17 +1709,21 @@ void draw_datetime_osm_info_text(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  std::string road_name = "";
-  std::string ref_ = "";
   if (s->scene.navi_select == 4 && s->scene.liveMapData.ocurrentRoadName == "") {
-    road_name = s->scene.liveENaviData.eopkrposroadname;
+    const std::string road_name = s->scene.liveENaviData.eopkrposroadname;
+    const std::string ref_ = "";
   } else if (s->scene.navi_select == 3) {
-    road_name = str(s->scene.liveNaviData.wazeroadname);
+    const std::string road_name = s->scene.liveNaviData.wazeroadname;
+    const std::string ref_ = "";
   } else if (s->scene.navi_select == 5) {
-    road_name = s->scene.liveENaviData.ewazeroadname;
+    const std::string road_name = s->scene.liveENaviData.ewazeroadname;
+    const std::string ref_ = "";
   } else if (s->scene.osm_enabled) {
-    road_name = s->scene.liveMapData.ocurrentRoadName;
-    ref_ = s->scene.liveMapData.oref;
+    const std::string road_name = s->scene.liveMapData.ocurrentRoadName;
+    const std::string ref_ = s->scene.liveMapData.oref;
+  } else {
+    const std::string road_name = s->scene.liveMapData.ocurrentRoadName;
+    const std::string ref_ = s->scene.liveMapData.oref;
   }
   std::string text_out = "";
   if (s->scene.top_text_view == 1) {
