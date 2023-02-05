@@ -27,7 +27,7 @@ def navid_thread(end_event, nv_queue):
   link_length = 0
   current_link_angle = 0
   next_link_angle = 0
-  pos_road_name = ""
+  road_name = ""
   is_highway = 0
   is_tunnel = 0
 
@@ -85,7 +85,7 @@ def navid_thread(end_event, nv_queue):
       link_length = 0
       current_link_angle = 0
       next_link_angle = 0
-      pos_road_name = ""
+      road_name = ""
       is_highway = 0
       is_tunnel = 0
 
@@ -158,9 +158,9 @@ def navid_thread(end_event, nv_queue):
         if "opkrnextlinkangle" in line:
           arr = line.split('opkrnextlinkangle: ')
           next_link_angle = arr[1]
-        if "opkrposroadname" in line:
-          arr = line.split('opkrposroadname: ')
-          pos_road_name = arr[1]
+        if "opkrroadname" in line:
+          arr = line.split('opkrroadname: ')
+          road_name = arr[1]
         if "opkrishighway" in line:
           arr = line.split('opkrishighway: ')
           is_highway = arr[1]
@@ -305,7 +305,7 @@ def navid_thread(end_event, nv_queue):
       navi_msg.liveENaviData.linkLength = int(link_length)
       navi_msg.liveENaviData.currentLinkAngle = int(current_link_angle)
       navi_msg.liveENaviData.nextLinkAngle = int(next_link_angle)
-      navi_msg.liveENaviData.posRoadName = str(pos_road_name)
+      navi_msg.liveENaviData.RoadName = str(road_name)
       navi_msg.liveENaviData.isHighway = bool(int(is_highway))
       navi_msg.liveENaviData.isTunnel = bool(int(is_tunnel))
 

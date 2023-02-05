@@ -1752,6 +1752,10 @@ struct LiveNaviData {
   turnInfo @5 :Int32;
   distanceToTurn @6 :Float32;
   ts @7 :UInt64;
+  roadName @28 :Text;
+  roadLimitSpeed @29 :Int32;
+  isHighway @30 :Bool;
+  isTunnel @31 :Bool;
 
   mapValid @8 :Bool;
   mapEnable @9 :Int32;
@@ -1789,7 +1793,7 @@ struct LiveENaviData {
   linkLength @8 :Int32;
   currentLinkAngle @9 :Int32;
   nextLinkAngle @10 :Int32;
-  posRoadName @11 :Text;
+  roadName @11 :Text;
   isHighway @12 :Bool;
   isTunnel @13 :Bool;
   opkr0 @14 :Text;

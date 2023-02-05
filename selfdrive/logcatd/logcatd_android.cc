@@ -25,6 +25,8 @@ typedef struct LiveNaviDataResult {
       //int  mapEnable;    // bool;
       long  tv_sec;
       long  tv_nsec;
+      int roadLimitSpeed = 0;  // int;
+      std::string roadName = "";
 
       int waze_AlertId = 0;
       int waze_AlertDistance = 0;
@@ -217,6 +219,14 @@ int main() {
       {
         res.safetySign = atoi( entry.message );
       }
+      else if( strcmp( entry.tag, "opkrroadlimitspd" ) == 0 )
+      {
+        res.roadLimitSpeed = atoi( entry.message );
+      }
+      else if( strcmp( entry.tag, "opkrroadname" ) == 0 )
+      {
+        res.roadName = entry.message;
+      }
       else if( naviSel == 1 && (res.safetyDistance > 1 && res.safetyDistance < 60) && (strcmp( entry.tag, "AudioFlinger" ) == 0) )  //   msm8974_platform
       {
         res.safetyDistance = 0;
@@ -275,6 +285,8 @@ int main() {
       // framed.setRoadCurvature( res.roadCurvature ); // road_curvature Float32;
       framed.setTurnInfo( res.turnInfo );  // int;
       framed.setDistanceToTurn( res.distanceToTurn );  // Float32;
+      framed.setRoadLimitSpeed( res.roadLimitSpeed );  // int;
+      framed.setRoadName( res.roadName );  // str;
       framed.setTs( res.tv_sec );
       //framed.setMapEnable( res.mapEnable );
       //framed.setMapValid( res.mapValid );

@@ -2041,7 +2041,7 @@ static void ui_draw_vision(UIState *s) {
 
   if (scene->top_text_view > 0 && scene->comma_stock_ui != 1) {
     if (scene->navi_select == 4 && scene->liveMapData.ocurrentRoadName == "") {
-      draw_datetime_streetname_text(s, scene->liveENaviData.eopkrposroadname, "");
+      draw_datetime_streetname_text(s, scene->liveENaviData.eopkrroadname, "");
     } else if (scene->navi_select == 3) {
       draw_datetime_streetname_text(s, scene->liveNaviData.wazeroadname, "");
     } else if (scene->navi_select == 5) {

@@ -359,7 +359,7 @@ typedef struct UIScene {
     int eopkrlinklength;
     int eopkrcurrentlinkangle;
     int eopkrnextlinkangle;
-    std::string eopkrposroadname;
+    std::string eopkrroadname;
     bool eopkrishighway;
     bool eopkristunnel;
     std::string eopkr0;
