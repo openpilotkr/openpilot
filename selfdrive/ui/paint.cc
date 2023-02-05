@@ -599,6 +599,7 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 static void ui_draw_vision_cruise_speed(UIState *s) {
   const int SET_SPEED_NA = 255;
   float maxspeed = round(s->scene.controls_state.getVCruise());
+  float ctrlspeed = round(s->scene.controls_state.getSafetySpeed());  
   const bool is_cruise_set = maxspeed != 0 && maxspeed != SET_SPEED_NA;
   int limitspeedcamera = s->scene.limitSpeedCamera;
   //if (is_cruise_set && !s->scene.is_metric) { maxspeed *= 0.6225; }
@@ -640,7 +641,8 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   if (limitspeedcamera > 21 && limitspeedcamera <= round(maxspeed)) {
-    ui_draw_text(s, rect.centerX(), bdr_s+65, "LIMIT", 26 * 2.5, COLOR_WHITE_ALPHA(s->scene.cruiseAccStatus ? 200 : 100), "sans-regular");
+    const std::string ctrlspeed_str = std::to_string((int)std::nearbyint(ctrlspeed));
+    ui_draw_text(s, rect.centerX(), bdr_s+65, ctrlspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
   } else if (is_cruise_set) {
     const std::string maxspeed_str = std::to_string((int)std::nearbyint(maxspeed));
     ui_draw_text(s, rect.centerX(), bdr_s+65, maxspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
@@ -650,7 +652,7 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
 
   const std::string cruise_speed_str = std::to_string((int)std::nearbyint(cruise_speed));
   if (s->scene.controls_state.getEnabled() && !s->scene.cruiseAccStatus && limitspeedcamera > 21) {
-    const std::string limitspeedcamera_str = std::to_string((int)std::nearbyint(s->scene.ctrl_speed));
+    const std::string limitspeedcamera_str = std::to_string((int)std::nearbyint(ctrlspeed));
     ui_draw_text(s, rect.centerX(), bdr_s+165, limitspeedcamera_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
   } else if (cruise_speed >= 20 && s->scene.controls_state.getEnabled()) {
     ui_draw_text(s, rect.centerX(), bdr_s+165, cruise_speed_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");

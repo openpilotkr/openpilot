@@ -317,7 +317,7 @@ class NaviControl():
         else:
           self.onSpeedBumpControl = False
           self.onSpeedBumpControl2 = False
-      elif (CS.map_enabled or self.navi_sel == 4) and self.liveNaviData.speedLimit > 21 \
+      elif ((CS.map_enabled and not self.navi_sel == 3) or self.navi_sel == 4) and self.liveNaviData.speedLimit > 21 \
        and ((self.liveNaviData.safetySignCam not in (4, 7, 16) and self.navi_sel != 4) or (self.liveNaviData.safetySign not in (20, 21) and self.navi_sel == 4)):  # navi app speedlimit
         self.onSpeedBumpControl = False
         self.onSpeedBumpControl2 = False
