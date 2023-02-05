@@ -1682,7 +1682,7 @@ static void ui_draw_blindspot_mon(UIState *s) {
 }
 
 // draw date/time/streetname
-void draw_datetime_streetname_text(UIState *s, std::string *string1, std::string *string2) {
+void draw_datetime_streetname_text(UIState *s, const std::string string1, const std::string string2) {
   int rect_w = 600;
   int rect_x = s->fb_w/2 - rect_w/2;
   const int rect_h = 60;
