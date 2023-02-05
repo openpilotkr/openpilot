@@ -305,7 +305,7 @@ def navid_thread(end_event, nv_queue):
       navi_msg.liveENaviData.linkLength = int(link_length)
       navi_msg.liveENaviData.currentLinkAngle = int(current_link_angle)
       navi_msg.liveENaviData.nextLinkAngle = int(next_link_angle)
-      navi_msg.liveENaviData.RoadName = str(road_name)
+      navi_msg.liveENaviData.roadName = str(road_name)
       navi_msg.liveENaviData.isHighway = bool(int(is_highway))
       navi_msg.liveENaviData.isTunnel = bool(int(is_tunnel))
 
