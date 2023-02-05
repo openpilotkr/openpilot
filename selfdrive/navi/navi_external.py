@@ -56,13 +56,13 @@ def navid_thread(end_event, nv_queue):
 
   navi_selection = int(Params().get("OPKRNaviSelect", encoding="utf8"))
   if navi_selection == 5:
-    waze_alert_id = ""
-    waze_alert_distance = ""
-    waze_road_speed_limit = ""
-    waze_current_speed = ""
+    waze_alert_id = 0
+    waze_alert_distance = 0
+    waze_road_speed_limit = 0
+    waze_current_speed = 0
     waze_road_name = ""
-    waze_nav_sign = ""
-    waze_nav_distance = ""
+    waze_nav_sign = 0
+    waze_nav_distance = 0
     waze_alert_type = ""
 
   while not end_event.is_set():
@@ -90,13 +90,13 @@ def navid_thread(end_event, nv_queue):
       is_tunnel = 0
 
       if navi_selection == 5:
-        waze_alert_id = ""
-        waze_alert_distance = ""
-        waze_road_speed_limit = ""
-        waze_current_speed = ""
+        waze_alert_id = 0
+        waze_alert_distance = 0
+        waze_road_speed_limit = 0
+        waze_current_speed = 0
         waze_road_name = ""
-        waze_nav_sign = ""
-        waze_nav_distance = ""
+        waze_nav_sign = 0
+        waze_nav_distance = 0
         waze_alert_type = ""
 
       if OPKR_Debug:
