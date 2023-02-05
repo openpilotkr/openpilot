@@ -327,7 +327,7 @@ def navid_thread(end_event, nv_queue):
         navi_msg.liveENaviData.wazeRoadSpeedLimit = round(int(waze_road_speed_limit) * 0.6214) if not is_metric else int(waze_road_speed_limit)
         navi_msg.liveENaviData.wazeCurrentSpeed = round(int(waze_current_speed) * 0.6214) if not is_metric else int(waze_current_speed)
         navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
-        navi_msg.liveENaviData.wazeNavSign = str(hex(waze_nav_sign))
+        navi_msg.liveENaviData.wazeNavSign = int(waze_nav_sign)
         navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)
         navi_msg.liveENaviData.wazeAlertType = str(waze_alert_type)
 
