@@ -180,7 +180,7 @@ class NaviControl():
 
     if not self.speedlimit_decel_off:
       if (self.navi_sel == 5 or (CS.map_enabled and self.navi_sel == 3)) and not self.sm['controlsState'].osmOffSpdLimit:
-        if self.sm['liveNaviData'].wazeRoadSpeedLimit > 21:
+        if self.sm['liveNaviData'].wazeRoadSpeedLimit > 9:
           self.map_speed = self.sm['liveNaviData'].wazeRoadSpeedLimit
           self.map_speed_dist = max(0, self.sm['liveNaviData'].wazeAlertDistance)
           spdTarget = self.map_speed
@@ -211,7 +211,7 @@ class NaviControl():
             self.onSpeedControl = True
           else:
             self.onSpeedControl = False
-        elif self.sm['liveENaviData'].wazeRoadSpeedLimit > 21:
+        elif self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
           self.map_speed = self.sm['liveENaviData'].wazeRoadSpeedLimit
           self.map_speed_dist = max(0, self.sm['liveENaviData'].wazeAlertDistance)
           spdTarget = self.map_speed

@@ -385,6 +385,7 @@ static void update_state(UIState *s) {
       scene.liveNaviData.wazeroadname = lm_data.getWazeRoadName();
       scene.liveNaviData.wazenavsign = lm_data.getWazeNavSign();
       scene.liveNaviData.wazenavdistance = lm_data.getWazeNavDistance();
+      scene.liveNaviData.wazealerttype = lm_data.getWazeAlertType();
     }
   }
   if (sm.updated("liveENaviData")) {
@@ -423,6 +424,7 @@ static void update_state(UIState *s) {
       scene.liveENaviData.ewazeroadname = lme_data.getWazeRoadName();
       scene.liveENaviData.ewazenavsign = lme_data.getWazeNavSign();
       scene.liveENaviData.ewazenavdistance = lme_data.getWazeNavDistance();
+      scene.liveENaviData.ewazealerttype = lme_data.getWazeAlertType();
     }
   }
   if (sm.updated("liveMapData")) {

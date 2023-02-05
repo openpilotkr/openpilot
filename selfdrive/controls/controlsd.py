@@ -634,16 +634,13 @@ class Controls:
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
           self.osm_waze_off_spdlimit = True
         elif osm_waze_speedlimit != self.v_cruise_kph:
-          if self.map_enabled and self.navi_selection == 3 and self.sm['liveNaviData'].wazeRoadSpeedLimit > 21:
-            self.osm_waze_off_spdlimit_init = True
+          if self.map_enabled and self.navi_selection == 3 and self.sm['liveNaviData'].wazeRoadSpeedLimit > 9:
             self.v_cruise_kph = osm_waze_speedlimit
             self.v_cruise_kph_last = self.v_cruise_kph
-          elif self.navi_selection == 5 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 21:
-            self.osm_waze_off_spdlimit_init = True
+          elif self.navi_selection == 5 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
             self.v_cruise_kph = osm_waze_speedlimit
             self.v_cruise_kph_last = self.v_cruise_kph
-          elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 21:
-            self.osm_waze_off_spdlimit_init = True
+          elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
             self.v_cruise_kph = osm_waze_speedlimit
             self.v_cruise_kph_last = self.v_cruise_kph
 
@@ -991,13 +988,13 @@ class Controls:
     controlsState.alertTextMsg3 = self.log_alertTextMsg3
     controlsState.osmOffSpdLimit = self.osm_waze_off_spdlimit
     if self.osm_speedlimit_enabled or self.navi_selection in (3,5):
-      if self.map_enabled and self.navi_selection == 3 and int(self.sm['liveNaviData'].wazeRoadSpeedLimit):
+      if self.navi_selection == 3:
         controlsState.limitSpeedCamera = int(round(self.sm['liveNaviData'].wazeRoadSpeedLimit))
         controlsState.limitSpeedCameraDist = float(self.sm['liveNaviData'].wazeAlertDistance)
-      elif self.navi_selection == 5 and int(self.sm['liveENaviData'].wazeRoadSpeedLimit):
+      elif self.navi_selection == 5:
         controlsState.limitSpeedCamera = int(round(self.sm['liveENaviData'].wazeRoadSpeedLimit))
         controlsState.limitSpeedCameraDist = float(self.sm['liveENaviData'].wazeAlertDistance)
-      elif self.osm_speedlimit_enabled and int(self.sm['liveMapData'].speedLimit):
+      elif self.osm_speedlimit_enabled:
         controlsState.limitSpeedCamera = int(round(self.sm['liveMapData'].speedLimit))
         controlsState.limitSpeedCameraDist = float(self.sm['liveMapData'].speedLimitAheadDistance)
       elif self.sm['liveMapData'].currentRoadName in self.roadname_and_slc:

@@ -63,6 +63,7 @@ def navid_thread(end_event, nv_queue):
     waze_road_name = ""
     waze_nav_sign = ""
     waze_nav_distance = ""
+    waze_alert_type = ""
 
   while not end_event.is_set():
     if not ip_bind:
@@ -96,6 +97,7 @@ def navid_thread(end_event, nv_queue):
         waze_road_name = ""
         waze_nav_sign = ""
         waze_nav_distance = ""
+        waze_alert_type = ""
 
       if OPKR_Debug:
         opkr_0 = ""
@@ -169,6 +171,7 @@ def navid_thread(end_event, nv_queue):
           if "opkrwazereportid" in line:
             arr = line.split('opkrwazereportid: ')
             try:
+              waze_alert_type = arr[1]
               if "icon_report_speedlimit" in arr[1]:
                 waze_alert_id = 1
               elif "icon_report_camera" in arr[1]:
@@ -326,6 +329,7 @@ def navid_thread(end_event, nv_queue):
         navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
         navi_msg.liveENaviData.wazeNavSign = str(hex(waze_nav_sign))
         navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)
+        navi_msg.liveENaviData.wazeAlertType = str(waze_alert_type)
 
       pm.send('liveENaviData', navi_msg)
 

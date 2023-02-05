@@ -33,6 +33,7 @@ typedef struct LiveNaviDataResult {
       int waze_NavSign = 0;
       int waze_NavDistance = 0;
       int waze_CurrentSpeed = 0;
+      std::string waze_AlertType = "";
 
       std::string opkr_0 = "";
       std::string opkr_1 = "";
@@ -136,6 +137,7 @@ int main() {
       }
       else if (naviSel == 3) {
         if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
+          res.waze_AlertType = entry.message;
           std::string opkr_log_msg = entry.message;
           std::size_t found1=opkr_log_msg.find("icon_report_speedlimit");
           std::size_t found2=opkr_log_msg.find("icon_report_camera");
@@ -188,6 +190,7 @@ int main() {
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
           res.waze_AlertId = 0;
+          res.waze_AlertType = "";
           res.waze_AlertDistance = 0;
         }
       }
@@ -291,6 +294,7 @@ int main() {
       if (naviSel == 3) {
         framed.setWazeAlertId( res.waze_AlertId );
         framed.setWazeAlertDistance( res.waze_AlertDistance );
+        framed.setWazeAlertType( res.waze_AlertType );
         if (is_metric) {
           framed.setWazeRoadSpeedLimit( res.waze_RoadSpeedLimit );
         } else {
