@@ -1682,7 +1682,7 @@ static void ui_draw_blindspot_mon(UIState *s) {
 }
 
 // draw date/time/streetname
-void draw_datetime_osm_info_text(UIState *s) {
+void draw_datetime_streetname_text(UIState *s, std::string *string1, std::string *string2) {
   int rect_w = 600;
   int rect_x = s->fb_w/2 - rect_w/2;
   const int rect_h = 60;
@@ -1709,8 +1709,8 @@ void draw_datetime_osm_info_text(UIState *s) {
     strcpy(dayofweek, "SAT");
   }
 
-  const std::string road_name = s->scene.liveNaviData.wazeroadname;
-  const std::string ref_ = s->scene.liveMapData.oref;
+  const std::string road_name = string1;
+  const std::string oref = string2;
   std::string text_out = "";
   if (s->scene.top_text_view == 1) {
     snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
@@ -1727,17 +1727,17 @@ void draw_datetime_osm_info_text(UIState *s) {
   } else if (s->scene.top_text_view == 4) {
     snprintf(now,sizeof(now),"%02d-%02d %s %02d:%02d:%02d ", tm.tm_mon + 1, tm.tm_mday, dayofweek, tm.tm_hour, tm.tm_min, tm.tm_sec);
     std::string str(now);
-    text_out = str + road_name + ref_;
+    text_out = str + road_name + oref;
   } else if (s->scene.top_text_view == 5) {
     snprintf(now,sizeof(now),"%02d-%02d %s ", tm.tm_mon + 1, tm.tm_mday, dayofweek);
     std::string str(now);
-    text_out = str + road_name + ref_;
+    text_out = str + road_name + oref;
   } else if (s->scene.top_text_view == 6) {
     snprintf(now,sizeof(now),"%02d:%02d:%02d ", tm.tm_hour, tm.tm_min, tm.tm_sec);
     std::string str(now);
-    text_out = str + road_name + ref_;
+    text_out = str + road_name + oref;
   } else if (s->scene.top_text_view == 7) {
-    text_out = road_name;
+    text_out = road_name + oref;
   }
   float tw = nvgTextBounds(s->vg, 0, 0, text_out.c_str(), nullptr, nullptr);
   rect_w = tw*2;
@@ -2036,9 +2036,21 @@ static void ui_draw_vision(UIState *s) {
   if (scene->live_tune_panel_enable) {
     ui_draw_live_tune_panel(s);
   }
+
   if (scene->top_text_view > 0 && scene->comma_stock_ui != 1) {
-    draw_datetime_osm_info_text(s);
+    if (scene->navi_select == 4 && scene->liveMapData.ocurrentRoadName == "") {
+      draw_datetime_streetname_text(s, scene->liveENaviData.eopkrposroadname, "");
+    } else if (scene->navi_select == 3) {
+      draw_datetime_streetname_text(s, scene->liveNaviData.wazeroadname, "");
+    } else if (scene->navi_select == 5) {
+      draw_datetime_streetname_text(s, scene->liveENaviData.ewazeroadname, "");
+    } else if (scene->osm_enabled) {
+      draw_datetime_streetname_text(s, scene->liveMapData.ocurrentRoadName, scene->liveMapData.oref);
+    } else {
+      draw_datetime_streetname_text(s, "", "");
+    }
   }
+
   if (scene->brakeHold && scene->comma_stock_ui != 1) {
     ui_draw_auto_hold(s);
   }
