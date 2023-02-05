@@ -383,14 +383,14 @@ static void ui_draw_debug(UIState *s) {
         } else if (scene.navi_select == 3) {
           if (scene.liveNaviData.wazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d/DS:%d", scene.liveNaviData.wazealertid, scene.liveNaviData.wazealertdistance);
           if (scene.liveNaviData.wazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "T:%s", scene.liveNaviData.wazealerttype.c_str());
-          if (scene.liveNaviData.wazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "RS:%d", scene.liveNaviData.wazeroadspeedlimit);
+          if (scene.liveNaviData.wazecurrentspeed || scene.liveNaviData.wazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "CS:%d/RS:%d", scene.liveNaviData.wazecurrentspeed, scene.liveNaviData.wazeroadspeedlimit);
           if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveNaviData.wazeroadname.c_str());
           if (scene.liveNaviData.wazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveNaviData.wazenavsign);
           if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+760, "ND:%d", scene.liveNaviData.wazenavdistance);
         } else if (scene.navi_select == 5) {
           if (scene.liveENaviData.ewazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d/DS:%d", scene.liveENaviData.ewazealertid, scene.liveENaviData.ewazealertdistance);
           if (scene.liveENaviData.ewazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "T:%s", scene.liveENaviData.ewazealerttype.c_str());
-          if (scene.liveENaviData.ewazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "RS:%d", scene.liveENaviData.ewazeroadspeedlimit);
+          if (scene.liveENaviData.ewazecurrentspeed || scene.liveENaviData.ewazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "CS:%d/RS:%d", scene.liveENaviData.ewazecurrentspeed, scene.liveENaviData.ewazeroadspeedlimit);
           if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveENaviData.ewazeroadname.c_str());
           if (scene.liveENaviData.ewazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveENaviData.ewazenavsign);
           if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+760, "ND:%d", scene.liveENaviData.ewazenavdistance);
@@ -2135,6 +2135,28 @@ void ui_nvg_init(UIState *s) {
     {"wheel", "../assets/img_chffr_wheel.png"},
     {"driver_face", "../assets/img_driver_face.png"},
     {"speed_bump", "../assets/addon/img/img_speed_bump.png"},
+    /*
+    {"nav_direction_end", "../assets/navigation/direction_arrive.png"}, // 7f080116 2131230998
+    {"nav_direction_exit_left", "../assets/navigation/direction_off_ramp_slight_left.png"}, // 7f080117 2131230999 
+    {"nav_direction_exit_right", "../assets/navigation/direction_off_ramp_slight_right.png"}, // 7f080118 2131231000 
+    {"nav_direction_forward", "../assets/navigation/direction_turn_straight.png"}, // 7f080119 2131231001 
+    //{"nav_direction_hov", "../assets/navigation/ 7f08011a 2131231002
+    {"nav_direction_left", "../assets/navigation/direction_turn_left.png"}, // 7f08011b 2131231003 
+    {"nav_direction_right", "../assets/navigation/direction_turn_right.png"}, // 7f08011c 2131231004 
+    //{"nav_direction_stop", "../assets/navigation/ 7f08011d 2131231005
+    {"nav_directions_roundabout", "../assets/navigation/direction_roundabout.png"}, // 7f08011e 2131231006 
+    {"nav_directions_roundabout_l", "../assets/navigation/direction_roundabout_left.png"}, // 7f08011f 2131231007 
+    {"nav_directions_roundabout_r", "../assets/navigation/direction_roundabout_right.png"}, // 7f080120 2131231008 
+    //{"nav_directions_roundabout_r_uk", "../assets/navigation/ 7f080121 2131231009
+    {"nav_directions_roundabout_s", "../assets/navigation/direction_roundabout_straight.png"}, // 7f080122 2131231010 
+    //{"nav_directions_roundabout_u", "../assets/navigation/ 7f080123 2131231011
+    //{"nav_directions_roundabout_u_uk", "../assets/navigation/ 7f080124 2131231012
+    //{"nav_directions_roundabout_uk", "../assets/navigation/ 7f080125 2131231013
+    //{"nav_directions_roundabout_uk_l", "../assets/navigation/ 7f080126 2131231014
+    //{"nav_directions_roundabout_uk_s", "../assets/navigation/ 7f080127 2131231015
+    {"nav_directions_uturn", "../assets/navigation/direction_turn_uturn.png"}, // 7f080128 2131231016 
+    //{"nav_directions_uturn_uk", "../assets/navigation/ 7f080129 2131231017
+    */
   };
   for (auto [name, file] : images) {
     s->images[name] = nvgCreateImage(s->vg, file, 1);
