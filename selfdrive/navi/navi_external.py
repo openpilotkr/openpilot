@@ -49,21 +49,26 @@ def navid_thread(end_event, nv_queue):
   ip_bind = False
  
   check_connection = False
-
   ip_count = int(len(Params().get("ExternalDeviceIP", encoding="utf8").split(',')))
-
   is_metric = Params().get_bool("IsMetric")
-
   navi_selection = int(Params().get("OPKRNaviSelect", encoding="utf8"))
+
+  mtom3 = False
+  mtom2 = False
+  mtom1 = False
+  mtimer = 0
+  mtom_dist_last = 0
+
   if navi_selection == 5:
     waze_alert_id = 0
-    waze_alert_distance = 0
+    waze_alert_distance = "0"
     waze_road_speed_limit = 0
     waze_current_speed = 0
     waze_road_name = ""
     waze_nav_sign = 0
     waze_nav_distance = 0
     waze_alert_type = ""
+    waze_is_metric = False
 
   while not end_event.is_set():
     if not ip_bind:
@@ -91,7 +96,7 @@ def navid_thread(end_event, nv_queue):
 
       if navi_selection == 5:
         waze_alert_id = 0
-        waze_alert_distance = 0
+        waze_alert_distance = "0"
         waze_road_speed_limit = 0
         waze_current_speed = 0
         waze_road_name = ""
@@ -190,9 +195,9 @@ def navid_thread(end_event, nv_queue):
             arr = line.split('opkrwazealertdist: ')
             try:
               if arr[1] is None or arr[1] == "":
-                waze_alert_distance = 0
+                waze_alert_distance = "0"
               else:
-                waze_alert_distance = re.sub(r'[^0-9]', '', arr[1])
+                waze_alert_distance = str(re.sub(r'[^0-9]', '', arr[1]))
             except:
               pass
           if "opkrwazeroadspdlimit" in line:
@@ -323,9 +328,57 @@ def navid_thread(end_event, nv_queue):
 
       if navi_selection == 5:
         navi_msg.liveENaviData.wazeAlertId = int(waze_alert_id)
-        navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
-        navi_msg.liveENaviData.wazeRoadSpeedLimit = round(int(waze_road_speed_limit) * 0.6214) if not is_metric else int(waze_road_speed_limit)
-        navi_msg.liveENaviData.wazeCurrentSpeed = round(int(waze_current_speed) * 0.6214) if not is_metric else int(waze_current_speed)
+
+        if is_metric:
+          navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
+        else:
+          if waze_alert_distance == "0":
+            mtom1 = False
+            mtom2 = False
+            mtom3 = False
+            mtimer = 0
+            navi_msg.liveENaviData.wazeAlertDistance = 0
+            mtom_dist_last = 0
+          elif len(waze_alert_distance) in (1,2,3) and waze_alert_distance[0] != '0':
+            navi_msg.liveENaviData.wazeAlertDistance = round(int(waze_alert_distance) / 3.281)
+          elif mtom1 and (count % int(1 / DT_TRML)) == 0:
+            mtimer += 1
+            navi_msg.liveENaviData.wazeAlertDistance = round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer))
+            mtom_dist_last = round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer))
+          elif waze_alert_distance == "01" and not mtom1:
+            mtom1 = True
+            mtom2 = False
+            mtom3 = False
+            mtimer = 0
+            count = 0
+            navi_msg.liveENaviData.wazeAlertDistance = 160
+            mtom_dist_last = 160
+          elif mtom2 and (count % int(1 / DT_TRML)) == 0:
+            mtimer += 1
+            navi_msg.liveENaviData.wazeAlertDistance = max(160, round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer)))
+            mtom_dist_last = max(160, round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer)))
+          elif waze_alert_distance == "02" and not mtom2:
+            mtom1 = False
+            mtom2 = True
+            mtom3 = False
+            mtimer = 0
+            count = 0
+            navi_msg.liveENaviData.wazeAlertDistance = 320
+            mtom_dist_last = 320
+          elif mtom3 and (count % int(1 / DT_TRML)) == 0:
+            mtimer += 1
+            navi_msg.liveENaviData.wazeAlertDistance = max(320, round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer)))
+            mtom_dist_last = max(320, round(mtom_dist_last - ((int(waze_current_speed) / 2.237) * mtimer)))
+          elif waze_alert_distance == "03" and not mtom3:
+            mtom1 = False
+            mtom2 = False
+            mtom3 = True
+            mtimer = 0
+            count = 0
+            navi_msg.liveENaviData.wazeAlertDistance = 510
+            mtom_dist_last = 510
+        navi_msg.liveENaviData.wazeRoadSpeedLimit = int(waze_road_speed_limit)
+        navi_msg.liveENaviData.wazeCurrentSpeed = int(waze_current_speed)
         navi_msg.liveENaviData.wazeRoadName = str(waze_road_name)
         navi_msg.liveENaviData.wazeNavSign = int(waze_nav_sign)
         navi_msg.liveENaviData.wazeNavDistance = int(waze_nav_distance)
