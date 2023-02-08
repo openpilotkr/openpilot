@@ -341,6 +341,8 @@ def navid_thread(end_event, nv_queue):
             waze_current_speed_prev = 0
           elif len(waze_alert_distance) in (1,2,3) and waze_alert_distance[0] != '0':
             navi_msg.liveENaviData.wazeAlertDistance = round(int(waze_alert_distance) / 3.281)
+          elif int(waze_current_speed) == 0:
+            navi_msg.liveENaviData.wazeAlertDistance = mtom_dist_last
           elif mtom1 and (count % int(1. / DT_TRML)) == 0:
             navi_msg.liveENaviData.wazeAlertDistance = max(152, round(mtom_dist_last - (((int(waze_current_speed) + waze_current_speed_prev)/2) / 2.237)))
             mtom_dist_last = max(152, round(mtom_dist_last - (((int(waze_current_speed) + waze_current_speed_prev)/2) / 2.237)))
