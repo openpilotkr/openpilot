@@ -329,7 +329,7 @@ def navid_thread(end_event, nv_queue):
       if navi_selection == 5:
         navi_msg.liveENaviData.wazeAlertId = int(waze_alert_id)
 
-        if is_metric:
+        if waze_is_metric:
           navi_msg.liveENaviData.wazeAlertDistance = int(waze_alert_distance)
         else:
           if waze_alert_distance == "0":
