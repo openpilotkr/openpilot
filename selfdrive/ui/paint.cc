@@ -642,10 +642,18 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   if (limitspeedcamera > 21 && limitspeedcamera <= round(maxspeed)) {
     const std::string ctrlspeed_str = std::to_string((int)std::nearbyint(ctrlspeed));
-    ui_draw_text(s, rect.centerX(), bdr_s+65, ctrlspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
+    if (limitspeedcamera == 0) {
+      ui_draw_text(s, rect.centerX(), bdr_s+65, "-", 26 * 3.3, COLOR_WHITE, "sans-bold");
+    } else {
+      ui_draw_text(s, rect.centerX(), bdr_s+65, ctrlspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
+    }
   } else if (is_cruise_set) {
     const std::string maxspeed_str = std::to_string((int)std::nearbyint(maxspeed));
-    ui_draw_text(s, rect.centerX(), bdr_s+65, maxspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
+    if (maxspeed == 0) {
+      ui_draw_text(s, rect.centerX(), bdr_s+65, "-", 26 * 3.3, COLOR_WHITE, "sans-bold");
+    } else {
+      ui_draw_text(s, rect.centerX(), bdr_s+65, maxspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
+    }
   } else {
     ui_draw_text(s, rect.centerX(), bdr_s+65, "-", 26 * 3.3, COLOR_WHITE_ALPHA(100), "sans-semibold");
   }
@@ -653,11 +661,19 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
   const std::string cruise_speed_str = std::to_string((int)std::nearbyint(cruise_speed));
   if (s->scene.controls_state.getEnabled() && !s->scene.cruiseAccStatus && limitspeedcamera > 21) {
     const std::string limitspeedcamera_str = std::to_string((int)std::nearbyint(ctrlspeed));
-    ui_draw_text(s, rect.centerX(), bdr_s+165, limitspeedcamera_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
+    if (ctrlspeed == 0) {
+      ui_draw_text(s, rect.centerX(), bdr_s+165, "-", 48 * 2.5, COLOR_WHITE, "sans-bold");
+    } else {
+      ui_draw_text(s, rect.centerX(), bdr_s+165, limitspeedcamera_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
+    }
   } else if (cruise_speed >= 20 && s->scene.controls_state.getEnabled()) {
-    ui_draw_text(s, rect.centerX(), bdr_s+165, cruise_speed_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
+    if (cruise_speed == 0) {
+      ui_draw_text(s, rect.centerX(), bdr_s+165, "-", 48 * 2.5, COLOR_WHITE, "sans-bold");
+    } else {
+      ui_draw_text(s, rect.centerX(), bdr_s+165, cruise_speed_str.c_str(), 48 * 2.5, COLOR_WHITE, "sans-bold");
+    }
   } else {
-    ui_draw_text(s, rect.centerX(), bdr_s+165, "-", 42 * 2.5, COLOR_WHITE_ALPHA(100), "sans-semibold");
+    ui_draw_text(s, rect.centerX(), bdr_s+165, "-", 48 * 2.5, COLOR_WHITE_ALPHA(100), "sans-semibold");
   }
 }
 
