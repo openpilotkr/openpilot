@@ -226,6 +226,7 @@ class Controls:
     self.live_sr_percent = int(Params().get("LiveSteerRatioPercent", encoding="utf8"))
 
     self.second = 0.0
+    self.second2 = 0.0
     self.map_enabled = False
     self.lane_change_delay = int(Params().get("OpkrAutoLaneChangeDelay", encoding="utf8"))
     self.auto_enable_speed = max(1, int(Params().get("AutoEnableSpeed", encoding="utf8"))) if int(Params().get("AutoEnableSpeed", encoding="utf8")) > -1 else int(Params().get("AutoEnableSpeed", encoding="utf8"))
@@ -239,7 +240,7 @@ class Controls:
     self.osm_waze_spdlimit_offset_option = int(Params().get("OpkrSpeedLimitOffsetOption", encoding="utf8"))
     self.osm_speedlimit_enabled = Params().get_bool("OSMSpeedLimitEnable")
     self.osm_waze_speedlimit = 255
-    self.osm_waze_off_spdlimit = False
+    self.pause_spdlimit = False
     self.osm_waze_off_spdlimit_init = False
     self.v_cruise_kph_set_timer = 0
     self.safety_speed = 0
@@ -257,6 +258,9 @@ class Controls:
 
     self.osm_waze_custom_spdlimit_c = list(map(int, Params().get("OSMCustomSpeedLimitC", encoding="utf8").split(',')))
     self.osm_waze_custom_spdlimit_t = list(map(int, Params().get("OSMCustomSpeedLimitT", encoding="utf8").split(',')))
+
+    self.pause_spdlimit_push = False
+    self.pause_spdlimit_push_cnt = 0
 
   def auto_enable(self, CS):
     if self.state != State.enabled:
@@ -630,9 +634,9 @@ class Controls:
           osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
         if CS.cruiseButtons == Buttons.GAP_DIST:
           self.osm_waze_speedlimit = 255
-          self.osm_waze_off_spdlimit = False    
+          self.pause_spdlimit = False
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
-          self.osm_waze_off_spdlimit = True
+          self.pause_spdlimit = True
         elif osm_waze_speedlimit != self.v_cruise_kph:
           if self.map_enabled and self.navi_selection == 3 and self.sm['liveNaviData'].wazeRoadSpeedLimit > 9:
             self.v_cruise_kph = osm_waze_speedlimit
@@ -643,6 +647,28 @@ class Controls:
           elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
             self.v_cruise_kph = osm_waze_speedlimit
             self.v_cruise_kph_last = self.v_cruise_kph
+      elif self.variable_cruise and CS.cruiseState.modeSel != 0 and not (self.osm_speedlimit_enabled or (self.map_enabled and self.navi_selection == 3) or self.navi_selection == 5):
+        if self.sm['liveENaviData'].safetyDistance > 600 or self.sm['liveNaviData'].safetyDistance > 600: # temporary pause to limit spd in safety section
+          self.second2 += DT_CTRL
+          if CS.cruiseButtons == Buttons.GAP_DIST: # push gap 2 times quickly, this is toggle.
+            self.pause_spdlimit_push = True
+            self.second2 = 0.0
+          elif self.pause_spdlimit_push:
+            self.pause_spdlimit_push = False
+            self.pause_spdlimit_push_cnt += 1
+          elif self.pause_spdlimit_push_cnt > 1:
+            self.pause_spdlimit_push_cnt = 0
+            self.pause_spdlimit = not self.pause_spdlimit
+          elif self.second2 > 1.0 and self.pause_spdlimit_push_cnt > 0:
+            self.pause_spdlimit_push_cnt = 0
+        else:
+          self.second2 = 0.0
+          self.pause_spdlimit_push = False
+          self.pause_spdlimit_push_cnt = 0
+          self.pause_spdlimit = False
+
+
+
 
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
@@ -986,7 +1012,7 @@ class Controls:
     controlsState.alertTextMsg1 = self.log_alertTextMsg1
     controlsState.alertTextMsg2 = self.log_alertTextMsg2
     controlsState.alertTextMsg3 = self.log_alertTextMsg3
-    controlsState.osmOffSpdLimit = self.osm_waze_off_spdlimit
+    controlsState.pauseSpdLimit = self.pause_spdlimit
     if self.osm_speedlimit_enabled or self.navi_selection in (3,5):
       if self.navi_selection == 3:
         controlsState.limitSpeedCamera = int(round(self.sm['liveNaviData'].wazeRoadSpeedLimit))

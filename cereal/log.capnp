@@ -596,7 +596,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   mapSignCam @76 :Float32;
   dynamicTRMode @69 :UInt8;
   dynamicTRValue @70 :Float32;
-  osmOffSpdLimit @71 :Bool;
+  pauseSpdLimit @71 :Bool;
   accel @72 :Float32;
   safetySpeed @73 :Float32;
   steeringAngleDesiredDeg @74 :Float32;

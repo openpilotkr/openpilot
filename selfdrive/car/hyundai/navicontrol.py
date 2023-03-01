@@ -178,8 +178,8 @@ class NaviControl():
     #if not mapValid or trafficType == 0:
     #  return  cruise_set_speed_kph
 
-    if not self.speedlimit_decel_off:
-      if (self.navi_sel == 5 or (CS.map_enabled and self.navi_sel == 3)) and not self.sm['controlsState'].osmOffSpdLimit:
+    if not self.speedlimit_decel_off and not self.sm['controlsState'].pauseSpdLimit:
+      if (self.navi_sel == 5 or (CS.map_enabled and self.navi_sel == 3)):
         if self.sm['liveNaviData'].wazeRoadSpeedLimit > 9:
           self.map_speed = self.sm['liveNaviData'].wazeRoadSpeedLimit
           self.map_speed_dist = max(0, self.sm['liveNaviData'].wazeAlertDistance)
@@ -238,7 +238,7 @@ class NaviControl():
             self.onSpeedControl = True
           else:
             self.onSpeedControl = False
-      elif self.osm_speedlimit_enabled and not self.sm['controlsState'].osmOffSpdLimit:  # osm speedlimit
+      elif self.osm_speedlimit_enabled:  # osm speedlimit
         if self.sm['liveMapData'].speedLimit > 21 or self.sm['liveMapData'].speedLimitAhead > 21:
           # spdTarget = cruiseState_speed
           spdTarget = self.sm['liveMapData'].speedLimit
@@ -454,7 +454,7 @@ class NaviControl():
         self.faststart = True
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
       elif self.onSpeedBumpControl2 and not self.lead_0.status:
-        var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
+        var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 60)
         self.t_interval = 7
       elif self.onSpeedBumpControl:
         var_speed = min(navi_speed, 20 if CS.is_set_speed_in_mph else 30)

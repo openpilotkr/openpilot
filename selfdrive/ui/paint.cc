@@ -1380,7 +1380,7 @@ static void draw_safetysign(UIState *s) {
   int sl_opacity = 0;
   if (s->scene.sl_decel_off) {
     sl_opacity = 3;
-  } else if (s->scene.osm_off_spdlimit) {
+  } else if (s->scene.pause_spdlimit) {
     sl_opacity = 2;
   } else {
     sl_opacity = 1;

@@ -241,7 +241,7 @@ typedef struct UIScene {
   bool tmux_error_check = false;
   bool speedlimit_signtype;
   bool sl_decel_off;
-  bool osm_off_spdlimit;
+  bool pause_spdlimit;
   float a_req_value;
   bool osm_enabled;
   int radar_long_helper;
