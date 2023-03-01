@@ -2244,7 +2244,7 @@ SpeedLimitOffset::SpeedLimitOffset() : AbstractControl(tr("SpeedLimit Offset"), 
     auto str = QString::fromStdString(params.get("OpkrSpeedLimitOffsetOption"));
     int value = str.toInt();
     value = value + 1;
-    if (value >= 3) {
+    if (value >= 4) {
       value = 0;
     }
     QString values = QString::number(value);
@@ -2286,12 +2286,12 @@ void SpeedLimitOffset::refresh() {
     btn.setText("%");
   } else if (strs == "1") {
     btn.setText("±");
-  } else {
+  } else if (strs == "2") {
     btn.setText("C");
-  }
+  } else {
+    btn.setText("D");}
   label.setText(QString::fromStdString(params.get("OpkrSpeedLimitOffset")));
 }
-
 RESChoice::RESChoice() : AbstractControl(tr("AutoRES Option"), tr("Sets the auto RES option. 1. Adjust the temporary cruise speed, 2. Adjust the set speed itself according to the presence or absence of a preceding car. 3. Adjust the cruise speed if there is a preceding car, and adjust the set speed if there is no preceding car. Please note that the automatic RES may not work well depending on the conditions."), "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);

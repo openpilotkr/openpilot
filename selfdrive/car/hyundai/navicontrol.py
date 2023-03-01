@@ -226,11 +226,11 @@ class NaviControl():
           else:
             self.onSpeedControl = False
             return cruise_set_speed_kph
-          if self.map_spdlimit_offset_option == 0:
+          if self.map_spdlimit_offset_option in (0,3):
             cruise_set_speed_kph = spdTarget + round(spdTarget*0.01*self.map_spdlimit_offset)
           elif self.map_spdlimit_offset_option == 1:
             cruise_set_speed_kph = spdTarget + self.map_spdlimit_offset
-          else:
+          elif self.map_spdlimit_offset_option == 2:
             cruise_set_speed_kph = int(interp(spdTarget, self.osm_custom_spdlimit_c, self.osm_custom_spdlimit_t))
           if cruise_set_speed_kph+1.5 < v_ego_mph and CS.is_set_speed_in_mph and not CS.out.gasPressed:
             self.onSpeedControl = True
