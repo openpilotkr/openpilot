@@ -542,7 +542,7 @@ class NaviControl():
     elif CS.cruise_active:
       cruiseState_speed = round(self.sm['controlsState'].vCruise)
       kph_set_vEgo = self.get_navi_speed(self.sm, CS, cruiseState_speed) # camspeed
-      if self.osm_speedlimit_enabled:
+      if self.osm_speedlimit_enabled and self.map_spdlimit_offset_option == 2:
         navi_speed = kph_set_vEgo
       else:
         navi_speed = min(cruiseState_speed, kph_set_vEgo)
