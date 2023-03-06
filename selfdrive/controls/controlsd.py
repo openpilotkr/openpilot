@@ -656,10 +656,10 @@ class Controls:
           elif self.pause_spdlimit_push:
             self.pause_spdlimit_push = False
             self.pause_spdlimit_push_cnt += 1
-          elif self.pause_spdlimit_push_cnt > 1:
+          elif self.pause_spdlimit_push_cnt == 2 and self.second2 > 0.5:
             self.pause_spdlimit_push_cnt = 0
             self.pause_spdlimit = not self.pause_spdlimit
-          elif self.second2 > 1.0 and self.pause_spdlimit_push_cnt > 0:
+          elif self.second2 > 0.5 and self.pause_spdlimit_push_cnt > 0:
             self.pause_spdlimit_push_cnt = 0
         else:
           self.second2 = 0.0

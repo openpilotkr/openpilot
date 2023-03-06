@@ -642,7 +642,7 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   if (limitspeedcamera > 21 && limitspeedcamera <= round(maxspeed)) {
     const std::string ctrlspeed_str = std::to_string((int)std::nearbyint(ctrlspeed));
-    if (limitspeedcamera == 0) {
+    if (ctrlspeed == 0) {
       ui_draw_text(s, rect.centerX(), bdr_s+65, "-", 26 * 3.3, COLOR_WHITE, "sans-bold");
     } else {
       ui_draw_text(s, rect.centerX(), bdr_s+65, ctrlspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");

@@ -402,7 +402,8 @@ class NaviControl():
       self.onSpeedControl = False
       self.map_speed = 0
       self.map_speed_dist = 0
-      self.map_speed_block = False
+      if not self.speedlimit_decel_off and not self.sm['controlsState'].pauseSpdLimit:
+        self.map_speed_block = False
       self.onSpeedBumpControl = False
       self.onSpeedBumpControl2 = False
 
