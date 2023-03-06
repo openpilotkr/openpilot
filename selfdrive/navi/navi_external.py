@@ -67,7 +67,7 @@ def navid_thread(end_event, nv_queue):
     waze_nav_sign = 0
     waze_nav_distance = 0
     waze_alert_type = ""
-    waze_is_metric = False
+    waze_is_metric = True
     waze_current_speed_prev = 0
 
   while not end_event.is_set():
