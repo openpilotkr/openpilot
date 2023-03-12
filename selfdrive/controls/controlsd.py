@@ -666,8 +666,32 @@ class Controls:
           self.pause_spdlimit_push = False
           self.pause_spdlimit_push_cnt = 0
           self.pause_spdlimit = False
-
-
+    # to display maxspeed synced as roadspeedlimit on scc standby
+    elif self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or (self.map_enabled and self.navi_selection == 3) or self.navi_selection == 5):
+      if self.map_enabled and self.navi_selection == 3:
+        osm_waze_speedlimit_ = round(self.sm['liveNaviData'].wazeRoadSpeedLimit)
+      elif self.navi_selection == 5:
+        osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
+      elif self.osm_speedlimit_enabled:
+        osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+      else:
+        osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+      if self.osm_waze_spdlimit_offset_option == 0:
+        osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset)
+      elif self.osm_waze_spdlimit_offset_option == 1:
+        osm_waze_speedlimit = osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
+      elif self.osm_waze_spdlimit_offset_option in (2,3):
+        osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
+      if osm_waze_speedlimit != self.v_cruise_kph:
+        if self.map_enabled and self.navi_selection == 3 and self.sm['liveNaviData'].wazeRoadSpeedLimit > 9:
+          self.v_cruise_kph = osm_waze_speedlimit
+          self.v_cruise_kph_last = self.v_cruise_kph
+        elif self.navi_selection == 5 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
+          self.v_cruise_kph = osm_waze_speedlimit
+          self.v_cruise_kph_last = self.v_cruise_kph
+        elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
+          self.v_cruise_kph = osm_waze_speedlimit
+          self.v_cruise_kph_last = self.v_cruise_kph
 
 
     # decrement the soft disable timer at every step, as it's reset on
