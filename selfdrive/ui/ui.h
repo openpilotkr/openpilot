@@ -293,6 +293,9 @@ typedef struct UIScene {
   bool started, ignition, is_metric, longitudinal_control, end_to_end;
   uint64_t started_frame;
 
+  uint64_t waze_stop_frame;
+  bool waze_stop = false;
+
   float accel_prob[2];
 
   // atom

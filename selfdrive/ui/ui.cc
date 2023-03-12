@@ -554,6 +554,34 @@ static void update_status(UIState *s) {
       s->scene.move_to_background = true;
     }
   }
+
+  // waze refresh at vehicle stop to prevent app from entering into pause state, refresh time 2min
+  if (s->scene.navi_select == 3 && s->scene.map_is_running && s->scene.map_on_overlay) {
+    if (s->scene.liveNaviData.wazecurrentspeed == 0 && !s->scene.waze_stop) {
+      s->scene.waze_stop_frame = s->sm->frame;
+      s->scene.waze_stop = true;
+    } else if (s->scene.waze_stop && (s->sm->frame - s->scene.waze_stop_frame > 120*UI_FREQ)) {
+      if (s->scene.liveNaviData.wazecurrentspeed == 0) {
+        s->scene.map_on_top = true;
+        s->scene.map_on_overlay = false;
+        s->scene.waze_stop_frame = s->sm->frame;
+        system("am start com.waze/com.waze.MainActivity");
+      } else if (s->scene.liveNaviData.wazecurrentspeed > 0) {
+        s->scene.waze_stop = false;
+      }
+    } else if (s->scene.liveNaviData.wazecurrentspeed > 0 && s->scene.waze_stop) {
+      s->scene.waze_stop = false;
+    }
+  } else if (s->scene.navi_select == 3 && s->scene.map_is_running && !s->scene.map_on_overlay && s->scene.waze_stop) {
+    if (s->sm->frame - s->scene.waze_stop_frame > 20*UI_FREQ) {
+      s->scene.waze_stop = false;
+      s->scene.map_on_top = false;
+      s->scene.map_on_overlay = true;
+      system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
+    }
+  }
+
+  // this is useful to save compiling time before depart when you use remote ignition
   if (!s->scene.auto_gitpull && (s->sm->frame - s->scene.started_frame > 15*UI_FREQ)) {
     if (params.getBool("GitPullOnBoot")) {
       s->scene.auto_gitpull = true;
