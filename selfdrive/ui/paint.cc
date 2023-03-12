@@ -1439,6 +1439,14 @@ static void draw_safetysign(UIState *s) {
       nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
       ui_draw_text(s, rect_d.centerX(), rect_d.centerY(), safetyDist, 78, COLOR_WHITE_ALPHA(200/sl_opacity), "sans-bold");
     }
+
+    // waze safety type img
+    if (s->scene.liveNaviData.wazealertid == 1) {
+      ui_draw_image(s, {s_center_x - diameter3/2 + 212, s_center_y - diameter3/2, diameter3, diameter3}, "speed_cam", 1.0f);
+    } else if (s->scene.liveNaviData.wazealertid == 2) {
+      ui_draw_image(s, {s_center_x - diameter3/2 + 212, s_center_y - diameter3/2, diameter3, diameter3}, "police_car", 1.0f);
+    }
+
   } else if ((s->scene.mapSignCam == 195 || s->scene.mapSignCam == 197) && safety_speed == 0 && safety_dist != 0 && s->scene.navi_select == 1) {
     ui_fill_rect(s->vg, rect_si, COLOR_WHITE_ALPHA(200/sl_opacity), diameter2/2);
     ui_draw_rect(s->vg, rect_s, COLOR_RED_ALPHA(200/sl_opacity), 20, diameter/2);
@@ -2151,6 +2159,8 @@ void ui_nvg_init(UIState *s) {
     {"wheel", "../assets/img_chffr_wheel.png"},
     {"driver_face", "../assets/img_driver_face.png"},
     {"speed_bump", "../assets/addon/img/img_speed_bump.png"},
+    {"speed_cam", "../assets/addon/img/img_speed_cam.png"},
+    {"police_car", "../assets/addon/img/img_police_car.png"},
     /*
     {"nav_direction_end", "../assets/navigation/direction_arrive.png"}, // 7f080116 2131230998
     {"nav_direction_exit_left", "../assets/navigation/direction_off_ramp_slight_left.png"}, // 7f080117 2131230999 
