@@ -645,6 +645,7 @@ static void ui_draw_vision_cruise_speed(UIState *s) {
     if (ctrlspeed == 0) {
       ui_draw_text(s, rect.centerX(), bdr_s+65, "-", 26 * 3.3, COLOR_WHITE, "sans-bold");
     } else if (is_cruise_set && !s->scene.cruiseAccStatus) {
+      const std::string maxspeed_str = std::to_string((int)std::nearbyint(maxspeed));
       ui_draw_text(s, rect.centerX(), bdr_s+65, maxspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
     } else {
       ui_draw_text(s, rect.centerX(), bdr_s+65, ctrlspeed_str.c_str(), 26 * 3.3, COLOR_WHITE, "sans-bold");
