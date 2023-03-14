@@ -190,3 +190,4 @@ SCC Set Speed Driver Override
 Do Not Disturb Mode On
 Touch Top-Left Box to turn Off
 Chime for Depart
+Slowing Down for Waze Alert
