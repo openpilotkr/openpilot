@@ -565,7 +565,7 @@ static void update_status(UIState *s) {
         s->scene.map_on_top = true;
         s->scene.map_on_overlay = false;
         s->scene.waze_stop_frame = s->sm->frame;
-        system("am start com.waze/com.waze.MainActivity");
+        system("am start --activity-task-on-home com.waze/com.waze.MainActivity");
       } else if (s->scene.liveNaviData.wazecurrentspeed > 0) {
         s->scene.waze_stop = false;
       }
