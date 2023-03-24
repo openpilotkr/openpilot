@@ -234,6 +234,7 @@ static void update_state(UIState *s) {
     scene.standStill = cs_data.getStandStill();
     scene.vSetDis = cs_data.getVSetDis();
     scene.cruiseAccStatus = cs_data.getCruiseAccStatus();
+    scene.driverAcc = cs_data.getDriverAcc();
     scene.angleSteers = cs_data.getSteeringAngleDeg();
     scene.cruise_gap = cs_data.getCruiseGapSet();
     scene.brakeHold = cs_data.getBrakeHold();

@@ -199,6 +199,7 @@ typedef struct UIScene {
   int mapSignCam;
   float vSetDis;
   bool cruiseAccStatus;
+  bool driverAcc;
   int laneless_mode;
   int recording_count;
   int recording_quality;
