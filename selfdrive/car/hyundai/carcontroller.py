@@ -1041,7 +1041,7 @@ class CarController():
                 if aReqValue < accel:
                   accel = interp(lead_objspd, [-1, 0, 5], [aReqValue, aReqValue, accel])
                 else:
-                  accel = accel*0.8
+                  accel = interp(self.dRel, [0, 40], [accel*0.1, accel*0.7])
               else:
                 accel = aReqValue
             elif aReqValue < 0.0 and CS.lead_distance < self.stoppingdist and accel >= aReqValue and lead_objspd <= 0 and self.stopping_dist_adj_enabled:
