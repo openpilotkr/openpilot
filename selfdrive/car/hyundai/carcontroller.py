@@ -1051,10 +1051,11 @@ class CarController():
                 accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.0, 1.0, 2.0], [0.05, 1.0, 5.0]))
             elif aReqValue < 0.0:
               dRel2 = self.dRel if self.dRel > 0 else CS.lead_distance
-              if ((CS.lead_distance - dRel2 > 3.0) or self.NC.cutInControl) and accel < 0:
-                stock_weight = 0.3
-                if aReqValue < accel:
-                  stock_weight = interp(lead_objspd, [-1, 0, 5], [1.0, 1.0, 0.0])
+              if ((CS.lead_distance - dRel2 > 3.0) or self.NC.cutInControl) and accel < 0 and not self.ed_rd_diff_on:
+                self.ed_rd_diff_on = True
+                self.ed_rd_diff_on_timer = min(400, int(self.dRel * 10))
+                self.ed_rd_diff_on_timer2 = min(400, int(self.dRel * 10))
+                stock_weight = 1.0
               elif ((dRel2 - CS.lead_distance > 3.0) or self.NC.cutInControl) and not self.ed_rd_diff_on:
                 self.ed_rd_diff_on = True
                 self.ed_rd_diff_on_timer = min(400, int(self.dRel * 10))
