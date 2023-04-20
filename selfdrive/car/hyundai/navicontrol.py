@@ -431,7 +431,8 @@ class NaviControl():
     #self.leadv3 = self.sm['modelV2'].leadsV3
 
     cut_in_model = True if self.lead_1.status and (self.lead_0.dRel - self.lead_1.dRel) > 3.0 else False
-    cut_in_ed_rd_diff = True if 0 < CS.lead_distance <= 149 and (CS.lead_distance - self.lead_0.dRel) > 3.0 else False
+    dist_sel = self.lead_1.dRel if 0 < self.lead_1.dRel < 150 else self.lead_0.dRel if 0 < self.lead_0.dRel < 150 else CS.lead_distance
+    cut_in_ed_rd_diff = True if 0 < CS.lead_distance <= 149 and (CS.lead_distance - dist_sel) > 3.0 else False
 
     self.cut_in = cut_in_model or cut_in_ed_rd_diff
 
@@ -462,7 +463,7 @@ class NaviControl():
         self.t_interval = 7
       elif self.faststart and CS.CP.vFuture <= 40:
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
-      elif self.lead_0.status and CS.CP.vFuture >= (min_control_speed-(4 if CS.is_set_speed_in_mph else 7)):
+      elif (self.lead_0.status or self.lead_1.status) and CS.CP.vFuture >= (min_control_speed-(4 if CS.is_set_speed_in_mph else 7)):
         self.faststart = False
         dRel = int(self.lead_0.dRel)
         vRel = int(self.lead_0.vRel * (CV.MS_TO_MPH if CS.is_set_speed_in_mph else CV.MS_TO_KPH))
@@ -472,6 +473,7 @@ class NaviControl():
           self.cut_in_run_timer = 1500
         d_ratio = interp(CS.clu_Vanz, [40, 110], [0.3, 0.2])
         if self.cut_in_run_timer and dRel < CS.clu_Vanz * d_ratio: # keep decel when cut_in, max running time 15sec
+          self.t_interval = 7
           self.cutInControl = True
           var_speed = min(CS.CP.vFutureA, navi_speed)
         elif vRel >= (-3 if CS.is_set_speed_in_mph else -5):
