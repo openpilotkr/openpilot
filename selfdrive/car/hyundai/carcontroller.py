@@ -1053,8 +1053,8 @@ class CarController():
               dRel2 = self.dRel if self.dRel > 0 else CS.lead_distance
               if ((CS.lead_distance - dRel2 > 3.0) or self.NC.cutInControl) and accel < 0 and not self.ed_rd_diff_on:
                 self.ed_rd_diff_on = True
-                self.ed_rd_diff_on_timer = min(400, int(self.dRel * 10))
-                self.ed_rd_diff_on_timer2 = min(400, int(self.dRel * 10))
+                self.ed_rd_diff_on_timer = min(400, int(self.dRel * 5))
+                self.ed_rd_diff_on_timer2 = min(400, int(self.dRel * 5))
                 stock_weight = 1.0
               elif ((dRel2 - CS.lead_distance > 3.0) or self.NC.cutInControl) and not self.ed_rd_diff_on:
                 self.ed_rd_diff_on = True
@@ -1108,9 +1108,12 @@ class CarController():
               self.stopped = True
             else:
               self.stopped = False
-          elif 0.1 < self.dRel < 80:
+          elif 0.1 < self.dRel < 85:
             self.stopped = False
-            pass
+            if accel <= 0 and faccel <= 0:
+              accel = (accel+faccel)/2
+            else:
+              pass
           else:
             self.stopped = False
             if self.stopsign_enabled:
