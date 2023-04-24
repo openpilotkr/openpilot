@@ -1110,8 +1110,8 @@ class CarController():
               self.stopped = False
           elif 0.1 < self.dRel < 85:
             self.stopped = False
-            if accel <= 0 and faccel <= 0:
-              accel = (accel+faccel)/2
+            if accel <= 0 and aReqValue <= 0:
+              accel = (accel+aReqValue)/2
             else:
               pass
           else:
