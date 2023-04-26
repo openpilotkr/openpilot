@@ -324,29 +324,30 @@ static void ui_draw_debug(UIState *s) {
   nvgFillColor(s->vg, COLOR_WHITE_ALPHA(125));
   if (scene.OPKR_Debug) {
     if (scene.navi_select > 3) {
-      ui_print(s, ui_viz_rx, ui_viz_ry+240, "0:%s", scene.liveENaviData.eopkr0.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+280, "1:%s", scene.liveENaviData.eopkr1.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+320, "2:%s", scene.liveENaviData.eopkr2.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+360, "3:%s", scene.liveENaviData.eopkr3.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+400, "4:%s", scene.liveENaviData.eopkr4.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+440, "5:%s", scene.liveENaviData.eopkr5.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+480, "6:%s", scene.liveENaviData.eopkr6.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+520, "7:%s", scene.liveENaviData.eopkr7.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+560, "8:%s", scene.liveENaviData.eopkr8.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+600, "9:%s", scene.liveENaviData.eopkr9.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+240, "0:%s", scene.liveENaviData.eopkr0.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+280, "1:%s", scene.liveENaviData.eopkr1.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+320, "2:%s", scene.liveENaviData.eopkr2.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+360, "3:%s", scene.liveENaviData.eopkr3.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+400, "4:%s", scene.liveENaviData.eopkr4.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+440, "5:%s", scene.liveENaviData.eopkr5.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+480, "6:%s", scene.liveENaviData.eopkr6.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+520, "7:%s", scene.liveENaviData.eopkr7.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+560, "8:%s", scene.liveENaviData.eopkr8.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+600, "9:%s", scene.liveENaviData.eopkr9.c_str());
     } else if (scene.navi_select > 0 && scene.navi_select < 4) {
-      ui_print(s, ui_viz_rx, ui_viz_ry+240, "0:%s", scene.liveNaviData.opkr0.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+280, "1:%s", scene.liveNaviData.opkr1.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+320, "2:%s", scene.liveNaviData.opkr2.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+360, "3:%s", scene.liveNaviData.opkr3.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+400, "4:%s", scene.liveNaviData.opkr4.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+440, "5:%s", scene.liveNaviData.opkr5.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+480, "6:%s", scene.liveNaviData.opkr6.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+520, "7:%s", scene.liveNaviData.opkr7.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+560, "8:%s", scene.liveNaviData.opkr8.c_str());
-      ui_print(s, ui_viz_rx, ui_viz_ry+600, "9:%s", scene.liveNaviData.opkr9.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+240, "0:%s", scene.liveNaviData.opkr0.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+280, "1:%s", scene.liveNaviData.opkr1.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+320, "2:%s", scene.liveNaviData.opkr2.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+360, "3:%s", scene.liveNaviData.opkr3.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+400, "4:%s", scene.liveNaviData.opkr4.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+440, "5:%s", scene.liveNaviData.opkr5.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+480, "6:%s", scene.liveNaviData.opkr6.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+520, "7:%s", scene.liveNaviData.opkr7.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+560, "8:%s", scene.liveNaviData.opkr8.c_str());
+      ui_print(s, ui_viz_rx+(scene.mapbox_running ? 300:400), ui_viz_ry+600, "9:%s", scene.liveNaviData.opkr9.c_str());
     }
-  } else {
+  }
+  if (true) {
     if (scene.nDebugUi2) {
       //if (scene.gpsAccuracyUblox != 0.00) {
       //  nvgFontSize(s->vg, 34);

@@ -137,7 +137,7 @@ int main() {
           res.opkr_9 = entry.message;
         }
       }
-      else if (naviSel == 3) {
+      if (naviSel == 3) {
         if( strcmp( entry.tag, "opkrwazereportid" ) == 0 ) {
           res.waze_AlertType = entry.message;
           std::string opkr_log_msg = entry.message;
