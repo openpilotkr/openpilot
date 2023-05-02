@@ -1114,6 +1114,8 @@ class CarController():
             vvrel_weight = interp(vvrel, [-35, 0], [0.2, 0.4])
             if accel <= 0 and aReqValue <= 0:
               accel = (accel*(1-vvrel_weight)) + (aReqValue*vvrel_weight)
+            elif accel <= 0 and aReqValue > 0 and CS.clu_Vanz > 30:
+              accel = (aReqValue*(1-vvrel_weight)) + (accel*vvrel_weight)
             else:
               pass
           else:
