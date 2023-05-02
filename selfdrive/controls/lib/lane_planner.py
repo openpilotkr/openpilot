@@ -101,19 +101,19 @@ class LanePlanner:
       if curvature > 0.0008 and self.left_curv_offset < 0 and lane_differ >= 0: # left curve
         if lane_differ > 0.6:
           lane_differ = 0.6          
-        lean_offset = -round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to left
+        lean_offset = +round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to left
       elif curvature > 0.0008 and self.left_curv_offset > 0 and lane_differ <= 0:
         if lane_differ > 0.6:
           lane_differ = 0.6
-        lean_offset = +round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to right
+        lean_offset = -round(abs(self.left_curv_offset) * lane_differ * 0.05, 3) # move to right
       elif curvature < -0.0008 and self.right_curv_offset < 0 and lane_differ >= 0: # right curve
         if lane_differ > 0.6:
           lane_differ = 0.6    
-        lean_offset = -round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to left
+        lean_offset = +round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to left
       elif curvature < -0.0008 and self.right_curv_offset > 0 and lane_differ <= 0:
         if lane_differ > 0.6:
           lane_differ = 0.6    
-        lean_offset = +round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to right
+        lean_offset = -round(abs(self.right_curv_offset) * lane_differ * 0.05, 3) # move to right
       else:
         lean_offset = 0
 
