@@ -35,7 +35,8 @@ from decimal import Decimal
 import common.log as trace1
 
 SOFT_DISABLE_TIME = 3  # seconds
-LDW_MIN_SPEED = 50 * CV.KPH_TO_MS if Params().get_bool("IsMetric") else 31 * CV.MPH_TO_MS
+IS_KPH = Params().get_bool("IsMetric")
+LDW_MIN_SPEED = 50 * CV.KPH_TO_MS if IS_KPH else 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 STEER_ANGLE_SATURATION_TIMEOUT = 1.0 / DT_CTRL
 STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees
@@ -543,8 +544,8 @@ class Controls:
   def state_transition(self, CS):
     """Compute conditional state transitions and execute actions on state transitions"""
 
-    t_speed = 20 if CS.isMph else 30
-    m_unit = CV.MS_TO_MPH if CS.isMph else CV.MS_TO_KPH
+    t_speed = 30 if IS_KPH else 20
+    m_unit = CV.MS_TO_KPH if IS_KPH else CV.MS_TO_MPH
 
     if self.v_cruise_kph_set_timer > 0:
       self.v_cruise_kph_set_timer -= 1
@@ -926,8 +927,8 @@ class Controls:
     else:
       v_future = 100.0
       v_future_a = 100.0
-    v_future_speed= float((v_future * CV.MS_TO_MPH + 10.0) if CS.isMph else (v_future * CV.MS_TO_KPH))
-    v_future_speed_a= float((v_future_a * CV.MS_TO_MPH + 10.0) if CS.isMph else (v_future_a * CV.MS_TO_KPH))
+    v_future_speed= float((v_future * CV.MS_TO_KPH) if IS_KPH else (v_future * CV.MS_TO_MPH))
+    v_future_speed_a= float((v_future_a * CV.MS_TO_KPH) if IS_KPH else (v_future_a * CV.MS_TO_MPH))
     hudControl.vFuture = v_future_speed
     hudControl.vFutureA = v_future_speed_a
 
