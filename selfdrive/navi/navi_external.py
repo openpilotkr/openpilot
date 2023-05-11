@@ -94,16 +94,15 @@ def navid_thread(end_event, nv_queue):
       is_highway = 0
       is_tunnel = 0
 
-      if navi_selection == 5 and (count % int(3. / DT_TRML)) == 0 and int(waze_current_speed) > 2:
-        waze_alert_id = 0
-        waze_alert_distance = "0"
-        waze_alert_type = ""
       if navi_selection == 5:
-        #waze_road_speed_limit = 0
+        if (count % int(3. / DT_TRML)) == 0 and int(waze_current_speed) > 2:
+          waze_alert_id = 0
+          waze_alert_distance = "0"
+          waze_alert_type = ""
+        if (count % int(10. / DT_TRML)) == 0 and int(waze_current_speed) > 2 and int(waze_nav_distance) < 30:
+          waze_nav_sign = 0
+          waze_nav_distance = 0
         waze_current_speed = 0
-        #waze_road_name = ""
-        #waze_nav_sign = 0
-        #waze_nav_distance = 0
 
       if OPKR_Debug:
         opkr_0 = ""

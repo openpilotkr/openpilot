@@ -385,16 +385,14 @@ static void ui_draw_debug(UIState *s) {
           if (scene.liveNaviData.wazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d/DS:%d", scene.liveNaviData.wazealertid, scene.liveNaviData.wazealertdistance);
           if (scene.liveNaviData.wazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "T:%s", scene.liveNaviData.wazealerttype.c_str());
           if (scene.liveNaviData.wazecurrentspeed || scene.liveNaviData.wazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "CS:%d/RS:%d", scene.liveNaviData.wazecurrentspeed, scene.liveNaviData.wazeroadspeedlimit);
-          if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveNaviData.wazeroadname.c_str());
-          if (scene.liveNaviData.wazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveNaviData.wazenavsign);
-          if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+760, "ND:%d", scene.liveNaviData.wazenavdistance);
+          if (scene.liveNaviData.wazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+680, "NS:%d", scene.liveNaviData.wazenavsign);
+          if (scene.liveNaviData.wazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+720, "ND:%d", scene.liveNaviData.wazenavdistance);
         } else if (scene.navi_select == 5) {
           if (scene.liveENaviData.ewazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+560, "AS:%d/DS:%d", scene.liveENaviData.ewazealertid, scene.liveENaviData.ewazealertdistance);
           if (scene.liveENaviData.ewazealertdistance) ui_print(s, ui_viz_rx, ui_viz_ry+600, "T:%s", scene.liveENaviData.ewazealerttype.c_str());
           if (scene.liveENaviData.ewazecurrentspeed || scene.liveENaviData.ewazeroadspeedlimit) ui_print(s, ui_viz_rx, ui_viz_ry+640, "CS:%d/RS:%d", scene.liveENaviData.ewazecurrentspeed, scene.liveENaviData.ewazeroadspeedlimit);
-          if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+680, "RN:%s", scene.liveENaviData.ewazeroadname.c_str());
-          if (scene.liveENaviData.ewazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+720, "NS:%d", scene.liveENaviData.ewazenavsign);
-          if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+760, "ND:%d", scene.liveENaviData.ewazenavdistance);
+          if (scene.liveENaviData.ewazenavsign) ui_print(s, ui_viz_rx, ui_viz_ry+680, "NS:%d", scene.liveENaviData.ewazenavsign);
+          if (scene.liveENaviData.ewazenavdistance) ui_print(s, ui_viz_rx, ui_viz_ry+720, "ND:%d", scene.liveENaviData.ewazenavdistance);
         } else if (scene.map_is_running) {
           if (scene.liveNaviData.opkrroadsign) ui_print(s, ui_viz_rx, ui_viz_ry+560, "RS:%d", scene.liveNaviData.opkrroadsign);
           if (scene.liveNaviData.opkrspeedsign) ui_print(s, ui_viz_rx, ui_viz_ry+600, "CS:%d", scene.liveNaviData.opkrspeedsign);
