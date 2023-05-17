@@ -188,7 +188,7 @@ int main() {
           res.waze_NavSign = atoi( entry.message );
         } else if( strcmp( entry.tag, "opkrwazenavdist" ) == 0 ) {
           res.waze_NavDistance = atoi( entry.message );
-        } else if( nDelta_nsec > 3000 ) {
+        } else if( nDelta_nsec > 7000 ) {
           res.tv_sec = entry.tv_sec;
           res.tv_nsec = tv_nsec;
           res.waze_AlertId = 0;
