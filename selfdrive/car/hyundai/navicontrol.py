@@ -431,8 +431,8 @@ class NaviControl():
     #self.leadv3 = self.sm['modelV2'].leadsV3
 
     cut_in_model = True if self.lead_1.status and (self.lead_0.dRel - self.lead_1.dRel) > 3.0 else False
-    dist_sel = self.lead_1.dRel if 0 < self.lead_1.dRel < 150 else self.lead_0.dRel if 0 < self.lead_0.dRel < 150 else CS.lead_distance
-    cut_in_ed_rd_diff = True if 0 < CS.lead_distance <= 149 and (CS.lead_distance - dist_sel) > 3.0 else False
+    dist_sel = self.lead_1.dRel if 0 < self.lead_1.dRel < 85 else self.lead_0.dRel if 0 < self.lead_0.dRel < 85 else CS.lead_distance
+    cut_in_ed_rd_diff = True if 0 < CS.lead_distance <= 100 and (CS.lead_distance - dist_sel) > 3.0 else False
 
     self.cut_in = cut_in_model or cut_in_ed_rd_diff
 
