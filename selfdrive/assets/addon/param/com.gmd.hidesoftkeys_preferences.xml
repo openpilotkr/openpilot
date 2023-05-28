@@ -13,13 +13,13 @@
     <set name="auto_hide_options">
         <string>SCREEN</string>
         <string>BUTTON1A</string>
-        <string>BUTTON3</string>
         <string>QUICK_BAR</string>
+        <string>BUTTON3</string>
         <string>BUTTON1</string>
         <string>BUTTON2</string>
         <string>BUTTON4</string>
-        <string>BUTTON5A</string>
         <string>BUTTON5</string>
+        <string>BUTTON5A</string>
     </set>
     <boolean name="googleNowOnTap" value="false" />
     <boolean name="R.xml.quick_bar_pref_layout" value="false" />
@@ -40,7 +40,7 @@
     <boolean name="start_on_boot" value="true" />
     <long name="lastIapQuery" value="1635824445223" />
     <int name="quick_bar_trigger_width" value="80" />
-    <string name="button5a">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Waze&quot;,&quot;data&quot;:&quot;com.waze#com.waze.FreeMapAppActivity&quot;}</string>
+    <string name="button5a">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
     <boolean name="R.xml.purchase_pref_layout" value="false" />
     <string name="button5">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Auto Hide Soft Keys&quot;,&quot;data&quot;:&quot;com.gmd.hidesoftkeys#com.gmd.hidesoftkeys.MainActivity&quot;}</string>
     <string name="ring5">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
