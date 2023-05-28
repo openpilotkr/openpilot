@@ -7,7 +7,7 @@
     <int name="quick_bar_spacing" value="50" />
     <int name="quick_bar_trigger_position" value="50" />
     <boolean name="side_mode" value="false" />
-    <string name="ring4">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;MAPPY&quot;,&quot;data&quot;:&quot;com.mnsoft.mappyobn#com.mnsoft.offboardnavi.intro.MappyIntroActivity&quot;}</string>
+    <string name="ring4">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
     <boolean name="hideSoftKeys" value="true" />
     <boolean name="hideStatusBar" value="true" />
     <set name="auto_hide_options">
@@ -45,6 +45,6 @@
     <string name="button5">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;Auto Hide Soft Keys&quot;,&quot;data&quot;:&quot;com.gmd.hidesoftkeys#com.gmd.hidesoftkeys.MainActivity&quot;}</string>
     <string name="ring5">{&quot;type&quot;:&quot;EMPTY&quot;}</string>
     <string name="navigation_mode">QUICK_BAR</string>
-    <string name="button4">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;아이나비 에어&quot;,&quot;data&quot;:&quot;com.thinkware.inaviair#com.thinkware.inaviair.UIActivity&quot;}</string>
+    <string name="button4">{&quot;type&quot;:&quot;APPLICATION&quot;,&quot;title&quot;:&quot;MAPPY&quot;,&quot;data&quot;:&quot;com.mnsoft.mappyobn#com.mnsoft.offboardnavi.intro.MappyIntroActivity&quot;}</string>
     <boolean name="R.xml.trigger_pref_layout" value="false" />
 </map>
