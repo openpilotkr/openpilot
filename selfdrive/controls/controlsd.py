@@ -637,8 +637,10 @@ class Controls:
           osm_waze_speedlimit = osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
         elif self.osm_waze_spdlimit_offset_option in (2,3):
           osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
-        if CS.cruiseButtons == Buttons.GAP_DIST or osm_waze_speedlimitdist_ > 0:
+        if CS.cruiseButtons == Buttons.GAP_DIST:
           self.osm_waze_speedlimit = 255
+          self.pause_spdlimit = False
+        elif osm_waze_speedlimitdist_ > 0:
           self.pause_spdlimit = False
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
           self.pause_spdlimit = True
