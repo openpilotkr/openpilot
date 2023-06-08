@@ -296,6 +296,7 @@ typedef struct UIScene {
 
   uint64_t waze_stop_frame;
   bool waze_stop = false;
+  bool waze_stop2 = false;
 
   float accel_prob[2];
 

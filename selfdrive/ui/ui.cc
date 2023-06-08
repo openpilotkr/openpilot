@@ -561,18 +561,20 @@ static void update_status(UIState *s) {
     if (s->scene.map_is_running && s->scene.map_on_overlay && s->scene.liveNaviData.wazealertid > 0) {
       s->scene.waze_stop_frame = s->sm->frame;
       s->scene.waze_stop = true;
+      s->scene.waze_stop2 = false;
     } else if (s->scene.waze_stop && (s->sm->frame - s->scene.waze_stop_frame > 3*UI_FREQ)) {
-        s->scene.map_on_top = true;
-        s->scene.map_on_overlay = false;
-        s->scene.waze_stop_frame = s->sm->frame;
-        system("am start com.waze/com.waze.MainActivity");
-    } else if (s->scene.map_is_running && !s->scene.map_on_overlay && s->scene.waze_stop) {
-      if (s->sm->frame - s->scene.waze_stop_frame > 10*UI_FREQ) {
-        s->scene.waze_stop = false;
-        s->scene.map_on_top = false;
-        s->scene.map_on_overlay = true;
-        system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-      }
+      s->scene.waze_stop = false;
+      s->scene.waze_stop2 = true;
+      s->scene.map_on_top = true;
+      s->scene.map_on_overlay = false;
+      s->scene.waze_stop_frame = s->sm->frame;
+      system("am start com.waze/com.waze.MainActivity");
+    } else if (s->scene.map_is_running && !s->scene.map_on_overlay && s->scene.waze_stop2 && (s->sm->frame - s->scene.waze_stop_frame > 12*UI_FREQ)) {
+      s->scene.waze_stop = false;
+      s->scene.waze_stop2 = false;
+      s->scene.map_on_top = false;
+      s->scene.map_on_overlay = true;
+      system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
     }
   }
 
