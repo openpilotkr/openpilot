@@ -568,8 +568,8 @@ static void update_status(UIState *s) {
       s->scene.map_on_top = true;
       s->scene.map_on_overlay = false;
       s->scene.waze_stop_frame = s->sm->frame;
-      system("am start com.waze/com.waze.MainActivity");
-    } else if (s->scene.map_is_running && !s->scene.map_on_overlay && s->scene.waze_stop2 && (s->sm->frame - s->scene.waze_stop_frame > 12*UI_FREQ)) {
+      system("am start --activity-task-on-home com.waze/com.waze.MainActivity");
+    } else if (s->scene.map_is_running && !s->scene.map_on_overlay && s->scene.waze_stop2 && (s->sm->frame - s->scene.waze_stop_frame > 15*UI_FREQ)) {
       s->scene.waze_stop = false;
       s->scene.waze_stop2 = false;
       s->scene.map_on_top = false;
