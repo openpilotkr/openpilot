@@ -1,5 +1,9 @@
 ☞ Use two fingers to scroll down ☜
 
+2023-06-12
+- Waze Nav Info on C2
+- No more Abrupt braking on Longitudinal of OPKR custom mode
+- Spdlimit pause toggle in Average Speed Section(Press Gap twice)
 2023-01-20
 - MaxSpeed Sync as RoadLimitSpeed+Offset(Ext Navi)
 - Auto Gap by Speed Toggle(Press Gap button 5times)
