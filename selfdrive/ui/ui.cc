@@ -558,7 +558,7 @@ static void update_status(UIState *s) {
 
   // waze refresh after alert to keep going alerts, this is an workaround till to find out better solution.
   if (s->scene.navi_select == 3) {
-    if (s->scene.map_is_running && s->scene.map_on_overlay && s->scene.liveNaviData.wazealertdistance >= 150) {
+    if (s->scene.map_is_running && s->scene.map_on_overlay && s->scene.liveNaviData.wazealertdistance >= 200) {
       s->scene.waze_stop_frame = s->sm->frame;
       s->scene.waze_stop = true;
       s->scene.waze_stop2 = false;
@@ -574,7 +574,7 @@ static void update_status(UIState *s) {
       s->scene.map_on_top = false;
       s->scene.map_on_overlay = true;
       system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
-    } else if (!s->scene.waze_stop && !s->scene.waze_stop2 && s->scene.liveNaviData.wazealertdistance < 150 && s->scene.liveNaviData.wazealertdistance > 0) {
+    } else if (!s->scene.waze_stop && !s->scene.waze_stop2 && s->scene.liveNaviData.wazealertdistance < 200 && s->scene.liveNaviData.wazealertdistance > 0) {
       s->scene.waze_stop = false;
       s->scene.waze_stop2 = true;
       s->scene.map_on_top = true;
