@@ -642,6 +642,8 @@ class Controls:
           self.pause_spdlimit = False
         elif osm_waze_speedlimitdist_ > 0:
           self.pause_spdlimit = False
+        elif self.pause_spdlimit and self.osm_waze_speedlimit != osm_waze_speedlimit_:
+          self.pause_spdlimit = False
         elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
           self.pause_spdlimit = True
         elif osm_waze_speedlimit != self.v_cruise_kph:
