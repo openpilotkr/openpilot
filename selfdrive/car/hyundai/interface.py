@@ -109,6 +109,7 @@ class CarInterface(CarInterfaceBase):
     if candidate == CAR.GENESIS_DH:
       ret.mass = 1930. + STD_CARGO_KG
       ret.wheelbase = 3.01
+      ret.minSteerSpeed = 15.42 # m/s
     elif candidate == CAR.GENESIS_G70_IK:
       ret.mass = 1595. + STD_CARGO_KG
       ret.wheelbase = 2.835

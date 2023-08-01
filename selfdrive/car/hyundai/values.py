@@ -130,7 +130,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.MOHAVE_HM: HyundaiCarInfo("Kia Mohave 2019"),
 
   # genesis
-  CAR.GENESIS_DH: HyundaiCarInfo("Genesis 2015-2016", min_enable_speed=19 * CV.MPH_TO_MS, harness=Harness.hyundai_j),
+  CAR.GENESIS_DH: HyundaiCarInfo("Genesis 2015-2016", min_enable_speed=15 * CV.MPH_TO_MS, harness=Harness.hyundai_j),
   CAR.GENESIS_G70_IK: HyundaiCarInfo("Genesis G70 2018", "All", harness=Harness.hyundai_f),
   CAR.GENESIS_G70_2020: HyundaiCarInfo("Genesis G70 2020", "All", harness=Harness.hyundai_f),
   CAR.GENESIS_G80_DH: HyundaiCarInfo("Genesis G80 2017", "All", harness=Harness.hyundai_h),
