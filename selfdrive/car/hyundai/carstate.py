@@ -43,6 +43,7 @@ class CarState(CarStateBase):
     self.gear_correction = Params().get_bool("JustDoGearD")
     self.fca11_message = Params().get_bool("FCA11Message")
     self.rd_conf = Params().get_bool("RadarDisable")
+    self.set_spd_five = Params().get_bool("SetSpeedFive")
     self.brake_check = False
     self.cancel_check = False
     
@@ -68,6 +69,7 @@ class CarState(CarStateBase):
     self.prev_clu_CruiseSwState = 0
     self.prev_acc_active = False
     self.prev_acc_set_btn = False
+    self.prev_cruise_btn = False
     self.acc_active = False
     self.cruise_set_speed_kph = 0
     self.cruise_set_mode = int(Params().get("CruiseStatemodeSelInit", encoding="utf8"))
@@ -81,58 +83,61 @@ class CarState(CarStateBase):
 
   #@staticmethod
   def cruise_speed_button(self):
-    if self.prev_acc_active != self.acc_active:
-      self.prev_acc_active = self.acc_active
-      self.cruise_set_speed_kph = self.clu_Vanz
-
+    self.sm.update(0)
     set_speed_kph = self.cruise_set_speed_kph
-    if not self.cruise_active:
-      if self.prev_clu_CruiseSwState != self.cruise_buttons:
-        self.prev_clu_CruiseSwState = self.cruise_buttons
-        if self.cruise_buttons == Buttons.GAP_DIST:  # mode change
-          self.cruise_set_mode += 1
-          if self.cruise_set_mode > 5:
-            self.cruise_set_mode = 0
-          return None
-      return self.cruise_set_speed_kph
-
-    if not self.prev_acc_set_btn:
-      self.prev_acc_set_btn = self.acc_active
-      if self.cruise_buttons == Buttons.RES_ACCEL:   # up 
-        self.cruise_set_speed_kph = self.VSetDis
-      else:
-        self.cruise_set_speed_kph = self.clu_Vanz
-      return self.cruise_set_speed_kph
-    elif self.prev_acc_set_btn != self.acc_active:
-      self.prev_acc_set_btn = self.acc_active
+    if 0 < round(self.sm['controlsState'].vCruise) < 255:
+      set_speed_kph = round(self.sm['controlsState'].vCruise)
 
     if self.cruise_buttons:
       self.cruise_buttons_time += 1
     else:
       self.cruise_buttons_time = 0
-     
+
+    # long press should set scc speed with cluster scc number
     if self.cruise_buttons_time >= 60:
       self.cruise_set_speed_kph = self.VSetDis
+      return self.cruise_set_speed_kph
 
-    if self.prev_clu_CruiseSwState == self.cruise_buttons:
-      return set_speed_kph
-    self.prev_clu_CruiseSwState = self.cruise_buttons
+    if self.prev_cruise_btn == self.cruise_buttons:
+      return self.cruise_set_speed_kph
+    elif self.prev_cruise_btn != self.cruise_buttons:
+      self.prev_cruise_btn = self.cruise_buttons
+      if not self.cruise_active:
+        if self.cruise_buttons == Buttons.GAP_DIST:  # mode change
+          self.cruise_set_mode += 1
+          if self.cruise_set_mode > 5:
+            self.cruise_set_mode = 0
+          return None
+        elif not self.prev_acc_set_btn: # first scc active
+          self.prev_acc_set_btn = self.acc_active
+          self.cruise_set_speed_kph = self.VSetDis
+          return self.cruise_set_speed_kph
 
-    if self.cruise_buttons == Buttons.RES_ACCEL:   # up 
-      set_speed_kph += 1
-    elif self.cruise_buttons == Buttons.SET_DECEL:  # dn
-      if self.gasPressed:
-        set_speed_kph = self.clu_Vanz + 1
-      else:
-        set_speed_kph -= 1
+      if self.cruise_buttons == Buttons.RES_ACCEL and not self.cruiseState_standstill:   # up 
+        if self.set_spd_five:
+          set_speed_kph += 5
+          if set_speed_kph % 5 != 0:
+            set_speed_kph = int(round(set_speed_kph/5)*5)
+        else:
+          set_speed_kph += 1
+      elif self.cruise_buttons == Buttons.SET_DECEL and not self.cruiseState_standstill:  # dn
+        if self.set_spd_five:
+          set_speed_kph -= 5
+          if set_speed_kph % 5 != 0:
+            set_speed_kph = int(round(set_speed_kph/5)*5)
+        else:
+          set_speed_kph -= 1
 
-    if set_speed_kph < 30 and not self.is_set_speed_in_mph:
-      set_speed_kph = 30
-    elif set_speed_kph < 20 and self.is_set_speed_in_mph:
-      set_speed_kph = 20
+      if set_speed_kph <= 30 and not self.is_set_speed_in_mph:
+        set_speed_kph = 30
+      elif set_speed_kph <= 20 and self.is_set_speed_in_mph:
+        set_speed_kph = 20
 
-    self.cruise_set_speed_kph = set_speed_kph
-    return  set_speed_kph
+      self.cruise_set_speed_kph = set_speed_kph
+    else:
+      self.prev_cruise_btn = False
+
+    return set_speed_kph
 
   def get_tpms(self, unit, fl, fr, rl, rr):
     factor = 0.72519 if unit == 1 else 0.1 if unit == 2 else 1 # 0:psi, 1:kpa, 2:bar

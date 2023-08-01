@@ -560,7 +560,7 @@ class CarController():
     elif self.last_lead_distance != 0:
       self.last_lead_distance = 0
       self.standstill_res_button = False
-    elif self.opkr_variablecruise and CS.acc_active and CS.out.cruiseState.modeSel > 0:
+    elif self.opkr_variablecruise and CS.acc_active:
       btn_signal = self.NC.update(CS, path_plan)
       self.on_speed_control = self.NC.onSpeedControl
       self.on_speed_bump_control = self.NC.onSpeedBumpControl
@@ -602,9 +602,15 @@ class CarController():
                 self.resume_cnt = 0
                 self.switch_timer = randint(30, 36)
           elif btn_signal != None:
-            can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal)) if not self.longcontrol \
-            else can_sends.append(create_clu11(self.packer, frame, CS.clu11, btn_signal, clu11_speed, CS.CP.sccBus))
-            self.resume_cnt += 1
+            if self.switch_timer > 0:
+              self.switch_timer -= 1
+            else:
+              can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal)) if not self.longcontrol \
+              else can_sends.append(create_clu11(self.packer, frame, CS.clu11, btn_signal, clu11_speed, CS.CP.sccBus))
+              self.resume_cnt += 1
+              if self.resume_cnt >= randint(6, 8):
+                self.resume_cnt = 0
+                self.switch_timer = randint(30, 36)
           elif 0 < CS.lead_distance <= 149 and not self.cruise_gap_set_init and self.try_early_stop and self.try_early_stop_retrieve and \
            CS.cruiseGapSet != self.try_early_stop_org_gap and \
            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.sm['longitudinalPlan'].e2eX[12] > 50 and self.sm['longitudinalPlan'].stopLine[12] > 100 and CS.clu_Vanz > 20)):
@@ -692,10 +698,15 @@ class CarController():
           elif btn_signal != None:
             if self.switch_timer2 > 0 and self.try_early_stop_retrieve:
               self.switch_timer2 -= 1
+            elif self.switch_timer > 0:
+              self.switch_timer -= 1
             else:
               can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal)) if not self.longcontrol \
               else can_sends.append(create_clu11(self.packer, frame, CS.clu11, btn_signal, clu11_speed, CS.CP.sccBus))
-            self.resume_cnt += 1
+              self.resume_cnt += 1
+              if self.resume_cnt >= randint(6, 8):
+                self.resume_cnt = 0
+                self.switch_timer = randint(30, 36)
             self.gap_by_spd_gap1 = False
             self.gap_by_spd_gap2 = False
             self.gap_by_spd_gap3 = False

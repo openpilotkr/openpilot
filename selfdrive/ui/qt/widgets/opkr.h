@@ -986,6 +986,18 @@ public:
   }
 };
 
+class SetSpeedByFive : public ToggleControl {
+  Q_OBJECT
+
+public:
+  SetSpeedByFive() : ToggleControl(tr("SetSpeed Changed by 5"), tr("MAX Speed can be adjusted by 5. Cruise Set Speed will be set as same with MAX quickly."), "../assets/offroad/icon_shell.png", Params().getBool("SetSpeedFive")) {
+    QObject::connect(this, &SetSpeedByFive::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("SetSpeedFive", status);
+    });
+  }
+};
+
 // openpilot preview
 class OpenpilotView : public AbstractControl {
   Q_OBJECT
