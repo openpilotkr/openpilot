@@ -597,7 +597,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.setFont(InterFont(s->scene.mapbox_running?26:35, QFont::DemiBold));
     //int debug_y3 = 970-UI_BORDER_SIZE+(s->scene.mapbox_running ? 18:0)-(s->scene.animated_rpm?60:0);
     //uiText(p, s->scene.low_ui_profile?(s->scene.mapbox_running?275:350):205, debug_y3, s->scene.alertTextMsg3.c_str());
-    uiText(p, ui_viz_rx, ui_viz_ry+760,
+    uiText(p, ui_viz_rx, ui_viz_ry+560,
     "0: " + QString::number(s->scene.longitudinalPlan.lead0[0], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead0[1], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead0[2], 'f', 2) +
@@ -611,7 +611,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     " "   + QString::number(s->scene.longitudinalPlan.lead0[10], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead0[11], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead0[12], 'f', 2));
-    uiText(p, ui_viz_rx, ui_viz_ry+800,
+    uiText(p, ui_viz_rx, ui_viz_ry+600,
     "1: " + QString::number(s->scene.longitudinalPlan.lead1[0], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead1[1], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead1[2], 'f', 2) +
@@ -625,7 +625,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     " "   + QString::number(s->scene.longitudinalPlan.lead1[10], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead1[11], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.lead1[12], 'f', 2));
-    uiText(p, ui_viz_rx, ui_viz_ry+840,
+    uiText(p, ui_viz_rx, ui_viz_ry+640,
     "C: " + QString::number(s->scene.longitudinalPlan.cruisetg[0], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.cruisetg[1], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.cruisetg[2], 'f', 2) +
@@ -639,7 +639,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     " "   + QString::number(s->scene.longitudinalPlan.cruisetg[10], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.cruisetg[11], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.cruisetg[12], 'f', 2));
-    uiText(p, ui_viz_rx, ui_viz_ry+880,
+    uiText(p, ui_viz_rx, ui_viz_ry+680,
     "X: " + QString::number(s->scene.longitudinalPlan.e2ex[0], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.e2ex[1], 'f', 2) +
     " "   + QString::number(s->scene.longitudinalPlan.e2ex[2], 'f', 2) +
@@ -656,23 +656,23 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   }
   if (s->scene.OPKR_Debug && s->scene.comma_stock_ui != 1) {
     p.setFont(InterFont(s->scene.mapbox_running?26:35, QFont::DemiBold));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+240, "CAR: " + QString::fromStdString(s->scene.car_fingerprint));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+280, "PSM:" + QString::fromStdString(s->scene.controls_state.getPandaSafetyModel()) +
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+280, "CAR: " + QString::fromStdString(s->scene.car_fingerprint));
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+320, "PSM:" + QString::fromStdString(s->scene.controls_state.getPandaSafetyModel()) +
      "/ISM:" + QString::fromStdString(s->scene.controls_state.getInterfaceSafetyModel()));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+320, "PTY:" + QString::number(int(s->scene.pandaType)) +
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+360, "PTY:" + QString::number(int(s->scene.pandaType)) +
      "/IGN:" + QString::number(int(s->scene.ignition)));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+360, "CAW:" + QString::number(int(s->scene.controlAllowed)) +
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "CAW:" + QString::number(int(s->scene.controlAllowed)) +
      "/ENA:" + QString::number(int(s->scene.enabled)));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "0: " + QString::fromStdString(s->scene.liveENaviData.eopkr0));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+440, "1: " + QString::fromStdString(s->scene.liveENaviData.eopkr1));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+480, "2: " + QString::fromStdString(s->scene.liveENaviData.eopkr2));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+520, "3: " + QString::fromStdString(s->scene.liveENaviData.eopkr3));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+560, "4: " + QString::fromStdString(s->scene.liveENaviData.eopkr4));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+600, "5: " + QString::fromStdString(s->scene.liveENaviData.eopkr5));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+640, "6: " + QString::fromStdString(s->scene.liveENaviData.eopkr6));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+680, "7: " + QString::fromStdString(s->scene.liveENaviData.eopkr7));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+720, "8: " + QString::fromStdString(s->scene.liveENaviData.eopkr8));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+760, "9: " + QString::fromStdString(s->scene.liveENaviData.eopkr9));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "0: " + QString::fromStdString(s->scene.liveENaviData.eopkr0));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+440, "1: " + QString::fromStdString(s->scene.liveENaviData.eopkr1));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+480, "2: " + QString::fromStdString(s->scene.liveENaviData.eopkr2));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+520, "3: " + QString::fromStdString(s->scene.liveENaviData.eopkr3));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+560, "4: " + QString::fromStdString(s->scene.liveENaviData.eopkr4));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+600, "5: " + QString::fromStdString(s->scene.liveENaviData.eopkr5));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+640, "6: " + QString::fromStdString(s->scene.liveENaviData.eopkr6));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+680, "7: " + QString::fromStdString(s->scene.liveENaviData.eopkr7));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+720, "8: " + QString::fromStdString(s->scene.liveENaviData.eopkr8));
+    // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+760, "9: " + QString::fromStdString(s->scene.liveENaviData.eopkr9));
   }
   if (s->scene.nDebugUi2 && s->scene.comma_stock_ui != 1) {
     p.setFont(InterFont(s->scene.mapbox_running?26:35, QFont::DemiBold));
@@ -723,14 +723,14 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
         }
       }
     }
-    if (s->scene.navi_select == 1) {
+    if (s->scene.navi_select == 1 && !s->scene.nDebugUi3) {
       if (s->scene.liveENaviData.eopkrsafetysign) uiText(p, ui_viz_rx, ui_viz_ry+560, "CS:" + QString::number(s->scene.liveENaviData.eopkrsafetysign, 'f', 0));
       if (s->scene.liveENaviData.eopkrsafetydist) uiText(p, ui_viz_rx, ui_viz_ry+600, "SL:" + QString::number(s->scene.liveENaviData.eopkrspeedlimit, 'f', 0) + "/DS:" + QString::number(s->scene.liveENaviData.eopkrsafetydist, 'f', 0));
       if (s->scene.liveENaviData.eopkrturninfo) uiText(p, ui_viz_rx, ui_viz_ry+640, "TI:" + QString::number(s->scene.liveENaviData.eopkrturninfo, 'f', 0) + "/DT:" + QString::number(s->scene.liveENaviData.eopkrdisttoturn, 'f', 0));
       if (s->scene.liveENaviData.eopkrroadlimitspeed > 0 && s->scene.liveENaviData.eopkrroadlimitspeed < 200) uiText(p, ui_viz_rx, ui_viz_ry+680, "RS:" + QString::number(s->scene.liveENaviData.eopkrroadlimitspeed, 'f', 0));
       if (s->scene.liveENaviData.eopkrishighway || s->scene.liveENaviData.eopkristunnel) uiText(p, ui_viz_rx, ui_viz_ry+720, "H:" + QString::number(s->scene.liveENaviData.eopkrishighway, 'f', 0) + "/T:" + QString::number(s->scene.liveENaviData.eopkristunnel, 'f', 0));
       //if (scene.liveENaviData.eopkrlinklength || scene.liveENaviData.eopkrcurrentlinkangle || scene.liveENaviData.eopkrnextlinkangle) uiText(p, ui_viz_rx, ui_viz_ry+840, "L:%d/C:%d/N:%d", scene.liveENaviData.eopkrlinklength, scene.liveENaviData.eopkrcurrentlinkangle, scene.liveENaviData.eopkrnextlinkangle);
-    } else if (s->scene.navi_select == 2) {
+    } else if (s->scene.navi_select == 2 && !s->scene.nDebugUi3) {
       if (s->scene.liveENaviData.ewazealertdistance) uiText(p, ui_viz_rx, ui_viz_ry+560, "AS:" + QString::number(s->scene.liveENaviData.ewazealertid, 'f', 0) + "/DS:" + QString::number(s->scene.liveENaviData.ewazealertdistance, 'f', 0));
       if (s->scene.liveENaviData.ewazealertdistance) uiText(p, ui_viz_rx, ui_viz_ry+600, "T:" + QString::fromStdString(s->scene.liveENaviData.ewazealerttype));
       if (s->scene.liveENaviData.ewazecurrentspeed || s->scene.liveENaviData.ewazeroadspeedlimit) uiText(p, ui_viz_rx, ui_viz_ry+640, "CS:" + QString::number(s->scene.liveENaviData.ewazecurrentspeed, 'f', 0) + "/RS:" + QString::number(s->scene.liveENaviData.ewazeroadspeedlimit, 'f', 0));
