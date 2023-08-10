@@ -251,6 +251,10 @@ class CarController:
     self.opkr_long_alt = True if int(self.c_params.get("OPKRLongAlt", encoding="utf8")) in (1, 2) else False
 
     self.btnsignal = 0
+    self.second2 = 0
+    self.experimental_mode_temp = True
+    self.exp_mode_push = False
+    self.exp_mode_push_cnt = 0
 
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
@@ -493,6 +497,20 @@ class CarController:
             if self.gap_by_spd_on_sw_cnt2 > 20:
               self.gap_by_spd_on_sw_cnt = 0
               self.gap_by_spd_on_sw_cnt2 = 0
+        self.second2 += 1
+        if self.second2 > 100:
+          self.second2 = 100
+        if CS.cruise_buttons[-1] == 3: # push gap 2 times quickly, this is toggle.
+          self.exp_mode_push = True
+          self.second2 = 0
+        elif self.exp_mode_push:
+          self.exp_mode_push = False
+          self.exp_mode_push_cnt += 1
+        elif self.exp_mode_push_cnt == 2 and self.second2 > 50:
+          self.exp_mode_push_cnt = 0
+          self.experimental_mode_temp = not self.experimental_mode_temp
+        elif self.second2 > 50 and self.exp_mode_push_cnt > 0:
+          self.exp_mode_push_cnt = 0
       else:
         self.lkas_onoff_counter = 0
         if self.lkas_temp_disabled_timer:
@@ -934,8 +952,7 @@ class CarController:
         self.resume_cnt = 0
 
       if CS.out.vEgo <= 1:
-        long_control_state = self.sm['controlsState'].longControlState
-        if long_control_state == LongCtrlState.stopping and CS.out.vEgo < 0.1 and not CS.out.gasPressed:
+        if stopping and CS.out.vEgo < 0.1 and not CS.out.gasPressed:
           self.acc_standstill_timer += 1
           if self.acc_standstill_timer >= 200:
             self.acc_standstill_timer = 200
@@ -994,7 +1011,6 @@ class CarController:
           aReqValue = CS.scc12["aReqValue"]
           faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
           accel = actuators.oaccel if CC.longActive and not CS.out.gasPressed else 0
-          stopping = (actuators.longControlState == LongCtrlState.stopping)
           radar_recog = (0 < CS.lead_distance <= 149)
           if self.joystick_debug_mode:
             accel = actuators.accel
@@ -1129,14 +1145,14 @@ class CarController:
             else:
               self.stopped = False
               if self.stopsign_enabled or self.experimental_mode:
-                if self.sm['longitudinalPlan'].longitudinalPlanSource == LongitudinalPlanSource.stop:
+                if stopping:
                   self.smooth_start = True
                   accel = min(-0.5, accel, faccel*0.5)
-                elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis):
-                  accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel, faccel), aReqValue])
+                elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis)*0.9:
+                  accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
                 else:
                   self.smooth_start = False
-                  if self.sm['liveENaviData'].isHighway or CS.is_highway:
+                  if self.sm['liveENaviData'].isHighway or CS.is_highway or (not self.experimental_mode_temp):
                     accel = aReqValue
                   elif self.dRel < 0.1:
                     accel = faccel
