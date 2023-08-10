@@ -1473,7 +1473,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
 
     if (rpm > 1) {
       p.setFont(InterFont(40, QFont::Normal));
-      p.drawText(QRect(s->fb_w/2-arpm_width/2, UI_BORDER_SIZE+30, arpm_width, arpm_height/4), Qt::AlignCenter, QString::number(rpm));
+      p.drawText(QRect(s->fb_w/2-arpm_width/2, UI_BORDER_SIZE+30, arpm_width, arpm_height/4), Qt::AlignCenter, QString::number(rpm, 'f', 0));
       startAngle = 225 * 16;
       spanAngle = int(fmax(-45, (-15*count))) * 16;
       p.setPen(QPen(QBrush(QColor(25, 127, 54, 200)),50,Qt::SolidLine,Qt::FlatCap));
