@@ -733,7 +733,7 @@ void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exit
 void BranchSelectCombo::processFinished2(int exitCode, QProcess::ExitStatus exitStatus) {
   btn2.setText(tr("RELOAD"));
   if(exitStatus == QProcess::NormalExit) {
-    QProcess::execute("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
+    std::system("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
   }
 }
 
