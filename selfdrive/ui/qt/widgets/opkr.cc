@@ -653,6 +653,16 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   btn2.setText(tr("RELOAD"));
 
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    QFile branchlistfile("/data/branches");
+    if (branchlistfile.open(QIODevice::ReadOnly)) {
+      QTextStream branchname(&branchlistfile);
+      stringList = QStringList();
+      while (!branchname.atEnd()) {
+        QString line = branchname.readLine();
+        stringList.append(line);
+      }
+      branchlistfile.close();
+    }
     QString cur = QString::fromStdString(params.get("GitBranch"));
     selection = MultiOptionDialog::getSelection(tr("Change Your Branch"), stringList, cur, this);
     if (!selection.isEmpty()) {
@@ -724,16 +734,6 @@ void BranchSelectCombo::processFinished2(int exitCode, QProcess::ExitStatus exit
   btn2.setText(tr("RELOAD"));
   if(exitStatus == QProcess::NormalExit) {
     QProcess::execute("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
-    QFile branchlistfile("/data/branches");
-    if (branchlistfile.open(QIODevice::ReadOnly)) {
-      QTextStream branchname(&branchlistfile);
-      stringList = QStringList();
-      while (!branchname.atEnd()) {
-        QString line = branchname.readLine();
-        stringList.append(line);
-      }
-      branchlistfile.close();
-    }
   }
 }
 

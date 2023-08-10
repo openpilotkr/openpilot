@@ -6,8 +6,6 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
-#include <QMessageBox>
-#include <QProcess>
 
 
 #include "selfdrive/ui/qt/util.h"
@@ -76,10 +74,6 @@ class SoftwarePanel : public ListWidget {
 public:
   explicit SoftwarePanel(QWidget* parent = nullptr);
 
-private slots:
-  void printMsg();
-  void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-
 private:
   void showEvent(QShowEvent *event) override;
   void updateLabels();
@@ -101,10 +95,6 @@ private:
 
   Params params;
   ParamWatcher *fs_watch;
-
-  QProcess textMsgProcess;
-  QMessageBox outbox;
-  QString outdata;
 };
 
 class UIPanel : public QFrame {
