@@ -150,3 +150,7 @@ class HardwareBase(ABC):
   @abstractmethod
   def get_storage_usage_percent(self):
     pass
+
+  @abstractmethod
+  def get_ip_address(self):
+    pass

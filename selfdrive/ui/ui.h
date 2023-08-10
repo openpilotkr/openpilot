@@ -136,6 +136,7 @@ typedef struct UIScene {
   float ambientTemp;
   int fanSpeedRpm;
   int storageUsage;
+  std::string ipAddress;
   bool rightblindspot;
   bool leftblindspot;
   bool leftBlinker;

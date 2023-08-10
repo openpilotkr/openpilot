@@ -79,6 +79,8 @@ void Sidebar::updateState(const UIState &s) {
   int strength = (int)deviceState.getNetworkStrength();
   setProperty("netStrength", strength > 0 ? strength + 1 : 0);
 
+  setProperty("ipAddress", QString::fromStdString(s.scene.ipAddress));
+
   ItemStatus connectStatus;
   auto last_ping = deviceState.getLastAthenaPingTime();
   if (last_ping == 0) {
@@ -131,9 +133,16 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   p.setFont(InterFont(35));
   p.setPen(QColor(0xff, 0xff, 0xff));
-  const QRect r = QRect(50, 247, 100, 50);
+  const QRect r = QRect(50, 237, 100, 35);
   p.drawText(r, Qt::AlignCenter, net_type);
 
+  p.setFont(InterFont(32, QFont::DemiBold));
+  p.setPen(QColor(0xff, 0xff, 0x0));
+  const QRect ip = QRect(35, 293, 220, 35);
+  p.drawText(ip, Qt::AlignCenter, ip_address);
+
+  p.setFont(InterFont(35));
+  p.setPen(QColor(0xff, 0xff, 0xff));
   // metrics
   drawMetric(p, temp_status.first, temp_status.second, 338);
   drawMetric(p, panda_status.first, panda_status.second, 496);

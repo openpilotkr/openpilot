@@ -609,6 +609,15 @@ class Tici(HardwareBase):
       pass
     return percent
 
+  def get_ip_address(self):
+    ipaddress = ""
+    try:
+      out = subprocess.check_output("hostname -I", shell=True)
+      ipaddress = str(out.decode())
+    except Exception:
+      pass
+    return ipaddress
+
 if __name__ == "__main__":
   t = Tici()
   t.initialize_hardware()
