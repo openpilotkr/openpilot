@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   main_layout->addWidget(label2, 0, 0, 1, 5, Qt::AlignRight | Qt::AlignTop);
   btn->setText(QObject::tr("Reboot"));
   btn2->setText(QObject::tr("Update"));
-  btn3->setText(QObject::tr("Restore"));
+  btn3->setText(QObject::tr("Rollback"));
   btn4->setText(QObject::tr("Reset"));
   btn5->setText(QObject::tr("InitParam"));
   QObject::connect(btn, &QPushButton::clicked, [=]() {
@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
   });
   QObject::connect(btn3, &QPushButton::clicked, [=]() {
     btn3->setEnabled(false);
+    QProcess::execute("touch /data/opkr_compiling");
     QString cmd = "git reset --hard " + QString::fromStdString(Params().get("GitCommit"));
     QProcess::execute(cmd);
     Hardware::reboot();
