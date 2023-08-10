@@ -272,13 +272,13 @@ void MapWindow::initializeGL() {
   QString MAPBOX_STYLE = QString::fromStdString(Params().get("OPKRMapboxStyleSelect"));
   QString MAPBOX_CUSTOM = QString::fromStdString(Params().get("MapboxStyleCustom")); // set the param with yours(pubulished style from Mapbox website)
   if (MAPBOX_STYLE == "0") {
-    m_map->setStyleUrl("mapbox://styles/commaai/clj7g5vrp007b01qzb5ro0i4j"); // comma
+    m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
   } else if (MAPBOX_STYLE == "1") {
     m_map->setStyleUrl("mapbox://styles/multikyd/ckwbf0oig3swu14lc482wqvfz"); // opkr
   } else if (MAPBOX_STYLE == "2" && !Params().get("MapboxStyleCustom").empty()) {
     m_map->setStyleUrl(MAPBOX_CUSTOM); // yours
   } else {
-    m_map->setStyleUrl("mapbox://styles/commaai/clj7g5vrp007b01qzb5ro0i4j"); // comma
+    m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
   }
 
   QObject::connect(m_map.data(), &QMapboxGL::mapChanged, [=](QMapboxGL::MapChange change) {

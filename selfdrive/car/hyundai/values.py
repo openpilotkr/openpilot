@@ -168,9 +168,11 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
     HyundaiCarInfo("Hyundai i30 2017-19", car_parts=CarParts.common([CarHarness.hyundai_e])),
   ],
   CAR.ELANTRA_2021: HyundaiCarInfo("Hyundai Elantra 2021-23", video_link="https://youtu.be/_EdYQtV52-c", car_parts=CarParts.common([CarHarness.hyundai_k])),
-  CAR.ELANTRA_HEV_2021: HyundaiCarInfo("Hyundai Elantra Hybrid 2021-23", video_link="https://youtu.be/_EdYQtV52-c", car_parts=CarParts.common([CarHarness.hyundai_k])),
+  CAR.ELANTRA_HEV_2021: HyundaiCarInfo("Hyundai Elantra Hybrid 2021-23", video_link="https://youtu.be/_EdYQtV52-c",
+                                       car_parts=CarParts.common([CarHarness.hyundai_k])),
   CAR.HYUNDAI_GENESIS: [
-    HyundaiCarInfo("Hyundai Genesis 2015-16", min_enable_speed=19 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_j])),  # TODO: check 2015 packages
+    # TODO: check 2015 packages
+    HyundaiCarInfo("Hyundai Genesis 2015-16", min_enable_speed=19 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_j])),
     HyundaiCarInfo("Genesis G80 2017", "All", min_enable_speed=19 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_j])),
   ],
   CAR.IONIQ: HyundaiCarInfo("Hyundai Ioniq Hybrid 2017-19", car_parts=CarParts.common([CarHarness.hyundai_c])),
@@ -182,12 +184,15 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
   CAR.KONA: HyundaiCarInfo("Hyundai Kona 2020", car_parts=CarParts.common([CarHarness.hyundai_b])),
   CAR.KONA_EV: HyundaiCarInfo("Hyundai Kona Electric 2018-21", car_parts=CarParts.common([CarHarness.hyundai_g])),
   CAR.KONA_EV_2022: HyundaiCarInfo("Hyundai Kona Electric 2022", car_parts=CarParts.common([CarHarness.hyundai_o])),
-  CAR.KONA_HEV: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/0dwpAHiZgFo", car_parts=CarParts.common([CarHarness.hyundai_i])),  # TODO: check packages
+  CAR.KONA_HEV: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/0dwpAHiZgFo",
+                                                                      car_parts=CarParts.common([CarHarness.hyundai_i])),  # TODO: check packages
   CAR.SANTA_FE: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All", car_parts=CarParts.common([CarHarness.hyundai_d])),
-  CAR.SANTA_FE_2022: HyundaiCarInfo("Hyundai Santa Fe 2021-23", "All", video_link="https://youtu.be/VnHzSTygTS4", car_parts=CarParts.common([CarHarness.hyundai_l])),
+  CAR.SANTA_FE_2022: HyundaiCarInfo("Hyundai Santa Fe 2021-23", "All", video_link="https://youtu.be/VnHzSTygTS4",
+                                                                      car_parts=CarParts.common([CarHarness.hyundai_l])),
   CAR.SANTA_FE_HEV_2022: HyundaiCarInfo("Hyundai Santa Fe Hybrid 2022-23", "All", car_parts=CarParts.common([CarHarness.hyundai_l])),
   CAR.SANTA_FE_PHEV_2022: HyundaiCarInfo("Hyundai Santa Fe Plug-in Hybrid 2022", "All", car_parts=CarParts.common([CarHarness.hyundai_l])),
-  CAR.SONATA: HyundaiCarInfo("Hyundai Sonata 2020-23", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw", car_parts=CarParts.common([CarHarness.hyundai_a])),
+  CAR.SONATA: HyundaiCarInfo("Hyundai Sonata 2020-23", "All", video_link="https://www.youtube.com/watch?v=ix63r9kE3Fw",
+                                                                      car_parts=CarParts.common([CarHarness.hyundai_a])),
   CAR.SONATA_LF: HyundaiCarInfo("Hyundai Sonata 2018-19", car_parts=CarParts.common([CarHarness.hyundai_e])),
   CAR.TUCSON: [
     HyundaiCarInfo("Hyundai Tucson 2021", min_enable_speed=19 * CV.MPH_TO_MS, car_parts=CarParts.common([CarHarness.hyundai_l])),
@@ -205,7 +210,8 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
     HyundaiCarInfo("Hyundai Ioniq 5 (with HDA II) 2022-23", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_q])),
   ],
   CAR.IONIQ_6: [
-    HyundaiCarInfo("Hyundai Ioniq 6 (without HDA II) 2023", "Highway Driving Assist", car_parts=CarParts.common([CarHarness.hyundai_k])),  # TODO: unknown
+    # TODO: unknown
+    HyundaiCarInfo("Hyundai Ioniq 6 (without HDA II) 2023", "Highway Driving Assist", car_parts=CarParts.common([CarHarness.hyundai_k])),
     HyundaiCarInfo("Hyundai Ioniq 6 (with HDA II) 2023", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_p])),
   ],
   CAR.TUCSON_4TH_GEN: [
@@ -247,7 +253,8 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
     HyundaiCarInfo("Kia Niro Hybrid 2021-22", car_parts=CarParts.common([CarHarness.hyundai_f])),  # TODO: 2021 could be hyundai_d, verify
   ],
   CAR.KIA_NIRO_HEV_2ND_GEN: HyundaiCarInfo("Kia Niro Hybrid 2023", car_parts=CarParts.common([CarHarness.hyundai_a])),
-  CAR.KIA_OPTIMA_G4: HyundaiCarInfo("Kia Optima 2017", "Advanced Smart Cruise Control", car_parts=CarParts.common([CarHarness.hyundai_b])),  # TODO: may support 2016, 2018
+  CAR.KIA_OPTIMA_G4: HyundaiCarInfo("Kia Optima 2017", "Advanced Smart Cruise Control",
+                                              car_parts=CarParts.common([CarHarness.hyundai_b])),  # TODO: may support 2016, 2018
   CAR.KIA_OPTIMA_G4_FL: HyundaiCarInfo("Kia Optima 2019-20", car_parts=CarParts.common([CarHarness.hyundai_g])),
   CAR.KIA_OPTIMA_H: [
     HyundaiCarInfo("Kia Optima Hybrid 2017", "Advanced Smart Cruise Control"),  # TODO: may support adjacent years
@@ -256,13 +263,15 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
   CAR.KIA_SELTOS: HyundaiCarInfo("Kia Seltos 2021", car_parts=CarParts.common([CarHarness.hyundai_a])),
   CAR.KIA_SPORTAGE_5TH_GEN: HyundaiCarInfo("Kia Sportage 2023", car_parts=CarParts.common([CarHarness.hyundai_n])),
   CAR.KIA_SORENTO: [
-    HyundaiCarInfo("Kia Sorento 2018", "Advanced Smart Cruise Control", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8", car_parts=CarParts.common([CarHarness.hyundai_c])),
+    HyundaiCarInfo("Kia Sorento 2018", "Advanced Smart Cruise Control", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8",
+                    car_parts=CarParts.common([CarHarness.hyundai_c])),
     HyundaiCarInfo("Kia Sorento 2019", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8", car_parts=CarParts.common([CarHarness.hyundai_e])),
   ],
   CAR.KIA_SORENTO_4TH_GEN: HyundaiCarInfo("Kia Sorento 2021-23", car_parts=CarParts.common([CarHarness.hyundai_k])),
   CAR.KIA_SORENTO_PHEV_4TH_GEN: HyundaiCarInfo("Kia Sorento Plug-in Hybrid 2022-23", car_parts=CarParts.common([CarHarness.hyundai_a])),
   CAR.KIA_SPORTAGE_HYBRID_5TH_GEN: HyundaiCarInfo("Kia Sportage Hybrid 2023", car_parts=CarParts.common([CarHarness.hyundai_n])),
-  CAR.KIA_STINGER: HyundaiCarInfo("Kia Stinger 2018-20", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0", car_parts=CarParts.common([CarHarness.hyundai_c])),
+  CAR.KIA_STINGER: HyundaiCarInfo("Kia Stinger 2018-20", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0",
+                                  car_parts=CarParts.common([CarHarness.hyundai_c])),
   CAR.KIA_STINGER_2022: HyundaiCarInfo("Kia Stinger 2022", "All", car_parts=CarParts.common([CarHarness.hyundai_k])),
   CAR.KIA_CEED: HyundaiCarInfo("Kia Ceed 2019", car_parts=CarParts.common([CarHarness.hyundai_e])),
   CAR.KIA_EV6: [
@@ -1799,6 +1808,7 @@ FW_VERSIONS = {
       b'\xf1\x00NE1 MFC  AT USA LHD 1.00 1.01 99211-GI010 211007',
       b'\xf1\x00NE1 MFC  AT EUR RHD 1.00 1.02 99211-GI010 211206',
       b'\xf1\x00NE1 MFC  AT USA LHD 1.00 1.03 99211-GI010 220401',
+      b'\xf1\x00NE1 MFC  AT USA LHD 1.00 1.06 99211-GI010 230110',
     ],
   },
   CAR.IONIQ_6: {
