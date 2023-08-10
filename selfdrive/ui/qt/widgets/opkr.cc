@@ -513,7 +513,6 @@ OpenpilotView::OpenpilotView() : AbstractControl(tr("Driving Camera"), tr("Previ
     if (stat) {
       params.putBool("IsOpenpilotViewEnabled", false);
       uiState()->scene.cal_view = false;
-      std::system("/data/openpilot/selfdrive/boardd/pandad.py &");
     } else {
       params.putBool("IsOpenpilotViewEnabled", true);
       uiState()->scene.cal_view = false;
@@ -526,7 +525,6 @@ OpenpilotView::OpenpilotView() : AbstractControl(tr("Driving Camera"), tr("Previ
     if (stat) {
       params.putBool("IsOpenpilotViewEnabled", false);
       uiState()->scene.cal_view = false;
-      std::system("/data/openpilot/selfdrive/boardd/pandad.py &");
     } else {
       params.putBool("IsOpenpilotViewEnabled", true);
       uiState()->scene.cal_view = true;
@@ -676,10 +674,14 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
-    if (btn2.text() == tr("RELOAD")) {
-      btn2.setText(tr("RUNNING"));
-      refresh();
-    }
+    btn2.setText(tr("RUNNING"));
+    QString tcmd2 = "git -C /data/openpilot fetch origin";
+    outbox2.setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
+    QProcess::execute("git -C /data/openpilot remote prune origin");
+    QObject::connect(&textMsgProcess2, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg2()));
+    QObject::connect(&textMsgProcess2, SIGNAL(readyReadStandardError()), this, SLOT(printMsg2()));
+    QObject::connect(&textMsgProcess2, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished2(int, QProcess::ExitStatus)));
+    textMsgProcess2.start(tcmd2);
   });
 }
 
@@ -695,6 +697,18 @@ void BranchSelectCombo::printMsg1() {
   outbox1.show();
 }
 
+void BranchSelectCombo::printMsg2() {
+  QByteArray datao2;
+  QByteArray datae2;
+  datao2 = textMsgProcess2.readAllStandardOutput();
+  datae2 = textMsgProcess2.readAllStandardError();
+  QString texto2 = QString::fromLocal8Bit(datao2);
+  QString texte2 = QString::fromLocal8Bit(datae2);
+  outdata2 = texto2+texte2;
+  outbox2.setText(outdata2.right(200));
+  outbox2.show();
+}
+
 void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exitStatus) {
   QString cmd2 = "git -C /data/openpilot checkout --track origin/" + selection;
   QString cmd3 = "git -C /data/openpilot checkout " + selection;
@@ -706,21 +720,21 @@ void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exit
   }
 }
 
-void BranchSelectCombo::refresh() {
-  QProcess::execute("git -C /data/openpilot remote prune origin");
-  QProcess::execute("git -C /data/openpilot fetch origin");
-  QProcess::execute("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
-  QFile branchlistfile("/data/branches");
-  if (branchlistfile.open(QIODevice::ReadOnly)) {
-    QTextStream branchname(&branchlistfile);
-    stringList = QStringList();
-    while (!branchname.atEnd()) {
-      QString line = branchname.readLine();
-      stringList.append(line);
-    }
-    branchlistfile.close();
-  }
+void BranchSelectCombo::processFinished2(int exitCode, QProcess::ExitStatus exitStatus) {
   btn2.setText(tr("RELOAD"));
+  if(exitStatus == QProcess::NormalExit) {
+    QProcess::execute("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
+    QFile branchlistfile("/data/branches");
+    if (branchlistfile.open(QIODevice::ReadOnly)) {
+      QTextStream branchname(&branchlistfile);
+      stringList = QStringList();
+      while (!branchname.atEnd()) {
+        QString line = branchname.readLine();
+        stringList.append(line);
+      }
+      branchlistfile.close();
+    }
+  }
 }
 
 TimeZoneSelectCombo::TimeZoneSelectCombo() : AbstractControl("", "", "") 

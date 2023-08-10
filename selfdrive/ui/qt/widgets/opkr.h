@@ -1069,6 +1069,8 @@ public:
 private slots:
   void printMsg1();
   void processFinished1(int exitCode, QProcess::ExitStatus exitStatus);
+  void printMsg2();
+  void processFinished2(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
   QPushButton btn1;
@@ -1076,12 +1078,13 @@ private:
   Params params;
 
   QProcess textMsgProcess1;
+  QProcess textMsgProcess2;
   QMessageBox outbox1;
+  QMessageBox outbox2;
   QString outdata1;
+  QString outdata2;
   QString selection;
   QStringList stringList;
-
-  void refresh();
 };
 
 class TimeZoneSelectCombo : public AbstractControl 

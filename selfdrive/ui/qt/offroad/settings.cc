@@ -317,7 +317,48 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   lastUpdateLbl = new LabelControl(tr("Last Update Check"), "", "");
   updateBtn = new ButtonControl(tr("Check for Updates"), "");
   connect(updateBtn, &ButtonControl::clicked, [=]() {
-    std::system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh");
+    outbox.setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
+    QObject::connect(&textMsgProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg()));
+    QObject::connect(&textMsgProcess, SIGNAL(readyReadStandardError()), this, SLOT(printMsg()));
+    QObject::connect(&textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
+    textMsgProcess.start("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh");
+  });
+
+  auto uninstallBtn = new ButtonControl(tr("Uninstall %1").arg(getBrand()), tr("UNINSTALL"));
+  connect(uninstallBtn, &ButtonControl::clicked, [&]() {
+    if (ConfirmationDialog::confirm2(tr("Are you sure you want to uninstall?"), this)) {
+      params.putBool("DoUninstall", true);
+    }
+  });
+  connect(parent, SIGNAL(offroadTransition(bool)), uninstallBtn, SLOT(setEnabled(bool)));
+
+  QWidget *widgets[] = {versionLbl, gitRemoteLbl, gitBranchLbl, lastUpdateLbl, updateBtn};
+  for (QWidget* w : widgets) {
+    addItem(w);
+  }
+
+  addItem(new GitHash());
+  addItem(new CPresetWidget());
+  addItem(new CGitGroup());
+  //addItem(new CUtilWidget(this));
+
+  addItem(uninstallBtn);
+}
+
+void SoftwarePanel::printMsg() {
+  QByteArray datao;
+  QByteArray datae;
+  datao = textMsgProcess.readAllStandardOutput();
+  datae = textMsgProcess.readAllStandardError();
+  QString texto = QString::fromLocal8Bit(datao);
+  QString texte = QString::fromLocal8Bit(datae);
+  outdata = texto+texte;
+  outbox.setText(outdata.right(200));
+  outbox.show();
+}
+
+void SoftwarePanel::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+  if(exitStatus == QProcess::NormalExit) {
     std::system("date '+%F %T' > /data/params/d/LastUpdateTime");
     QString last_ping = QString::fromStdString(params.get("LastAthenaPingTime"));
     QString desc = "";
@@ -359,27 +400,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
         }
       }
     }
-  });
-
-  auto uninstallBtn = new ButtonControl(tr("Uninstall %1").arg(getBrand()), tr("UNINSTALL"));
-  connect(uninstallBtn, &ButtonControl::clicked, [&]() {
-    if (ConfirmationDialog::confirm2(tr("Are you sure you want to uninstall?"), this)) {
-      params.putBool("DoUninstall", true);
-    }
-  });
-  connect(parent, SIGNAL(offroadTransition(bool)), uninstallBtn, SLOT(setEnabled(bool)));
-
-  QWidget *widgets[] = {versionLbl, gitRemoteLbl, gitBranchLbl, lastUpdateLbl, updateBtn};
-  for (QWidget* w : widgets) {
-    addItem(w);
   }
-
-  addItem(new GitHash());
-  addItem(new CPresetWidget());
-  addItem(new CGitGroup());
-  //addItem(new CUtilWidget(this));
-
-  addItem(uninstallBtn);
 }
 
 void SoftwarePanel::showEvent(QShowEvent *event) {
