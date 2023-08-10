@@ -500,6 +500,8 @@ void UIState::updateStatus() {
     scene.depart_chime_at_resume = params.getBool("DepartChimeAtResume");
     scene.OPKR_Debug = params.getBool("OPKRDebug");
     scene.low_ui_profile = params.getBool("LowUIProfile");
+    scene.stock_lkas_on_disengagement = params.getBool("StockLKASEnabled");
+    scene.ufc_mode = params.getBool("UFCModeEnabled");
 
     if (scene.autoScreenOff > 0) {
       scene.nTime = scene.autoScreenOff * 60 * UI_FREQ;

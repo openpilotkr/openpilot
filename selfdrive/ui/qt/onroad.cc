@@ -659,10 +659,14 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+280, "CAR: " + QString::fromStdString(s->scene.car_fingerprint));
     uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+320, "PSM:" + QString::fromStdString(s->scene.controls_state.getPandaSafetyModel()) +
      "/ISM:" + QString::fromStdString(s->scene.controls_state.getInterfaceSafetyModel()));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+360, "PTY:" + QString::number(int(s->scene.pandaType)) +
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+360, "RXC:" + QString::number(int(s->scene.controls_state.getRxChecks())) +
+     "/MCT:" + QString::number(int(s->scene.controls_state.getMismatchCounter())));
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "PTY:" + QString::number(int(s->scene.pandaType)) +
      "/IGN:" + QString::number(int(s->scene.ignition)));
-    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "CAW:" + QString::number(int(s->scene.controlAllowed)) +
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+440, "CAW:" + QString::number(int(s->scene.controlAllowed)) +
      "/ENA:" + QString::number(int(s->scene.enabled)));
+    uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+480, "STK:" + QString::number(int(s->scene.stock_lkas_on_disengagement)) +
+     "/UFC:" + QString::number(int(s->scene.ufc_mode)));
     // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+400, "0: " + QString::fromStdString(s->scene.liveENaviData.eopkr0));
     // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+440, "1: " + QString::fromStdString(s->scene.liveENaviData.eopkr1));
     // uiText(p, ui_viz_rx+(s->scene.mapbox_running ? 300:400), ui_viz_ry+480, "2: " + QString::fromStdString(s->scene.liveENaviData.eopkr2));

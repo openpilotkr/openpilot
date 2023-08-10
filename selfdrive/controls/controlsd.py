@@ -285,6 +285,8 @@ class Controls:
 
     self.pandaState_safetyModel = ""
     self.interface_safetyModel = ""
+    self.rx_checks_ok = False
+    self.mismatch_counter_ok = False
 
   def auto_enable(self, CS):
     if self.state != State.enabled:
@@ -419,6 +421,8 @@ class Controls:
         #print('safety_mismatch2')
         safety_mismatch = pandaState.safetyModel not in IGNORED_SAFETY_MODES
 
+      self.rx_checks_ok = not pandaState.safetyRxChecksInvalid
+      self.mismatch_counter_ok = self.mismatch_counter < 200
       if safety_mismatch or pandaState.safetyRxChecksInvalid or self.mismatch_counter >= 200:
         #print('safety_mismatch={} safetyRxChecksInvalid={} mismatch_counter={}'.format(safety_mismatch, pandaState.safetyRxChecksInvalid, self.mismatch_counter))
         self.events.add(EventName.controlsMismatch)
@@ -1048,6 +1052,8 @@ class Controls:
 
     controlsState.pandaSafetyModel = self.pandaState_safetyModel
     controlsState.interfaceSafetyModel = self.interface_safetyModel
+    controlsState.rxChecks = self.rx_checks_ok
+    controlsState.mismatchCounter = self.mismatch_counter_ok
 
     self.pm.send('controlsState', dat)
 

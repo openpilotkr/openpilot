@@ -704,6 +704,9 @@ struct ControlsState @0x97ff69c53601abf1 {
 
   pandaSafetyModel @83 :Text;
   interfaceSafetyModel @84 :Text;
+  rxChecks @85 :Bool;
+  mismatchCounter @86 :Bool;
+
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;

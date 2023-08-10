@@ -231,6 +231,8 @@ typedef struct UIScene {
   bool rec_stat2 = false;
   bool rec_stat3 = false;
   int rec_blinker = 0;
+  bool stock_lkas_on_disengagement;
+  bool ufc_mode;
 
   bool experimental_mode = false;
   bool low_ui_profile;
