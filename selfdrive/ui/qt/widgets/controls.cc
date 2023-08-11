@@ -148,6 +148,9 @@ MenuControl::MenuControl( const QString &str_param, const QString &title, const 
 
 void MenuControl::refresh() 
 {
+  auto str = QString::fromStdString( params.get("OpkrSteerMethod") );
+  int valuem = str.toInt();
+
   QString values = QString::number( m_dValue );
 
   int count = m_strList.size();
@@ -164,6 +167,14 @@ void MenuControl::refresh()
    // printf( "MenuControl %f  %f \n", m_nValue, fDelta);
     if( m_nValue == m_dValue  )
         values = m_strValue;
+  }
+  else if( valuem == 0 && m_dValue == 80 )
+  {
+	  values = "NoLimit";
+  }
+  else if( valuem == 1 && m_dValue == 0 )
+  {
+	  values = "Not";
   }
 
 

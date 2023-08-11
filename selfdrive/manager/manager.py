@@ -106,7 +106,7 @@ def manager_init() -> None:
     ("DebugUi3", "0"),
     ("LongLogDisplay", "0"),
     ("OpkrBlindSpotDetect", "1"),
-    ("OpkrMaxAngleLimit", "90"),
+    ("OpkrMaxAngleLimit", "80"),
     ("OpkrSteerMethod", "0"),
     ("OpkrMaxSteeringAngle", "90"),
     ("OpkrMaxDriverAngleWait", "0.002"),
