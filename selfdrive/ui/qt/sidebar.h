@@ -4,7 +4,6 @@
 #include <QMap>
 
 #include "selfdrive/ui/ui.h"
-#include "selfdrive/ui/qt/offroad/wifiManager.h"
 
 typedef QPair<QPair<QString, QString>, QColor> ItemStatus;
 Q_DECLARE_METATYPE(ItemStatus);
