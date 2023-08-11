@@ -7,7 +7,6 @@
 
 #include <QComboBox>
 #include <QAbstractItemView>
-#include <QMessageBox>
 #include <QProcess>
 
 #include "selfdrive/hardware/hw.h"
@@ -107,7 +106,6 @@ public:
   SwitchOpenpilot();
 
 private slots:
-  void printMsg();
   void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
@@ -118,8 +116,6 @@ private:
   QString githubbranch;
 
   QProcess textMsgProcess;
-  QMessageBox outbox;
-  QString outdata;
 
   void refresh();
   void getUserID(const QString &userid);
@@ -1067,9 +1063,7 @@ public:
   BranchSelectCombo();
 
 private slots:
-  void printMsg1();
   void processFinished1(int exitCode, QProcess::ExitStatus exitStatus);
-  void printMsg2();
   void processFinished2(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
@@ -1079,10 +1073,6 @@ private:
 
   QProcess textMsgProcess1;
   QProcess textMsgProcess2;
-  QMessageBox outbox1;
-  QMessageBox outbox2;
-  QString outdata1;
-  QString outdata2;
   QString selection;
   QStringList stringList;
 };

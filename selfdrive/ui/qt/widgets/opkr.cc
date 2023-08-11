@@ -317,12 +317,8 @@ CPresetWidget::CPresetWidget() : CGroupWidget( tr("Parameter Preset") )
 
 void CPresetWidget::refresh( int nID )
 {
-  CGroupWidget::refresh( nID );
-
-  
+  CGroupWidget::refresh( nID );  
 }
-
-
 
 SwitchOpenpilot::SwitchOpenpilot() : ButtonControl(tr("Change Repo/Branch"), "", tr("Change to another open pilot code. You can change it by entering ID/repository/branch.")) {
   QObject::connect(this, &ButtonControl::clicked, [=]() {
@@ -351,9 +347,6 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl(tr("Change Repo/Branch"), "",
               QProcess::execute(cmd1);
               QProcess::execute(cmd3);
 			        QProcess::execute(cmd4);
-              outbox.setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
-              QObject::connect(&textMsgProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg()));
-              QObject::connect(&textMsgProcess, SIGNAL(readyReadStandardError()), this, SLOT(printMsg()));
               QObject::connect(&textMsgProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
               textMsgProcess.start(tcmd);
             }
@@ -365,18 +358,6 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl(tr("Change Repo/Branch"), "",
     }
   });
   refresh();
-}
-
-void SwitchOpenpilot::printMsg() {
-  QByteArray datao;
-  QByteArray datae;
-  datao = textMsgProcess.readAllStandardOutput();
-  datae = textMsgProcess.readAllStandardError();
-  QString texto = QString::fromLocal8Bit(datao);
-  QString texte = QString::fromLocal8Bit(datae);
-  outdata = texto+texte;
-  outbox.setText(outdata.right(200));
-  outbox.show();
 }
 
 void SwitchOpenpilot::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -673,9 +654,6 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
           QProcess::execute("git -C /data/openpilot clean -d -f -f");
           QProcess::execute(cmd1);
           QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh");
-          outbox1.setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
-          QObject::connect(&textMsgProcess1, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg1()));
-          QObject::connect(&textMsgProcess1, SIGNAL(readyReadStandardError()), this, SLOT(printMsg1()));
           QObject::connect(&textMsgProcess1, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished1(int, QProcess::ExitStatus)));
           textMsgProcess1.start(tcmd1);
         }
@@ -685,38 +663,11 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
     btn2.setText(tr("RUNNING"));
-    QString tcmd2 = "git -C /data/openpilot fetch origin";
-    outbox2.setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
+    QString tcmd2 = "git -C /data/openpilot fetch origin &";
     QProcess::execute("git -C /data/openpilot remote prune origin");
-    QObject::connect(&textMsgProcess2, SIGNAL(readyReadStandardOutput()), this, SLOT(printMsg2()));
-    QObject::connect(&textMsgProcess2, SIGNAL(readyReadStandardError()), this, SLOT(printMsg2()));
     QObject::connect(&textMsgProcess2, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished2(int, QProcess::ExitStatus)));
     textMsgProcess2.start(tcmd2);
   });
-}
-
-void BranchSelectCombo::printMsg1() {
-  QByteArray datao1;
-  QByteArray datae1;
-  datao1 = textMsgProcess1.readAllStandardOutput();
-  datae1 = textMsgProcess1.readAllStandardError();
-  QString texto1 = QString::fromLocal8Bit(datao1);
-  QString texte1 = QString::fromLocal8Bit(datae1);
-  outdata1 = texto1+texte1;
-  outbox1.setText(outdata1.right(200));
-  outbox1.show();
-}
-
-void BranchSelectCombo::printMsg2() {
-  QByteArray datao2;
-  QByteArray datae2;
-  datao2 = textMsgProcess2.readAllStandardOutput();
-  datae2 = textMsgProcess2.readAllStandardError();
-  QString texto2 = QString::fromLocal8Bit(datao2);
-  QString texte2 = QString::fromLocal8Bit(datae2);
-  outdata2 = texto2+texte2;
-  outbox2.setText(outdata2.right(200));
-  outbox2.show();
 }
 
 void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exitStatus) {
