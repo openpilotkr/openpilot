@@ -85,7 +85,7 @@ class CarController:
     self.lanechange_manual_timer = 0
     self.emergency_manual_timer = 0
     self.driver_steering_torque_above = False
-    self.driver_steering_torque_above_timer = 100
+    self.driver_steering_torque_above_timer = 150
     
     self.mode_change_timer = 0
 
@@ -310,7 +310,7 @@ class CarController:
     self.vRel = self.sm['radarState'].leadOne.vRel #Vision Lead
     self.yRel = self.sm['radarState'].leadOne.yRel #Vision Lead
 
-    if abs(CS.out.steeringTorque) > 170 and CS.out.vEgo < LANE_CHANGE_SPEED_MIN:
+    if abs(CS.out.steeringTorque) > 170 and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.CP.carFingerprint not in CANFD_CAR:
       self.driver_steering_torque_above = True
     else:
       self.driver_steering_torque_above = False
