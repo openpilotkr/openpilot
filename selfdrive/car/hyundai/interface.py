@@ -456,7 +456,7 @@ class CarInterface(CarInterfaceBase):
     ret = self.CS.update(self.cp, self.cp2, self.cp_cam)
 
     # most HKG cars has no long control, it is safer and easier to engage by main on
-    if self.CC.ufc_mode_enabled:
+    if self.CC.ufc_mode_enabled or self.CS.CP.openpilotLongitudinalControl:
       ret.cruiseState.enabled = ret.cruiseState.available
 
     if (self.CS.CP.openpilotLongitudinalControl or self.CC.ufc_mode_enabled) and self.CS.cruise_buttons[-1] != self.CS.prev_cruise_buttons:
