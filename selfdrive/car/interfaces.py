@@ -92,6 +92,8 @@ class CarInterfaceBase(ABC):
     self.ufc_mode = Params().get_bool("UFCModeEnabled")
     self.steer_warning_fix_enabled = Params().get_bool("SteerWarningFix")
     self.user_specific_feature = int(Params().get("UserSpecificFeature", encoding="utf8"))
+    self.long_alt = int(Params().get("OPKRLongAlt", encoding="utf8"))
+    self.exp_long = self.CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)
 
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
@@ -349,6 +351,11 @@ class CarInterfaceBase(ABC):
         events.add(EventName.pcmEnable)
       elif not cs_out.cruiseState.enabled:
         events.add(EventName.pcmDisable)
+    elif self.exp_long:
+      if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled and allow_enable:
+        events.add(EventName.buttonEnable)
+      elif not cs_out.cruiseState.enabled and allow_enable:
+        events.add(EventName.buttonCancel)
 
     return events
 

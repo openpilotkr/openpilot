@@ -251,7 +251,8 @@ class CarState(CarStateBase):
       if self.cruise_buttons[-1] == 1 or self.cruise_buttons[-1] == 2:
         self.exp_engage_available = True
         self.brake_check = False
-        self.mainsw_check = False
+      elif self.cruise_buttons[-1] == 4:
+        self.exp_engage_available = False
       ret.cruiseState.available = self.exp_engage_available
       ret.cruiseState.enabled = ret.cruiseState.available
     else:
