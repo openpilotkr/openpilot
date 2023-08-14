@@ -49,8 +49,6 @@ class CarState(CarStateBase):
 
     self.params = CarControllerParams(CP)
 
-    #Auto detection for setup
-    self.exp_long = CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)
     self.lkas_button_on = True
     self.cruise_main_button = 0
     self.mdps_error_cnt = 0
@@ -89,6 +87,8 @@ class CarState(CarStateBase):
 
     self.long_alt = int(Params().get("OPKRLongAlt", encoding="utf8"))
     self.exp_engage_available = False
+    
+    self.exp_long = CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)
 
     self.sm = messaging.SubMaster(['controlsState'])
 
