@@ -138,7 +138,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   const QRect r = QRect(50, 237, 100, 35);
   p.drawText(r, Qt::AlignCenter, net_type);
 
-  p.setFont(InterFont(32, QFont::DemiBold));
+  p.setFont(InterFont(30, QFont::DemiBold));
   p.setPen(QColor(0xff, 0xff, 0x0));
   const QRect ip = QRect(35, 293, 220, 70);
   p.drawText(ip, Qt::AlignHCenter|Qt::AlignTop, ip_address);
