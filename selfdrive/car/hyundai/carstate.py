@@ -276,7 +276,7 @@ class CarState(CarStateBase):
       self.cruise_active = self.acc_active
 
       ret.cruiseState.gapSet = cp_scc.vl["SCC11"]['TauGapSet']
-      self.cruiseGapSet = cp_scc.vl["SCC11"]["TauGapSet"]
+      self.cruiseGapSet = ret.cruiseState.gapSet
       ret.cruiseGapSet = self.cruiseGapSet
 
 
@@ -518,6 +518,7 @@ class CarState(CarStateBase):
       ("CGW2", 5),
       ("CGW4", 5),
       ("WHL_SPD11", 50),
+      ("TPMS11", 0),
     ]
 
     if CP.sccBus == 0 and CP.pcmCruise:
