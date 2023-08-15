@@ -71,7 +71,6 @@ class CarController:
 
 
     self.scc12_cnt = 0
-    self.counter_init = False
     self.aq_value = 0
     self.aq_value_raw = 0
 
@@ -1001,12 +1000,8 @@ class CarController:
         can_sends.append(hyundaican.create_frt_radar_opt(self.packer))
 
 
-      if self.CP.sccBus == 2 and self.counter_init and self.longcontrol and self.opkr_long_alt:
+      if self.CP.sccBus == 2 and self.longcontrol and self.opkr_long_alt:
         if self.frame % 2 == 0:
-          self.scc12cnt += 1
-          self.scc12cnt %= 0xF
-          self.scc11cnt += 1
-          self.scc11cnt %= 0x10
           lead_objspd = CS.lead_objspd  # vRel (km/h)
           aReqValue = CS.scc12["aReqValue"]
           faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
@@ -1186,14 +1181,10 @@ class CarController:
           can_sends.append(hyundaican.create_scc13(self.packer, CS.scc13))
         if self.frame % 50 == 0:
           can_sends.append(hyundaican.create_scc42a(self.packer))
-      elif self.CP.sccBus == 2 and self.longcontrol and self.opkr_long_alt:
-        self.counter_init = True
-        self.scc12cnt = CS.scc12init["CR_VSM_Alive"]
-        self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     if self.CP.carFingerprint in CANFD_CAR:
-      str_log1 = 'EN/LA/LO={}/{}/{}  MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}/{:03.0f}  VF={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}'.format(
-        int(CC.enabled), int(lat_active), int(CC.longActive), CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), abs(CS.out.steeringTorque), self.vFuture, self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN)
+      str_log1 = 'EN/LA/LO={}/{}{}/{}  MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}/{:03.0f}  VF={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}'.format(
+        int(CC.enabled), int(CC.latActive), int(lat_active), int(CC.longActive), CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), abs(CS.out.steeringTorque), self.vFuture, self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN)
       if CS.out.cruiseState.accActive:
         str_log2 = 'AQ={:+04.2f}  SS={:03.0f}  VF={:03.0f}/{:03.0f}  TS/VS={:03.0f}/{:03.0f}  RD/ED/C/T={:04.1f}/{:04.1f}/{}/{}  C={:1.0f}/{:1.0f}/{}'.format(
         self.aq_value if self.longcontrol else 0, set_speed_in_units, self.vFuture, self.vFutureA, self.NC.ctrl_speed, round(CS.VSetDis), 0, self.dRel, int(self.NC.cut_in), self.NC.cut_in_run_timer, 0, self.btnsignal if self.btnsignal is not None else 0, self.NC.t_interval)

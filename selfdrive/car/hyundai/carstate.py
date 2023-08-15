@@ -394,9 +394,6 @@ class CarState(CarStateBase):
     self.scc14 = copy.copy(cp_scc.vl["SCC14"])
     self.mdps12 = copy.copy(cp_mdps.vl["MDPS12"])
 
-    self.scc11init = copy.copy(cp.vl["SCC11"])
-    self.scc12init = copy.copy(cp.vl["SCC12"])
-
     self.brake_error = cp.vl["TCS13"]["ACCEnable"] == 3 # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
     self.lead_distance = cp_scc.vl["SCC11"]["ACC_ObjDist"] if not self.no_radar else 0
     ret.radarDistance = self.lead_distance
