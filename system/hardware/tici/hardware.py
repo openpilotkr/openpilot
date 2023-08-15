@@ -617,7 +617,7 @@ class Tici(HardwareBase):
     ipaddress = ""
     try:
       out = subprocess.check_output("hostname -I", shell=True)
-      ipaddress = str(out.decode())
+      ipaddress = str(out.strip().decode()).replace(' ', '\n')
     except Exception:
       pass
     return ipaddress
