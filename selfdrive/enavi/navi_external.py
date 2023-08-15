@@ -95,6 +95,9 @@ def navid_thread(end_event, nv_queue):
         if ip_add is not None:
           ip_bind = True
           check_connection = True
+          context = zmq.Context()
+          socket = context.socket(zmq.SUB)
+          socket.connect("tcp://" + str(ip_add) + ":5555")
 
     if ip_bind:
       spd_limit = 0
@@ -132,16 +135,7 @@ def navid_thread(end_event, nv_queue):
         opkr_8 = ""
         opkr_9 = ""
 
-      context = zmq.Context()
-      socket = context.socket(zmq.SUB)
-
-      try:
-        socket.connect("tcp://" + str(ip_add) + ":5555")
-      except:
-        socket.connect("tcp://127.0.0.1:5555")
-        pass
       socket.subscribe("")
-
       message = str(socket.recv(), 'utf-8')
 
       if (count % int(30. / DT_TRML)) == 0:
