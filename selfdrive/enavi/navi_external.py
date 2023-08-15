@@ -140,8 +140,8 @@ def navid_thread(end_event, nv_queue):
 
       if (count % int(30. / DT_TRML)) == 0:
         try:
-          rtext = subprocess.check_output(["netstat", "-tp"])
-          check_connection = True if str(rtext).find('navi') else False
+          rtext = subprocess.check_output(["netstat", "-n"])
+          check_connection = True if str(rtext).find('5555      ESTABLISHED') != -1 else False
         except:
           pass
       
