@@ -91,6 +91,7 @@ class CarState(CarStateBase):
     self.cruise_set_speed_kph = 0
     self.cruise_set_mode = int(Params().get("CruiseStatemodeSelInit", encoding="utf8"))
     self.gasPressed = False
+    self.cruiseGapSet = 4.0
 
     self.long_alt = int(Params().get("OPKRLongAlt", encoding="utf8"))
 
@@ -274,8 +275,12 @@ class CarState(CarStateBase):
         ret.cruiseState.speed = 0
       self.cruise_active = self.acc_active
 
+      ret.cruiseState.gapSet = cp_scc.vl["SCC11"]['TauGapSet']
+      self.cruiseGapSet = cp_scc.vl["SCC11"]["TauGapSet"]
+      ret.cruiseGapSet = self.cruiseGapSet
+
+
     ret.cruiseState.accActive = self.acc_active
-    ret.cruiseState.gapSet = cp.vl["SCC11"]['TauGapSet']
     ret.cruiseState.cruiseSwState = self.cruise_buttons[-1]
     ret.cruiseState.modeSel = self.cruise_set_mode
 
@@ -334,9 +339,6 @@ class CarState(CarStateBase):
       cp.vl["TPMS11"]["PRESSURE_RL"],
       cp.vl["TPMS11"]["PRESSURE_RR"],
     )
-
-    self.cruiseGapSet = cp_scc.vl["SCC11"]["TauGapSet"]
-    ret.cruiseGapSet = self.cruiseGapSet
 
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
     # as this seems to be standard over all cars, but is not the preferred method.
