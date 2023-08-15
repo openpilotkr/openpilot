@@ -146,7 +146,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.setFont(InterFont(35));
   p.setPen(QColor(0xff, 0xff, 0xff));
   // metrics
-  drawMetric(p, temp_status.first, temp_status.second, ip_address.length()>15?378:338);
-  drawMetric(p, panda_status.first, panda_status.second, ip_address.length()>15?536:496);
-  drawMetric(p, connect_status.first, connect_status.second, ip_address.length()>15?694:654);
+  drawMetric(p, temp_status.first, temp_status.second, ip_address.length()>15?388:338);
+  drawMetric(p, panda_status.first, panda_status.second, ip_address.length()>15?546:496);
+  drawMetric(p, connect_status.first, connect_status.second, ip_address.length()>15?704:654);
 }
