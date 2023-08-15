@@ -513,6 +513,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   p.setPen(set_speed_color);
   p.drawText(set_speed_rect.adjusted(0, 90, 0, 0), Qt::AlignTop | Qt::AlignHCenter, s->scene.cruiseAccStatus?QString::number(s->scene.vSetDis, 'f', 0):"-");
 
+  if (s->scene.btn_pressing > 0) {
+    p.setPen(QPen(Qt::white, 5));
+    p.drawPoint(set_speed_rect.left()+15, set_speed_rect.y()+15);
+  }
+
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
   // US/Canada (MUTCD style) sign`
   if (has_us_speed_limit && false) {

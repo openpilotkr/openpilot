@@ -236,6 +236,7 @@ typedef struct UIScene {
 
   bool experimental_mode = false;
   bool exp_mode_temp = true;
+  int btn_pressing;
   bool low_ui_profile;
   bool multi_btn_touched = false;
   float multi_btn_slide_timer = 0;

@@ -707,6 +707,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   rxChecks @85 :Bool;
   mismatchCounter @86 :Bool;
   expModeTemp @87 :Bool;
+  btnPressing @88 :UInt8;
 
 
   lateralControlState :union {

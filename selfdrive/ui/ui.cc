@@ -192,6 +192,7 @@ static void update_state(UIState *s) {
     scene.enabled = scene.controls_state.getEnabled();
     scene.experimental_mode = scene.controls_state.getExperimentalMode();
     scene.exp_mode_temp = scene.controls_state.getExpModeTemp();
+    scene.btn_pressing = scene.controls_state.getBtnPressing();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();

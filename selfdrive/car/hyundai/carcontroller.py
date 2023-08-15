@@ -1251,4 +1251,4 @@ class CarController:
 
 
     self.frame += 1
-    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp
+    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp, self.btnsignal if self.btnsignal is not None else 0
