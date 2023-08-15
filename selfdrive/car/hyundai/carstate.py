@@ -405,7 +405,7 @@ class CarState(CarStateBase):
     ret.driverAcc = self.driverOverride == 1
     ret.aReqValue = cp_scc.vl["SCC12"]["aReqValue"]
 
-    self.is_highway = cp_scc.vl["SCC11"]["Navi_SCC_Camera_Act"] != 0.
+    self.highway_cam = cp_scc.vl["SCC11"]["Navi_SCC_Camera_Act"]
 
     return ret
 

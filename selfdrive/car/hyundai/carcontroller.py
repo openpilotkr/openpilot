@@ -1147,7 +1147,7 @@ class CarController:
                   accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
                 else:
                   self.smooth_start = False
-                  if self.sm['liveENaviData'].isHighway or CS.is_highway or (not self.experimental_mode_temp):
+                  if self.sm['liveENaviData'].isHighway or CS.highway_cam != 0 or (not self.experimental_mode_temp):
                     accel = aReqValue
                   elif self.dRel < 0.1:
                     accel = faccel
@@ -1158,7 +1158,7 @@ class CarController:
             stock_weight = 0.
 
           if self.stock_safety_decel_enabled:
-            if CS.scc11["Navi_SCC_Camera_Act"] == 2 and accel > aReqValue:
+            if CS.highway_cam == 2 and accel > aReqValue:
               accel = aReqValue
           accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
           self.aq_value = accel
@@ -1251,4 +1251,4 @@ class CarController:
 
 
     self.frame += 1
-    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on)
+    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp

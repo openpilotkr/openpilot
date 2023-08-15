@@ -468,7 +468,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int bottom_radius = 32;
 
   QRect set_speed_rect(QPoint(15 + (default_size.width() - set_speed_size.width()) / 2, s->scene.low_ui_profile?(height()-default_size.height()-35-150):15), set_speed_size);
-  p.setPen(QPen(whiteColor(75), 6));
+  if (s->scene.exp_mode_temp) {
+    p.setPen(QPen(whiteColor(75), 6));
+  } else {
+    p.setPen(QPen(greenColor(200), 6));
+  }
   if (is_over_sl) {
     p.setBrush(ochreColor(128));
   } else if (!is_over_sl && s->scene.limitSpeedCamera > 19){
