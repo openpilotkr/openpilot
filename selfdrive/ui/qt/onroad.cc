@@ -515,7 +515,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
 
   if (s->scene.btn_pressing > 0) {
     p.setPen(QPen(Qt::white, 15));
-    p.drawPoint(set_speed_rect.left()+25, set_speed_rect.y()+25);
+    p.drawPoint(set_speed_rect.left()+25, set_speed_rect.y()+set_speed_size.height()/2+25);
   }
 
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
@@ -1102,7 +1102,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.setBrush(blackColor(70));
     p.setPen(Qt::NoPen);
     p.drawEllipse(m_x-15, m_y-15, m_btn_size+30, m_btn_size+30);
-    p.setPen(QPen(QColor(255, 255, 255, 80), 6));
+    if (s->scene.liveENaviData.eopkrconalive) {
+      p.setPen(QPen(QColor(0, 255, 0, 150), 6));
+    } else {
+      p.setPen(QPen(QColor(255, 255, 255, 80), 6));
+    }
     p.setBrush(Qt::NoBrush);
     if (s->scene.lateralPlan.lanelessModeStatus) p.setBrush(QColor(13, 177, 248, 100));
     p.drawEllipse(multi_btn_draw);

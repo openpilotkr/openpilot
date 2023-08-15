@@ -25,6 +25,7 @@ def navid_thread(end_event, nv_queue):
   turn_info = 0
   turn_distance = 0
   road_limit_speed = 0
+  road_limit_speed_cnt = 0
   link_length = 0
   current_link_angle = 0
   next_link_angle = 0
@@ -105,7 +106,7 @@ def navid_thread(end_event, nv_queue):
       sign_type = 0
       turn_info = 0
       turn_distance = 0
-      road_limit_speed = 0
+      #road_limit_speed = 0
       link_length = 0
       current_link_angle = 0
       next_link_angle = 0
@@ -164,6 +165,12 @@ def navid_thread(end_event, nv_queue):
         if "opkrroadlimitspd" in line:
           arr = line.split('opkrroadlimitspd: ')
           road_limit_speed = arr[1]
+          road_limit_speed_cnt = 0
+        elif (count % int(2. / DT_TRML)) == 0:
+          road_limit_speed_cnt += 1
+          if road_limit_speed_cnt > 30:
+            road_limit_speed = 0
+            road_limit_speed_cnt = 0
         if "opkrlinklength" in line:
           arr = line.split('opkrlinklength: ')
           link_length = arr[1]
@@ -277,13 +284,21 @@ def navid_thread(end_event, nv_queue):
           if "opkrwazedestlat" in line: # route should be set.
             arr = line.split('opkrwazedestlat: ')
             try:
-              waze_lat = arr[1]
+              waze_lat_temp = arr[1]
+              waze_lat_temp_back = waze_lat_temp[-6:]
+              waze_lat_temp_front_temp = waze_lat_temp.split(waze_lat_temp_back)
+              waze_lat_temp_front = waze_lat_temp_front_temp[0]
+              waze_lat = waze_lat_temp_front + "." + waze_lat_temp_back
             except:
               pass
           if "opkrwazedestlon" in line: # route should be set.
             arr = line.split('opkrwazedestlon: ')
             try:
-              waze_lon = arr[1]
+              waze_lon_temp = arr[1]
+              waze_lon_temp_back = waze_lon_temp[-6:]
+              waze_lon_temp_front_temp = waze_lon_temp.split(waze_lon_temp_back)
+              waze_lon_temp_front = waze_lon_temp_front_temp[0]
+              waze_lon = waze_lon_temp_front + "." + waze_lon_temp_back
             except:
               pass
 
