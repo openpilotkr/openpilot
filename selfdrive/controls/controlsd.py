@@ -484,7 +484,7 @@ class Controls:
 
     # generic catch-all. ideally, a more specific event should be added above instead
     can_rcv_timeout = self.can_rcv_timeout_counter >= 5
-    has_disable_events = self.events.any(ET.NO_ENTRY) and (self.events.any(ET.SOFT_DISABLE) or self.events.any(ET.IMMEDIATE_DISABLE))
+    has_disable_events = self.events.contains(ET.NO_ENTRY) and (self.events.contains(ET.SOFT_DISABLE) or self.events.contains(ET.IMMEDIATE_DISABLE))
     no_system_errors = (not has_disable_events) or (len(self.events) == num_events)
     if (not self.sm.all_checks() or can_rcv_timeout) and no_system_errors:
       if not self.sm.all_alive():
@@ -625,29 +625,29 @@ class Controls:
     # ENABLED, SOFT DISABLING, PRE ENABLING, OVERRIDING
     if self.state != State.disabled:
       # user and immediate disable always have priority in a non-disabled state
-      if self.events.any(ET.USER_DISABLE):
+      if self.events.contains(ET.USER_DISABLE):
         self.state = State.disabled
         self.current_alert_types.append(ET.USER_DISABLE)
 
-      elif self.events.any(ET.IMMEDIATE_DISABLE):
+      elif self.events.contains(ET.IMMEDIATE_DISABLE):
         self.state = State.disabled
         self.current_alert_types.append(ET.IMMEDIATE_DISABLE)
 
       else:
         # ENABLED
         if self.state == State.enabled:
-          if self.events.any(ET.SOFT_DISABLE):
+          if self.events.contains(ET.SOFT_DISABLE):
             self.state = State.softDisabling
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
 
-          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
+          elif self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
             self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
         # SOFT DISABLING
         elif self.state == State.softDisabling:
-          if not self.events.any(ET.SOFT_DISABLE):
+          if not self.events.contains(ET.SOFT_DISABLE):
             # no more soft disabling condition, so go back to ENABLED
             self.state = State.enabled
 
@@ -659,38 +659,37 @@ class Controls:
 
         # PRE ENABLING
         elif self.state == State.preEnabled:
-          if not self.events.any(ET.PRE_ENABLE):
+          if not self.events.contains(ET.PRE_ENABLE):
             self.state = State.enabled
           else:
             self.current_alert_types.append(ET.PRE_ENABLE)
 
         # OVERRIDING
         elif self.state == State.overriding:
-          if self.events.any(ET.SOFT_DISABLE):
+          if self.events.contains(ET.SOFT_DISABLE):
             self.state = State.softDisabling
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
-          elif not (self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL)):
+          elif not (self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL)):
             self.state = State.enabled
           else:
             self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
     # DISABLED
     elif self.state == State.disabled:
-      if self.events.any(ET.ENABLE):
-        if self.events.any(ET.NO_ENTRY):
+      if self.events.contains(ET.ENABLE):
+        if self.events.contains(ET.NO_ENTRY):
           self.current_alert_types.append(ET.NO_ENTRY)
 
         else:
-          if self.events.any(ET.PRE_ENABLE):
+          if self.events.contains(ET.PRE_ENABLE):
             self.state = State.preEnabled
-          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
+          elif self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
           else:
             self.state = State.enabled
           self.current_alert_types.append(ET.ENABLE)
-          if not self.long_alt not in (1, 2):
-            self.v_cruise_helper.initialize_v_cruise(CS, self.experimental_mode)
+          self.v_cruise_helper.initialize_v_cruise(CS, self.experimental_mode)
 
     # Check if openpilot is engaged and actuators are enabled
     self.enabled = self.state in ENABLED_STATES
@@ -729,22 +728,13 @@ class Controls:
     CC.enabled = self.enabled
 
     # Check which actuators can be enabled
-    if self.ufc_mode:
-      standstill = (CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) and self.no_mdps_mods) or CS.standstill
-      CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
-                     (not standstill or self.joystick_mode) and not self.lkas_temporary_off
-      CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
-      #print('active={}  steerFaultTemporary={}  steerFaultPermanent={}  standstill={}  joystick_mode={}  lkas_temporary_off={}'.format(
-      # self.active, CS.steerFaultTemporary, CS.steerFaultPermanent, standstill, self.joystick_mode, self.lkas_temporary_off))
-    else:
-      standstill = (CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) and self.no_mdps_mods) or CS.standstill
-      CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
-                     (not standstill or self.joystick_mode)
-      CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
-      #print('active={}  steerFaultTemporary={}  steerFaultPermanent={}  standstill={}  joystick_mode={}  lkas_temporary_off={}'.format(
-      # self.active, CS.steerFaultTemporary, CS.steerFaultPermanent, standstill, self.joystick_mode, self.lkas_temporary_off))
-
-    #print('CON_latActive={}'.format(CC.latActive))
+    standstill = (CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) and self.no_mdps_mods) or CS.standstill
+    CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
+                   (not standstill or self.joystick_mode) and not self.lkas_temporary_off
+    CC.longActive = self.enabled and not self.events.contains(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
+    # print('active={}  steerFaultTemporary={}  steerFaultPermanent={}  standstill={}  joystick_mode={}  lkas_temporary_off={}'.format(
+    # self.active, CS.steerFaultTemporary, CS.steerFaultPermanent, standstill, self.joystick_mode, self.lkas_temporary_off))
+    # print('CON_latActive={}'.format(CC.latActive))
 
     actuators = CC.actuators
     actuators.longControlState = self.LoC.long_control_state
@@ -989,7 +979,7 @@ class Controls:
     controlsState.desiredCurvature = self.desired_curvature
     controlsState.desiredCurvatureRate = self.desired_curvature_rate
     controlsState.state = self.state
-    controlsState.engageable = not self.events.any(ET.NO_ENTRY)
+    controlsState.engageable = not self.events.contains(ET.NO_ENTRY)
     controlsState.longControlState = self.LoC.long_control_state
     controlsState.vPid = float(self.LoC.v_pid)
     controlsState.vCruise = float(self.v_cruise_helper.v_cruise_kph) # SCC setspeed number of cluster, kph or mph not m/s

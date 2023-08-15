@@ -84,7 +84,7 @@ class Events:
     self.events_prev = {k: (v + 1 if k in self.events else 0) for k, v in self.events_prev.items()}
     self.events = self.static_events.copy()
 
-  def any(self, event_type: str) -> bool:
+  def contains(self, event_type: str) -> bool:
     return any(event_type in EVENTS.get(e, {}) for e in self.events)
 
   def create_alerts(self, event_types: List[str], callback_args=None):
@@ -210,7 +210,7 @@ class StartupAlert(Alert):
   def __init__(self, alert_text_1: str, alert_text_2: str = tr(5), alert_status=AlertStatus.normal):
     super().__init__(alert_text_1, alert_text_2,
                      alert_status, AlertSize.mid,
-                     Priority.LOWER, VisualAlert.none, AudibleAlert.none, 10.),
+                     Priority.LOWER, VisualAlert.none, AudibleAlert.none, 5.),
 
 
 # ********** helper functions **********
@@ -527,8 +527,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   EventName.resumeRequired: {
     ET.WARNING: Alert(
       tr(56),
-      tr(57),
-      AlertStatus.userPrompt, AlertSize.mid,
+      "",
+      AlertStatus.userPrompt, AlertSize.small,
       Priority.LOW, VisualAlert.none, AudibleAlert.none, .2),
   },
 
@@ -898,7 +898,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.SOFT_DISABLE: soft_disable_alert(tr(118)),
     ET.NO_ENTRY: NoEntryAlert(tr(119)),
   },
-  
+
   EventName.calibrationRecalibrating: {
     ET.PERMANENT: calibration_incomplete_alert,
     ET.SOFT_DISABLE: soft_disable_alert("Device Remount Detected: Recalibrating"),
@@ -994,7 +994,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.accFaulted: {
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(tr(146)),
-    ET.PERMANENT: NormalPermanentAlert(tr(147), ""),
+    ET.PERMANENT: NormalPermanentAlert(tr(147)),
     ET.NO_ENTRY: NoEntryAlert(tr(148)),
   },
 
