@@ -515,7 +515,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
 
   if (s->scene.btn_pressing > 0) {
     p.setPen(QPen(Qt::white, 15));
-    p.drawPoint(set_speed_rect.left()+25, set_speed_rect.y()+set_speed_size.height()/2+25);
+    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+20);
   }
 
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
