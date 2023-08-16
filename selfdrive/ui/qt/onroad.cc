@@ -471,7 +471,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   if (s->scene.exp_mode_temp) {
     p.setPen(QPen(whiteColor(75), 6));
   } else {
-    p.setPen(QPen(greenColor(200), 6));
+    p.setPen(QPen(greenColor(220), 6));
   }
   if (is_over_sl) {
     p.setBrush(ochreColor(128));

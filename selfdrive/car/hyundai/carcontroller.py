@@ -169,7 +169,7 @@ class CarController:
     self.osm_spdlimit_enabled = self.c_params.get_bool("OSMSpeedLimitEnable")
     self.stock_safety_decel_enabled = self.c_params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.c_params.get_bool("JoystickDebugMode")
-    self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
+    #self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
 
     self.smooth_start = False
 
@@ -1022,16 +1022,26 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-            elif 0.1 < self.dRel:
-              self.stopped = False
-              pass
             else:
               self.stopped = False
-              accel = aReqValue
+              accel = faccel
           elif self.radar_helper_option == 1: # Radar Only
             accel = aReqValue
           elif self.radar_helper_option >= 2: # OPKR Custom(Radar+Vision), more smooth slowdown for cut-in or encountering being decellerated car.
-            if 0 < CS.lead_distance <= 149:
+            if self.experimental_mode_temp and self.experimental_mode:
+              self.stopped = False
+              if stopping:
+                self.smooth_start = True
+                accel = min(-0.5, accel, faccel*0.5)
+              elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis)*0.9:
+                accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
+              else:
+                self.smooth_start = False
+                accel = faccel
+            elif 0 < CS.lead_distance <= 149 and CS.clu_Vanz > 3 and self.smooth_start:
+              self.smooth_start = False
+              accel = aReqValue
+            elif 0 < CS.lead_distance <= 149 and not self.smooth_start: # prevent moving forward at exp stop
               stock_weight = 0.0
               self.smooth_start = False
               self.vrel_delta_timer2 += 1
@@ -1127,19 +1137,13 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-            elif 0.1 < self.dRel < 80:
+            elif 0.1 < self.dRel < 90:
               self.stopped = False
-              vvrel = self.vRel*3.6
-              vvrel_weight = interp(vvrel, [-35, 0], [0.2, 0.4])
-              if accel <= 0 and aReqValue <= 0:
-                accel = (accel*(1-vvrel_weight)) + (aReqValue*vvrel_weight)
-              elif accel <= 0 and aReqValue > 0 and CS.clu_Vanz > 30:
-                accel = (aReqValue*(1-vvrel_weight)) + (accel*vvrel_weight)
-              else:
-                pass
+              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.0, 30], [0.9, 1.0])
+              accel = faccel*ddrel_weight
             else:
               self.stopped = False
-              if self.stopsign_enabled or self.experimental_mode:
+              if self.experimental_mode:
                 if stopping:
                   self.smooth_start = True
                   accel = min(-0.5, accel, faccel*0.5)
