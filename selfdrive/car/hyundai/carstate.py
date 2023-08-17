@@ -563,7 +563,10 @@ class CarState(CarStateBase):
     elif CP.carFingerprint in CAN_GEARS["use_elect_gears"]:
       messages.append(("ELECT_GEAR", 20))
     else:
-      messages.append(("LVR12", 100))
+      messages += [
+        ("LVR11", 100),
+        ("LVR12", 100),
+      ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)
 
