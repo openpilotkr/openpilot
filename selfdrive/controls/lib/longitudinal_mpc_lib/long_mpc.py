@@ -40,7 +40,7 @@ X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
 J_EGO_COST = 5.0
-A_CHANGE_COST = 100. # 200.
+A_CHANGE_COST = 200. # 200.
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .25
 LEAD_DANGER_FACTOR = 0.75
@@ -414,7 +414,8 @@ class LongitudinalMpc:
       # These are not used in ACC mode
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
       x = np.cumsum(np.insert(xforward, 0, x[0]))
-      x = (x[N] + 5.0) * np.ones(N+1)
+      e2ex = (x[N] + 5.0) * np.ones(N+1)
+      x = (x[N] + 5.0) * np.ones(N+1)      
 
       #x[:], v[:], a[:], j[:] = 0.0, 0.0, 0.0, 0.0
       v[:], a[:], j[:] = 0.0, 0.0, 0.0
@@ -427,6 +428,7 @@ class LongitudinalMpc:
       cruise_target = T_IDXS * np.clip(v_cruise, v_ego - 2.0, 1e3) + x[0]
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
       x = np.cumsum(np.insert(xforward, 0, x[0]))
+      e2ex = (x[N] + 5.0) * np.ones(N+1)
 
       x_and_cruise = np.column_stack([x, cruise_target])
       x = np.min(x_and_cruise, axis=1)
@@ -449,7 +451,7 @@ class LongitudinalMpc:
     self.params[:,4] = t_follow if not self.custom_tr_enabled else self.t_follow
 
 
-    self.e2e_x = x[:]
+    self.e2e_x = e2ex[:]
     self.lead_0_obstacle = lead_0_obstacle[:]
     self.lead_1_obstacle = lead_1_obstacle[:]
     if self.mode == 'acc':

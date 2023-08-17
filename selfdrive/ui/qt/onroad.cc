@@ -515,7 +515,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
 
   if (s->scene.btn_pressing > 0) {
     p.setPen(QPen(Qt::white, 15));
-    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+20);
+    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+17);
   }
 
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
@@ -907,7 +907,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     // debug info(right panel)
     int width_r = 180;
     int sp_xr = rect().right() - UI_BORDER_SIZE - width_r / 2 - 10;
-    int sp_yr = UI_BORDER_SIZE + 235;
+    int sp_yr = UI_BORDER_SIZE + 245;
     int num_r = 0;
 
     //p.setRenderHint(QPainter::TextAntialiasing);
@@ -1268,7 +1268,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
       sl_opacity = 1;
     }
 
-    if (s->scene.limitSpeedCamera > 19) {
+    if (s->scene.limitSpeedCamera > 21) {
       if (s->scene.speedlimit_signtype) {
         p.setBrush(whiteColor(255/sl_opacity));
         p.drawRoundedRect(rect_si, 8, 8);
