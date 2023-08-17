@@ -250,7 +250,7 @@ class CarState(CarStateBase):
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       #ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0 or cp.vl["EMS16"]["CRUISE_LAMP_M"] != 0
       #ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 or cp.vl["LVR12"]["CF_Lvr_CruiseSet"] != 0
-      #ret.cruiseState.standstill = False
+      ret.cruiseState.standstill = False
       if self.cruise_buttons[-1] == 1 or self.cruise_buttons[-1] == 2:
         self.exp_engage_available = True
         self.brake_check = False

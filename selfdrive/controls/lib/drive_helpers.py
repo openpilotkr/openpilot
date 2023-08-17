@@ -10,13 +10,14 @@ from selfdrive.modeld.constants import T_IDXS
 from selfdrive.car.hyundai.values import Buttons
 from common.params import Params
 
+IS_METRIC = Params().get_bool("IsMetric") if Params().get_bool("IsMetric") is not None else False
 # WARNING: this value was determined based on the model's training distribution,
 #          model predictions above this speed can be unpredictable
 # V_CRUISE's are in kph
-V_CRUISE_MIN = 30
+V_CRUISE_MIN = 30 if IS_METRIC else 20
 V_CRUISE_MAX = 160
 V_CRUISE_UNSET = 255
-V_CRUISE_INITIAL = 30
+V_CRUISE_INITIAL = V_CRUISE_MIN = 30 if IS_METRIC else 20
 V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 105
 IMPERIAL_INCREMENT = 1.6  # should be CV.MPH_TO_KPH, but this causes rounding errors
 
