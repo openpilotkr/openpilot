@@ -7,7 +7,7 @@ from selfdrive.car.hyundai.values import Buttons
 from common.numpy_fast import clip, interp
 from cereal import log
 import cereal.messaging as messaging
-from random import randint
+from random import randint, randrange
 from common.params import Params
 
 LaneChangeState = log.LateralPlan.LaneChangeState
@@ -358,7 +358,7 @@ class NaviControl():
     self.driverSccSetControl = False
 
     if CS.driverAcc_time and CS.cruise_set_mode in (1,2,4):
-      self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+      self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
       self.driverSccSetControl = True
       return min(CS.clu_Vanz + (3 if CS.is_set_speed_in_mph else 5), navi_speed)
     # elif self.gasPressed_old:
@@ -366,20 +366,20 @@ class NaviControl():
     #   ctrl_speed = max(min_control_speed, ctrl_speed, clu_Vanz)
     #   CS.set_cruise_speed(ctrl_speed)
     elif CS.CP.resSpeed > 21:
-      self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+      self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
       res_speed = max(min_control_speed, CS.CP.resSpeed)
       return min(res_speed, navi_speed)
     elif CS.cruise_set_mode in (1,2,4):
       if CS.out.brakeLights and CS.out.vEgo == 0:
         self.faststart = True
-        self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+        self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
       elif self.onSpeedBumpControl2 and not self.lead_0.status:
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 60)
-        self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+        self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
       elif self.onSpeedBumpControl:
         var_speed = min(navi_speed, 20 if CS.is_set_speed_in_mph else 30)
-        self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+        self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
       elif self.faststart and CS.CP.vFuture <= 40:
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
       elif (self.lead_0.status or self.lead_1.status) and CS.CP.vFuture >= (min_control_speed-(4 if CS.is_set_speed_in_mph else 7)):
@@ -395,33 +395,33 @@ class NaviControl():
           self.cut_in_run_timer = 1500
         d_ratio = interp(CS.clu_Vanz, [40, 110], [0.3, 0.2])
         if self.cut_in_run_timer and dRel < CS.clu_Vanz * d_ratio: # keep decel when cut_in, max running time 15sec
-          self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+          self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
           self.cutInControl = True
           var_speed = min(CS.CP.vFutureA, navi_speed)
         elif vRel > (-3 if CS.is_set_speed_in_mph else -5):
           var_speed = min(CS.CP.vFuture + max(0, int(dRel*(0.11 if CS.is_set_speed_in_mph else 0.16)+vRel)), navi_speed)
-          ttime = randint(65, 75) if CS.is_set_speed_in_mph else randint(35, 45)
+          ttime = randint(60, 80) if CS.is_set_speed_in_mph else randint(30, 50)
           self.t_interval = int(interp(dRel, [15, 50], [7, ttime])) if not (self.onSpeedControl or self.curvSpeedControl or self.cut_in) else 10 if CS.is_set_speed_in_mph else 7
           self.cutInControl = False
         else:
           var_speed = min(CS.CP.vFuture, navi_speed)
-          self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+          self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
           self.cut_in_run_timer = 0
           self.cutInControl = False
       elif self.lead_0.status and CS.CP.vFuture < min_control_speed:
         self.faststart = False
         var_speed = min(CS.CP.vFuture, navi_speed)
-        self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+        self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
         self.cutInControl = False
       else:
         self.faststart = False
         var_speed = navi_speed
-        ttime = randint(65, 75) if CS.is_set_speed_in_mph else randint(35, 45)
+        ttime = randint(60, 80) if CS.is_set_speed_in_mph else randint(30, 50)
         self.t_interval = ttime if not (self.onSpeedControl or self.curvSpeedControl or self.cut_in) else 10 if CS.is_set_speed_in_mph else 7
         self.cutInControl = False
     else:
       var_speed = navi_speed
-      self.t_interval = randint(9, 11) if CS.is_set_speed_in_mph else randint(6, 8)
+      self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
       self.cut_in_run_timer = 0
       self.cutInControl = False
 

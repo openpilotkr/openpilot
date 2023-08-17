@@ -71,7 +71,6 @@ class CarController:
 
 
     self.scc12_cnt = 0
-    self.counter_init = False
     self.aq_value = 0
     self.aq_value_raw = 0
 
@@ -170,7 +169,7 @@ class CarController:
     self.osm_spdlimit_enabled = self.c_params.get_bool("OSMSpeedLimitEnable")
     self.stock_safety_decel_enabled = self.c_params.get_bool("UseStockDecelOnSS")
     self.joystick_debug_mode = self.c_params.get_bool("JoystickDebugMode")
-    self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
+    #self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
 
     self.smooth_start = False
 
@@ -362,7 +361,7 @@ class CarController:
 
     # >90 degree steering fault prevention
     if self.to_avoid_lkas_fault_enabled or self.CP.carFingerprint in CANFD_CAR:
-      self.angle_limit_counter, apply_steer_req = common_fault_avoidance(CS.out.steeringAngleDeg, self.to_avoid_lkas_fault_max_angle, lat_active,
+      self.angle_limit_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringAngleDeg) >= self.to_avoid_lkas_fault_max_angle, lat_active,
                                                                          self.angle_limit_counter, self.to_avoid_lkas_fault_max_frame,
                                                                          MAX_ANGLE_CONSECUTIVE_FRAMES)
       # Hold torque with induced temporary fault when cutting the actuation bit
@@ -389,7 +388,7 @@ class CarController:
     # *** common hyundai stuff ***
 
     # tester present - w/ no response (keeps relevant ECU disabled)
-    if self.frame % 100 == 0 and not (self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and self.CP.openpilotLongitudinalControl and not self.opkr_long_alt:
+    if self.frame % 100 == 0 and not (self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
       # for longitudinal control, either radar or ADAS driving ECU
       addr, bus = 0x7d0, 0
       if self.CP.flags & HyundaiFlags.CANFD_HDA2.value:
@@ -982,7 +981,7 @@ class CarController:
       #       if (self.frame - self.last_button_frame) * DT_CTRL >= 0.15:
       #         self.last_button_frame = self.frame
 
-      if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and not self.opkr_long_alt:
+      if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         # TODO: unclear if this is needed
         jerk = 3.0 if actuators.longControlState == LongCtrlState.pid else 1.0
         can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
@@ -993,20 +992,16 @@ class CarController:
         can_sends.append(hyundaican.create_lfahda_mfc(self.packer, CC.enabled))
 
       # 5 Hz ACC options
-      if self.frame % 20 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and not self.opkr_long_alt:
+      if self.frame % 20 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         can_sends.extend(hyundaican.create_acc_opt(self.packer))
 
       # 2 Hz front radar options
-      if self.frame % 50 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and not self.opkr_long_alt:
+      if self.frame % 50 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         can_sends.append(hyundaican.create_frt_radar_opt(self.packer))
 
 
-      if self.CP.sccBus == 2 and self.counter_init and self.longcontrol and self.opkr_long_alt:
+      if self.CP.sccBus == 2 and self.longcontrol and self.opkr_long_alt:
         if self.frame % 2 == 0:
-          self.scc12cnt += 1
-          self.scc12cnt %= 0xF
-          self.scc11cnt += 1
-          self.scc11cnt %= 0x10
           lead_objspd = CS.lead_objspd  # vRel (km/h)
           aReqValue = CS.scc12["aReqValue"]
           faccel = actuators.accel if CC.longActive and not CS.out.gasPressed else 0
@@ -1027,16 +1022,26 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-            elif 0.1 < self.dRel:
-              self.stopped = False
-              pass
             else:
               self.stopped = False
-              accel = aReqValue
+              accel = faccel
           elif self.radar_helper_option == 1: # Radar Only
             accel = aReqValue
           elif self.radar_helper_option >= 2: # OPKR Custom(Radar+Vision), more smooth slowdown for cut-in or encountering being decellerated car.
-            if 0 < CS.lead_distance <= 149:
+            if self.experimental_mode_temp and self.experimental_mode:
+              self.stopped = False
+              if stopping:
+                self.smooth_start = True
+                accel = min(-0.5, accel, faccel*0.5)
+              elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis)*0.9:
+                accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
+              else:
+                self.smooth_start = False
+                accel = faccel
+            elif 0 < CS.lead_distance <= 149 and CS.clu_Vanz > 3 and self.smooth_start:
+              self.smooth_start = False
+              accel = aReqValue
+            elif 0 < CS.lead_distance <= 149 and not self.smooth_start: # prevent moving forward at exp stop
               stock_weight = 0.0
               self.smooth_start = False
               self.vrel_delta_timer2 += 1
@@ -1132,19 +1137,13 @@ class CarController:
                 self.stopped = True
               else:
                 self.stopped = False
-            elif 0.1 < self.dRel < 80:
+            elif 0.1 < self.dRel < 90:
               self.stopped = False
-              vvrel = self.vRel*3.6
-              vvrel_weight = interp(vvrel, [-35, 0], [0.2, 0.4])
-              if accel <= 0 and aReqValue <= 0:
-                accel = (accel*(1-vvrel_weight)) + (aReqValue*vvrel_weight)
-              elif accel <= 0 and aReqValue > 0 and CS.clu_Vanz > 30:
-                accel = (aReqValue*(1-vvrel_weight)) + (accel*vvrel_weight)
-              else:
-                pass
+              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.0, 30], [0.9, 1.0])
+              accel = faccel*ddrel_weight
             else:
               self.stopped = False
-              if self.stopsign_enabled or self.experimental_mode:
+              if self.experimental_mode:
                 if stopping:
                   self.smooth_start = True
                   accel = min(-0.5, accel, faccel*0.5)
@@ -1152,7 +1151,7 @@ class CarController:
                   accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
                 else:
                   self.smooth_start = False
-                  if self.sm['liveENaviData'].isHighway or CS.is_highway or (not self.experimental_mode_temp):
+                  if self.sm['liveENaviData'].isHighway or CS.highway_cam != 0 or (not self.experimental_mode_temp):
                     accel = aReqValue
                   elif self.dRel < 0.1:
                     accel = faccel
@@ -1163,7 +1162,7 @@ class CarController:
             stock_weight = 0.
 
           if self.stock_safety_decel_enabled:
-            if CS.scc11["Navi_SCC_Camera_Act"] == 2 and accel > aReqValue:
+            if CS.highway_cam == 2 and accel > aReqValue:
               accel = aReqValue
           accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
           self.aq_value = accel
@@ -1186,14 +1185,10 @@ class CarController:
           can_sends.append(hyundaican.create_scc13(self.packer, CS.scc13))
         if self.frame % 50 == 0:
           can_sends.append(hyundaican.create_scc42a(self.packer))
-      elif self.CP.sccBus == 2 and self.longcontrol and self.opkr_long_alt:
-        self.counter_init = True
-        self.scc12cnt = CS.scc12init["CR_VSM_Alive"]
-        self.scc11cnt = CS.scc11init["AliveCounterACC"]
 
     if self.CP.carFingerprint in CANFD_CAR:
-      str_log1 = 'EN/LA/LO={}/{}/{}  MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}/{:03.0f}  VF={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}'.format(
-        int(CC.enabled), int(lat_active), int(CC.longActive), CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), abs(CS.out.steeringTorque), self.vFuture, self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN)
+      str_log1 = 'EN/LA/LO={}/{}{}/{}  MD={}  BS={:1.0f}/{:1.0f}  CV={:03.0f}/{:0.4f}  TQ={:03.0f}/{:03.0f}  VF={:03.0f}  ST={:03.0f}/{:01.0f}/{:01.0f}'.format(
+        int(CC.enabled), int(CC.latActive), int(lat_active), int(CC.longActive), CS.out.cruiseState.modeSel, self.CP.mdpsBus, self.CP.sccBus, self.model_speed, abs(self.sm['controlsState'].curvature), abs(new_steer), abs(CS.out.steeringTorque), self.vFuture, self.params.STEER_MAX, self.params.STEER_DELTA_UP, self.params.STEER_DELTA_DOWN)
       if CS.out.cruiseState.accActive:
         str_log2 = 'AQ={:+04.2f}  SS={:03.0f}  VF={:03.0f}/{:03.0f}  TS/VS={:03.0f}/{:03.0f}  RD/ED/C/T={:04.1f}/{:04.1f}/{}/{}  C={:1.0f}/{:1.0f}/{}'.format(
         self.aq_value if self.longcontrol else 0, set_speed_in_units, self.vFuture, self.vFutureA, self.NC.ctrl_speed, round(CS.VSetDis), 0, self.dRel, int(self.NC.cut_in), self.NC.cut_in_run_timer, 0, self.btnsignal if self.btnsignal is not None else 0, self.NC.t_interval)
@@ -1260,4 +1255,4 @@ class CarController:
 
 
     self.frame += 1
-    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on)
+    return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp, self.btnsignal if self.btnsignal is not None else 0

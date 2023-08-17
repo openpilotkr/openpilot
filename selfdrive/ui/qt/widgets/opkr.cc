@@ -160,8 +160,8 @@ CLongControlGroup::CLongControlGroup() : CGroupWidget( tr("Long Control") )
   pBoxLayout->addWidget(new RadarLongHelperOption());
   pBoxLayout->addWidget(new StoppingDistAdjToggle());
   pBoxLayout->addWidget(new StoppingDist());
-  pBoxLayout->addWidget(new E2ELongToggle());
-  pBoxLayout->addWidget(new StopAtStopSignToggle());
+  //pBoxLayout->addWidget(new E2ELongToggle());
+  //pBoxLayout->addWidget(new StopAtStopSignToggle());
   pBoxLayout->addWidget(new StockDecelonCamToggle());
   //pBoxLayout->addWidget(new RadarDisableToggle());
   pBoxLayout->addWidget(new UseRadarTrackToggle());

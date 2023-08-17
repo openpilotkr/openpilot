@@ -36,7 +36,8 @@ DISCONNECT_TIMEOUT = 5.  # wait 5 seconds before going offroad after disconnect 
 PANDA_STATES_TIMEOUT = int(1000 * 1.5 * DT_TRML)  # 1.5x the expected pandaState frequency
 
 ThermalBand = namedtuple("ThermalBand", ['min_temp', 'max_temp'])
-HardwareState = namedtuple("HardwareState", ['network_type', 'network_info', 'network_strength', 'network_stats', 'network_metered', 'nvme_temps', 'modem_temps', 'storage_usage', 'ip_address'])
+HardwareState = namedtuple("HardwareState", ['network_type', 'network_info', 'network_strength', 'network_stats',
+                                             'network_metered', 'nvme_temps', 'modem_temps', 'storage_usage', 'ip_address'])
 
 # List of thermal bands. We will stay within this region as long as we are within the bounds.
 # When exiting the bounds, we'll jump to the lower or higher band. Bands are ordered in the dict.
@@ -62,7 +63,7 @@ def populate_tz_by_type():
     if not n.startswith("thermal_zone"):
       continue
     with open(os.path.join("/sys/devices/virtual/thermal", n, "type")) as f:
-      tz_by_type[f.read().strip()] = int(n.lstrip("thermal_zone"))
+      tz_by_type[f.read().strip()] = int(n.removeprefix("thermal_zone"))
 
 def read_tz(x):
   if x is None:
@@ -114,7 +115,6 @@ def hw_state_thread(end_event, hw_queue):
   while not end_event.is_set():
     # these are expensive calls. update every 10s
     if (count % int(10. / DT_TRML)) == 0:
-
       try:
         network_type = HARDWARE.get_network_type()
         modem_temps = HARDWARE.get_modem_temperatures()
@@ -162,13 +162,10 @@ def hw_state_thread(end_event, hw_queue):
           pass
 
         # TODO: remove this once the config is in AGNOS
-        try:
-          if not modem_configured and len(HARDWARE.get_sim_info().get('sim_id', '')) > 0:
-            cloudlog.warning("configuring modem")
-            HARDWARE.configure_modem()
-            modem_configured = True
-        except:
-          pass
+        if not modem_configured and len(HARDWARE.get_sim_info().get('sim_id', '')) > 0:
+          cloudlog.warning("configuring modem")
+          HARDWARE.configure_modem()
+          modem_configured = True
 
         prev_hw_state = hw_state
       except Exception:

@@ -468,7 +468,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int bottom_radius = 32;
 
   QRect set_speed_rect(QPoint(15 + (default_size.width() - set_speed_size.width()) / 2, s->scene.low_ui_profile?(height()-default_size.height()-35-150):15), set_speed_size);
-  p.setPen(QPen(whiteColor(75), 6));
+  if (s->scene.exp_mode_temp) {
+    p.setPen(QPen(whiteColor(75), 6));
+  } else {
+    p.setPen(QPen(greenColor(220), 6));
+  }
   if (is_over_sl) {
     p.setBrush(ochreColor(128));
   } else if (!is_over_sl && s->scene.limitSpeedCamera > 19){
@@ -508,6 +512,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   p.setFont(InterFont(90, QFont::Bold));
   p.setPen(set_speed_color);
   p.drawText(set_speed_rect.adjusted(0, 90, 0, 0), Qt::AlignTop | Qt::AlignHCenter, s->scene.cruiseAccStatus?QString::number(s->scene.vSetDis, 'f', 0):"-");
+
+  if (s->scene.btn_pressing > 0) {
+    p.setPen(QPen(Qt::white, 15));
+    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+20);
+  }
 
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
   // US/Canada (MUTCD style) sign`
@@ -1093,7 +1102,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.setBrush(blackColor(70));
     p.setPen(Qt::NoPen);
     p.drawEllipse(m_x-15, m_y-15, m_btn_size+30, m_btn_size+30);
-    p.setPen(QPen(QColor(255, 255, 255, 80), 6));
+    if (s->scene.liveENaviData.eopkrconalive) {
+      p.setPen(QPen(QColor(0, 255, 0, 150), 6));
+    } else {
+      p.setPen(QPen(QColor(255, 255, 255, 80), 6));
+    }
     p.setBrush(Qt::NoBrush);
     if (s->scene.lateralPlan.lanelessModeStatus) p.setBrush(QColor(13, 177, 248, 100));
     p.drawEllipse(multi_btn_draw);

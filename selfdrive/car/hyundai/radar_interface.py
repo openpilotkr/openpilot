@@ -18,34 +18,15 @@ def get_radar_can_parser(CP):
     if DBC[CP.carFingerprint]['radar'] is None:
       return None
 
-    signals = []
-    checks = []
+    messages = [(f"RADAR_TRACK_{addr:x}", 50) for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT)]
+    return CANParser(DBC[CP.carFingerprint]['radar'], messages, 1)
 
-    for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT):
-      msg = f"RADAR_TRACK_{addr:x}"
-      signals += [
-        ("STATE", msg),
-        ("AZIMUTH", msg),
-        ("LONG_DIST", msg),
-        ("REL_ACCEL", msg),
-        ("REL_SPEED", msg),
-      ]
-      checks += [(msg, 50)]
-    return CANParser(DBC[CP.carFingerprint]['radar'], signals, checks, 1)
   else:
-    signals = [
-      # signal_name, signal_address
-      ("ObjValid", "SCC11"),
-      ("ACC_ObjStatus", "SCC11"),
-      ("ACC_ObjLatPos", "SCC11"),
-      ("ACC_ObjDist", "SCC11"),
-      ("ACC_ObjRelSpd", "SCC11"),
-    ]
-    checks = [
+    messages = [
       # address, frequency
       ("SCC11", 50),
     ]
-    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CP.sccBus)
+    return CANParser(DBC[CP.carFingerprint]['pt'], messages, CP.sccBus)
 
 
 class RadarInterface(RadarInterfaceBase):
@@ -71,10 +52,10 @@ class RadarInterface(RadarInterfaceBase):
   def update(self, can_strings):
     if USE_RADAR_TRACK or self.CP.carFingerprint in CANFD_CAR:
       if self.radar_off_can or (self.rcp is None):
-        return super().update(None)
+        return None
     else:
       if self.radar_off_can:
-        return super().update(None)
+        return None
 
     vls = self.rcp.update_strings(can_strings)
     self.updated_messages.update(vls)
@@ -115,7 +96,7 @@ class RadarInterface(RadarInterfaceBase):
           self.pts[addr].dRel = math.cos(azimuth) * msg['LONG_DIST']
           self.pts[addr].yRel = 0.5 * -math.sin(azimuth) * msg['LONG_DIST']
           self.pts[addr].vRel = msg['REL_SPEED']
-          self.pts[addr].aRel = msg['REL_ACCEL'] 
+          self.pts[addr].aRel = msg['REL_ACCEL']
           self.pts[addr].yvRel = float('nan')
 
         else:
