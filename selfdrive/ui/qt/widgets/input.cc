@@ -238,8 +238,49 @@ bool ConfirmationDialog::confirm(const QString &prompt_text, const QString &conf
   return d.exec();
 }
 
+bool ConfirmationDialog::confirm2(const QString &prompt_text, QWidget *parent) {
+  ConfirmationDialog d = ConfirmationDialog(prompt_text, tr("Ok"), tr("Cancel"), false, parent);
+  return d.exec();
+}
+
 bool ConfirmationDialog::rich(const QString &prompt_text, QWidget *parent) {
   ConfirmationDialog d = ConfirmationDialog(prompt_text, tr("Ok"), "", true, parent);
+  return d.exec();
+}
+
+// RichTextDialog
+
+RichTextDialog::RichTextDialog(const QString &prompt_text, const QString &btn_text,
+                               QWidget *parent) : QDialogBase(parent) {
+  QFrame *container = new QFrame(this);
+  container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
+  QGridLayout *main_layout = new QGridLayout(container);
+
+  //QVBoxLayout *main_layout = new QVBoxLayout(container);
+  main_layout->setContentsMargins(20, 20, 20, 20);
+
+  QLabel *prompt = new QLabel(prompt_text, this);
+  prompt->setWordWrap(true);
+  prompt->setAlignment(Qt::AlignLeft);
+  prompt->setStyleSheet("font-size: 40px; font-weight: light; color: #C9C9C9; margin: 25px;");
+
+  ScrollView *scroll_view = new ScrollView(prompt, this);
+  scroll_view->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+  main_layout->addWidget(scroll_view, 0, 0, 1, -1);
+
+  // confirm button
+  QPushButton* confirm_btn = new QPushButton(btn_text);
+  main_layout->addWidget(confirm_btn, 1, 0, 1, -1);
+  QObject::connect(confirm_btn, &QPushButton::clicked, this, &RichTextDialog::accept);
+
+  QVBoxLayout *outer_layout = new QVBoxLayout(this);
+  outer_layout->setContentsMargins(10, 10, 10, 10);
+  outer_layout->addWidget(container);
+}
+
+bool RichTextDialog::alert(const QString &prompt_text, QWidget *parent) {
+  auto d = RichTextDialog(prompt_text, tr("Ok"), parent);
   return d.exec();
 }
 
@@ -332,4 +373,125 @@ QString MultiOptionDialog::getSelection(const QString &prompt_text, const QStrin
     return d.selection;
   }
   return "";
+}
+
+
+// Update Info
+
+UpdateInfoDialog::UpdateInfoDialog(const QString &prompt_text, const QString &confirm_text, const QString &cancel_text, const QString &detail_text,
+                               QWidget *parent) : QDialogBase(parent) {
+  QFrame *container = new QFrame(this);
+  container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
+  QVBoxLayout *main_layout = new QVBoxLayout(container);
+  main_layout->setContentsMargins(32, 32, 32, 32);
+
+  QLabel *title = new QLabel(tr("UPDATE"), this);
+  title->setAlignment(Qt::AlignHCenter);
+  title->setStyleSheet("font-size: 70px; font-weight: bold; color: #AEFF82;");
+  main_layout->addWidget(title, 0, Qt::AlignTop | Qt::AlignHCenter);
+
+  QLabel *prompt = new QLabel(prompt_text, this);
+  prompt->setAlignment(Qt::AlignLeft);
+  prompt->setStyleSheet("font-size: 50px; font-weight: light; color: #FFFFFF; margin: 45px;");
+  main_layout->addWidget(new ScrollView(prompt, this), 1, Qt::AlignTop);
+
+  // Update + Cancel buttons
+  QHBoxLayout *btn_layout = new QHBoxLayout();
+  btn_layout->setSpacing(30);
+  main_layout->addLayout(btn_layout);
+
+  if (confirm_text.length()) {
+    QPushButton* confirm_btn = new QPushButton(confirm_text);
+    btn_layout->addWidget(confirm_btn);
+    QObject::connect(confirm_btn, &QPushButton::clicked, this, &UpdateInfoDialog::accept);
+  }
+
+  if (cancel_text.length()) {
+    QPushButton* cancel_btn = new QPushButton(cancel_text);
+    btn_layout->addWidget(cancel_btn);
+    QObject::connect(cancel_btn, &QPushButton::clicked, this, &UpdateInfoDialog::reject);
+  }
+
+  if (detail_text.length()) {
+    QPushButton* detail_btn = new QPushButton(detail_text);
+    btn_layout->addWidget(detail_btn);
+    QObject::connect(detail_btn, &QPushButton::clicked, [=]() {
+      std::system("git log -p -5 --color=always origin/$(git rev-parse --abbrev-ref HEAD) | /data/openpilot/selfdrive/assets/addon/aha/aha > /data/git_log.html");
+      const std::string txt = util::read_file("/data/git_log.html");
+      RichTextDialog::alert(QString::fromStdString(txt), this);
+    });
+  }
+
+  QVBoxLayout *outer_layout = new QVBoxLayout(this);
+  outer_layout->setContentsMargins(30, 30, 30, 30);
+  outer_layout->addWidget(container);
+}
+
+bool UpdateInfoDialog::confirm(const QString &prompt_text, QWidget *parent) {
+  auto d = UpdateInfoDialog(prompt_text, tr("Update"), tr("Cancel"), tr("Detail"), parent);
+  return d.exec();
+}
+
+// Git Pull Cancel
+
+GitPullCancel::GitPullCancel(const QString &confirm_text, const QString &cancel_text,
+                               QWidget *parent) : QDialogBase(parent) {
+  QStringList commit_list = QString::fromStdString(params.get("GitCommits")).split("\n");
+  QFrame *container = new QFrame(this);
+  container->setStyleSheet("QFrame { background-color: #1B1B1B; }");
+  QVBoxLayout *main_layout = new QVBoxLayout(container);
+  main_layout->setContentsMargins(32, 32, 32, 32);
+
+  QLabel *title = new QLabel(tr("Select a commit you want to go back and then press Ok to apply"), this);
+  title->setStyleSheet("font-size: 50px; font-weight: bold; color: #AEFF82;");
+  main_layout->addWidget(title, 0, Qt::AlignTop);
+
+  QListWidget *listWidget = new QListWidget();
+  for (QString contents : commit_list) {
+    listWidget->addItem(contents);
+  }
+  listWidget->setStyleSheet("font-size: 45px; font-weight: light; color: #FFFFFF;");
+  main_layout->addWidget(new ScrollView(listWidget, this), 1);
+
+  // Ok + Cancel buttons
+  QHBoxLayout *btn_layout = new QHBoxLayout();
+  btn_layout->setSpacing(30);
+  main_layout->addLayout(btn_layout);
+
+  if (confirm_text.length()) {
+    QPushButton* confirm_btn = new QPushButton(confirm_text);
+    btn_layout->addWidget(confirm_btn);
+    QObject::connect(confirm_btn, &QPushButton::clicked, [=]() {
+      int num = listWidget->currentRow();
+      if (num != -1) {
+        QString str = listWidget->currentItem()->text();
+        QStringList hash = str.split(",");
+        if (ConfirmationDialog::confirm2(tr("This will run below command: git reset --hard ") + hash[0], this)) {
+          QString cmd0 = "git reset --hard " + hash[0];
+          std::system("rm -f /data/openpilot/prebuilt");
+          std::system("touch /data/opkr_compiling");
+          std::system("git clean -d -f -f");
+          std::system(cmd0.toUtf8().constData());
+          std::system("sudo reboot");
+        }
+      } else {
+        ConfirmationDialog::alert(tr("No selection."), this);
+      }
+    });
+  }
+
+  if (cancel_text.length()) {
+    QPushButton* cancel_btn = new QPushButton(cancel_text);
+    btn_layout->addWidget(cancel_btn);
+    QObject::connect(cancel_btn, &QPushButton::clicked, this, &GitPullCancel::reject);
+  }
+
+  QVBoxLayout *outer_layout = new QVBoxLayout(this);
+  outer_layout->setContentsMargins(30, 30, 30, 30);
+  outer_layout->addWidget(container);
+}
+
+bool GitPullCancel::confirm(QWidget *parent) {
+  auto d = GitPullCancel(tr("Ok"), tr("Cancel"), parent);
+  return d.exec();
 }

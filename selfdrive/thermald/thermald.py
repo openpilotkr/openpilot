@@ -37,7 +37,7 @@ PANDA_STATES_TIMEOUT = int(1000 * 1.5 * DT_TRML)  # 1.5x the expected pandaState
 
 ThermalBand = namedtuple("ThermalBand", ['min_temp', 'max_temp'])
 HardwareState = namedtuple("HardwareState", ['network_type', 'network_info', 'network_strength', 'network_stats',
-                                             'network_metered', 'nvme_temps', 'modem_temps'])
+                                             'network_metered', 'nvme_temps', 'modem_temps', 'storage_usage', 'ip_address'])
 
 # List of thermal bands. We will stay within this region as long as we are within the bounds.
 # When exiting the bounds, we'll jump to the lower or higher band. Bands are ordered in the dict.
@@ -52,6 +52,8 @@ THERMAL_BANDS = OrderedDict({
 OFFROAD_DANGER_TEMP = 75
 
 prev_offroad_states: Dict[str, Tuple[bool, Optional[str]]] = {}
+
+sshkeyfile = '/data/public_key'
 
 tz_by_type: Optional[Dict[str, int]] = None
 def populate_tz_by_type():
@@ -107,6 +109,9 @@ def hw_state_thread(end_event, hw_queue):
   modem_restarted = False
   modem_missing_count = 0
 
+  storage_usage = 0
+  ip_address = ""
+
   while not end_event.is_set():
     # these are expensive calls. update every 10s
     if (count % int(10. / DT_TRML)) == 0:
@@ -136,6 +141,9 @@ def hw_state_thread(end_event, hw_queue):
 
         tx, rx = HARDWARE.get_modem_data_usage()
 
+        storage_usage = HARDWARE.get_storage_usage_percent()
+        ip_address = HARDWARE.get_ip_address()
+
         hw_state = HardwareState(
           network_type=network_type,
           network_info=HARDWARE.get_network_info(),
@@ -144,6 +152,8 @@ def hw_state_thread(end_event, hw_queue):
           network_metered=HARDWARE.get_network_metered(network_type),
           nvme_temps=HARDWARE.get_nvme_temperatures(),
           modem_temps=modem_temps,
+          storage_usage=storage_usage,
+          ip_address=ip_address,
         )
 
         try:
@@ -191,6 +201,8 @@ def thermald_thread(end_event, hw_queue):
     network_stats={'wwanTx': -1, 'wwanRx': -1},
     nvme_temps=[],
     modem_temps=[],
+    storage_usage = 0,
+    ip_address = "",
   )
 
   all_temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML, initialized=False)
@@ -206,6 +218,9 @@ def thermald_thread(end_event, hw_queue):
   thermal_config = HARDWARE.get_thermal_config()
 
   fan_controller = None
+
+  is_openpilot_view_enabled = 0
+  onroadrefresh = False
 
   while not end_event.is_set():
     sm.update(PANDA_STATES_TIMEOUT)
@@ -229,11 +244,17 @@ def thermald_thread(end_event, hw_queue):
       if fan_controller is None and peripheral_panda_present:
         if TICI:
           fan_controller = TiciFanController()
-
-    elif (time.monotonic() - sm.rcv_time['pandaStates']) > DISCONNECT_TIMEOUT:
-      if onroad_conditions["ignition"]:
-        onroad_conditions["ignition"] = False
-        cloudlog.error("panda timed out onroad")
+    elif params.get_bool("IsOpenpilotViewEnabled") and not params.get_bool("IsDriverViewEnabled") and is_openpilot_view_enabled == 0:
+      is_openpilot_view_enabled = 1
+      onroad_conditions["ignition"] = True
+    elif not params.get_bool("IsOpenpilotViewEnabled") and not params.get_bool("IsDriverViewEnabled") and is_openpilot_view_enabled == 1:
+      is_openpilot_view_enabled = 0
+      onroad_conditions["ignition"] = False
+    elif not is_openpilot_view_enabled:
+      if (time.monotonic() - sm.rcv_time['pandaStates']) > DISCONNECT_TIMEOUT:
+        if onroad_conditions["ignition"]:
+          onroad_conditions["ignition"] = False
+          cloudlog.error("panda timed out onroad")
 
     try:
       last_hw_state = hw_queue.get_nowait()
@@ -256,6 +277,9 @@ def thermald_thread(end_event, hw_queue):
     msg.deviceState.modemTempC = last_hw_state.modem_temps
 
     msg.deviceState.screenBrightnessPercent = HARDWARE.get_screen_brightness()
+
+    msg.deviceState.storageUsage = last_hw_state.storage_usage
+    msg.deviceState.ipAddress = last_hw_state.ip_address
 
     # this subset is only used for offroad
     temp_sources = [
@@ -289,11 +313,11 @@ def thermald_thread(end_event, hw_queue):
     # **** starting logic ****
 
     # Ensure date/time are valid
-    now = datetime.datetime.utcnow()
-    startup_conditions["time_valid"] = now > MIN_DATE
-    set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]) and peripheral_panda_present)
+    #now = datetime.datetime.utcnow()
+    #startup_conditions["time_valid"] = now > MIN_DATE
+    #set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]) and peripheral_panda_present)
 
-    startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get_bool("DisableUpdates") or params.get_bool("SnoozeUpdate")
+    #startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get_bool("DisableUpdates") or params.get_bool("SnoozeUpdate")
     startup_conditions["not_uninstalling"] = not params.get_bool("DoUninstall")
     startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
 
@@ -328,6 +352,13 @@ def thermald_thread(end_event, hw_queue):
               cloudlog.event("Unsupported NVMe", model=model, error=True)
           except Exception:
             pass
+
+    if params.get_bool("OnRoadRefresh"):
+      onroad_conditions["onroad_refresh"] = not params.get_bool("OnRoadRefresh")
+      onroadrefresh = True
+    elif onroadrefresh:
+       onroadrefresh = False
+       onroad_conditions["onroad_refresh"] = True
 
     # Handle offroad/onroad transition
     should_start = all(onroad_conditions.values())
@@ -370,6 +401,13 @@ def thermald_thread(end_event, hw_queue):
       started_ts = None
       if off_ts is None:
         off_ts = time.monotonic()
+
+    # opkr
+    sshkeylet = params.get_bool("OpkrSSHLegacy")
+    if not os.path.isfile(sshkeyfile) and sshkeylet:
+      os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; touch /data/public_key")
+    elif os.path.isfile(sshkeyfile) and not sshkeylet:
+      os.system("cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_new /data/params/d/GithubSshKeys; chmod 600 /data/params/d/GithubSshKeys; rm -f /data/public_key")
 
     # Offroad power monitoring
     voltage = None if peripheralState.pandaType == log.PandaState.PandaType.unknown else peripheralState.voltage

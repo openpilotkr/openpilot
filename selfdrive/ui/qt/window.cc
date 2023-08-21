@@ -66,11 +66,23 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 }
 
 void MainWindow::openSettings(int index, const QString &param) {
+  if (uiState()->scene.autoScreenOff != -3) {
+    uiState()->scene.brightness_off = 100;
+  }
+  if (uiState()->scene.do_not_disturb_mode > 0) {
+    uiState()->scene.do_not_disturb_mode = 0;
+  }
   main_layout->setCurrentWidget(settingsWindow);
   settingsWindow->setCurrentPanel(index, param);
 }
 
 void MainWindow::closeSettings() {
+  if (uiState()->scene.brightness_off == 100) {
+    uiState()->scene.brightness_off = std::stoi(Params().get("OpkrUIBrightnessOff"));
+  }
+  if (uiState()->scene.do_not_disturb_mode == 0) {
+    uiState()->scene.do_not_disturb_mode = std::stoi(Params().get("DoNotDisturbMode"));
+  }
   main_layout->setCurrentWidget(homeWindow);
 
   if (uiState()->scene.started) {

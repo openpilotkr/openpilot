@@ -140,6 +140,35 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     startupFuzzyFingerprintDEPRECATED @97;
     noTargetDEPRECATED @25;
     brakeUnavailableDEPRECATED @2;
+
+    laneChangeManual @118;
+    emgButtonManual @119;
+    driverSteering @120;
+    modeChangeOpenpilot @121;
+    modeChangeDistcurv @122;
+    modeChangeDistance @123;
+    modeChangeCurv @124;
+    modeChangeOneway @125;
+    modeChangeMaponly @126;
+    needBrake @127;
+    standStill @128;
+    e2eLongAlert @129;
+    isgActive @130;
+    camSpeedDown @131;
+    gapAdjusting @132;
+    resCruise @133;
+    curvSpeedDown @134;
+    standstillResButton @135;
+    routineDriveOn @136;
+    lkasEnabled @137;
+    cutinDetection @138;
+    gearNotD @139;
+    unSleepMode @140;
+    speedBump @141;
+    sccDriverOverride @142;
+    doNotDisturb @143;
+    chimeAtResume @144;
+    autoHold @145;
   }
 }
 
@@ -217,6 +246,36 @@ struct CarState {
   fuelGauge @41 :Float32; # battery or fuel tank level from 0.0 to 1.0
   charging @43 :Bool;
 
+  # opkr-tpms
+  tpms @48 :TPMS;
+
+  radarDistance @49 :Float32;
+  standStill @50 :Bool;
+  vSetDis @51 :Float32;
+  cruiseButtons @52 :Float32;
+  cruiseAccStatus @53 :Bool;
+  driverAcc @54 :Bool;
+  autoHold @55 :Bool;    # AutoHold
+  cruiseGapSet @56 :UInt8;
+
+  # opkr
+  safetyDist @57 :Float32;
+  safetySign @58 :Float32;
+  vEgoOP @59 :Float32;  # openpilot speed
+  gearStep @60 :Int8;
+  isMph @61 :Bool;
+  aReqValue @62 :Float32;
+  chargeMeter @63 :Float32;
+  brakeLights @64 :Bool;
+
+  struct TPMS {
+    unit @0 :Int8;
+    fl @1 :Float32;
+    fr @2 :Float32;
+    rl @3 :Float32;
+    rr @4 :Float32;
+  }
+
   struct WheelSpeeds {
     # optional wheel speeds
     fl @0 :Float32;
@@ -233,6 +292,12 @@ struct CarState {
     speedOffset @3 :Float32;
     standstill @4 :Bool;
     nonAdaptive @5 :Bool;
+
+    # atom
+    modeSel @7 :Int16;
+    cruiseSwState @8 :Int16;
+    accActive @9 :Bool;
+    gapSet @10 :Int16;
   }
 
   enum GearShifter {
@@ -351,6 +416,9 @@ struct CarControl {
     accel @4: Float32; # m/s^2
     longControlState @5: LongControlState;
 
+    # opkr
+    oaccel @9: Float32; # m/s^2
+    
     enum LongControlState @0xe40f3a917d908282{
       off @0;
       pid @1;
@@ -378,6 +446,8 @@ struct CarControl {
     leftLaneVisible @7: Bool;
     rightLaneDepart @8: Bool;
     leftLaneDepart @9: Bool;
+    vFuture @10:Float32;
+    vFutureA @11:Float32;
 
     enum VisualAlert {
       # these are the choices from the Honda
@@ -405,6 +475,8 @@ struct CarControl {
       prompt @6;
       promptRepeat @7;
       promptDistracted @8;
+      warning @9;
+      dingdong @10;
     }
   }
 
@@ -431,9 +503,11 @@ struct CarParams {
   enableBsm @56 :Bool;       # blind spot monitoring
   flags @64 :UInt32;         # flags for car specific quirks
   experimentalLongitudinalAvailable @71 :Bool;
+  experimentalLong @95 :Bool;
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
+  smoothSteer @93 :SmoothSteerData;
   safetyConfigs @62 :List(SafetyConfig);
   alternativeExperience @65 :Int16;      # panda flag for features like no disengage on gas
 
@@ -450,7 +524,7 @@ struct CarParams {
 
   # things we can derive
   rotationalInertia @22 :Float32;    # [kg*m2] body rotational inertia
-  tireStiffnessFactor @72 :Float32;  # scaling factor used in calculating tireStiffness[Front,Rear]
+  tireStiffnessFactor @96 :Float32;  # scaling factor used in calculating tireStiffness[Front,Rear]
   tireStiffnessFront @23 :Float32;   # [N/rad] front tire coeff of stiff
   tireStiffnessRear @24 :Float32;    # [N/rad] rear tire coeff of stiff
 
@@ -461,6 +535,7 @@ struct CarParams {
     indi @27 :LateralINDITuning;
     lqr @40 :LateralLQRTuning;
     torque @67 :LateralTorqueTuning;
+    atom @94 :LateralATOMTuning;
   }
 
   steerLimitAlert @28 :Bool;
@@ -498,9 +573,48 @@ struct CarParams {
     safetyParam2DEPRECATED @2 :UInt32;
   }
 
+  # opkr
+  mdpsBus @72: Int8;
+  sasBus @73: Int8;
+  sccBus @74: Int8;
+  fcaBus @75: Int8;
+  bsmAvailable @76: Bool;
+  lfaAvailable @77: Bool;
+  lvrAvailable @78: Bool;
+  evgearAvailable @79: Bool;
+  emsAvailable @80: Bool;
+  standStill @81: Bool;
+  vCruisekph @82: Float32;
+  resSpeed @83: Float32;
+  vFuture @84: Float32;
+  aqValue @85: Float32;
+  aqValueRaw @86: Float32;
+  vFutureA @87: Float32;
+  autoHoldAvailable @88 :Bool;
+  scc13Available @89 :Bool;
+  scc14Available @90 :Bool;
+  lfaHdaAvailable @91 :Bool;
+  navAvailable @92 :Bool;
+
+  struct SmoothSteerData
+  {
+    method @0: Int8;
+    maxSteeringAngle @1 :Float32;
+    maxDriverAngleWait @2 :Float32;
+    maxSteerAngleWait @3 :Float32;
+    driverAngleWait @4 :Float32;
+  }
+
   struct LateralParams {
     torqueBP @0 :List(Int32);
     torqueV @1 :List(Int32);
+  }
+
+  struct LateralATOMTuning {
+    lqr @0 :LateralLQRTuning;
+    torque @1 :LateralTorqueTuning;
+    indi @2 :LateralINDITuning;
+    pid @3 :LateralPIDTuning;
   }
 
   struct LateralPIDTuning {
@@ -509,6 +623,7 @@ struct CarParams {
     kiBP @2 :List(Float32);
     kiV @3 :List(Float32);
     kf @4 :Float32;
+    kd @5 :Float32;
   }
 
   struct LateralTorqueTuning {
@@ -530,6 +645,10 @@ struct CarParams {
     kf @6 :Float32;
     deadzoneBP @4 :List(Float32);
     deadzoneV @5 :List(Float32);
+    kdBP @7 :List(Float32) = [0.];
+    kdV @8 :List(Float32) = [0.];
+    kfBP @9 :List(Float32);
+    kfV @10 :List(Float32);
   }
 
   struct LateralINDITuning {
@@ -587,12 +706,14 @@ struct CarParams {
     volkswagenPq @21;
     subaruPreglobal @22;  # pre-Global platform
     hyundaiLegacy @23;
-    hyundaiCommunity @24;
+    hyundaiCommunity1 @24;
     volkswagenMlb @25;
     hongqi @26;
     body @27;
     hyundaiCanfd @28;
-    volkswagenMqbEvo @29;
+    hyundaiCommunity2 @29;
+    hyundaiCommunity1Legacy @30;
+    volkswagenMqbEvo @31;
   }
 
   enum SteerControlType {

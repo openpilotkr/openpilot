@@ -21,13 +21,29 @@ DriverViewWindow::DriverViewWindow(QWidget* parent) : QWidget(parent) {
   layout->setCurrentWidget(scene);
 }
 
-void DriverViewWindow::mouseReleaseEvent(QMouseEvent* e) {
+void DriverViewWindow::mousePressEvent(QMouseEvent* e) {
+  if (d_rec_btn.contains(e->pos())) {
+    uiState()->scene.rec_stat = !uiState()->scene.rec_stat;
+    return;
+  }
   cameraView->stopVipcThread();
   emit done();
 }
 
 DriverViewScene::DriverViewScene(QWidget* parent) : sm({"driverStateV2"}), QWidget(parent) {
   face_img = loadPixmap("../assets/img_driver_face_static.png", {FACE_IMG_SIZE, FACE_IMG_SIZE});
+
+  // neokii screen recorder, thx for sharing:)
+  record_timer = std::make_shared<QTimer>();
+  QObject::connect(record_timer.get(), &QTimer::timeout, [=]() {
+    if(recorder) {
+      recorder->update_screen();
+    }
+  });
+  record_timer->start(1000/UI_FREQ);
+
+  recorder = new ScreenRecoder(this);
+  recorder->hide();
 }
 
 void DriverViewScene::showEvent(QShowEvent* event) {
@@ -91,4 +107,38 @@ void DriverViewScene::paintEvent(QPaintEvent* event) {
   const int img_y = rect().bottom() - FACE_IMG_SIZE - img_offset;
   p.setOpacity(face_detected ? 1.0 : 0.2);
   p.drawPixmap(img_x, img_y, face_img);
+
+  // opkr
+  if (frame_updated) {
+  	UIState *s = uiState();
+    p.setPen(QColor(0xff, 0xff, 0xff));
+    p.setOpacity(1.0);
+    p.setRenderHint(QPainter::TextAntialiasing);
+    p.setFont(InterFont(50, QFont::Bold));
+
+    p.drawText(1550, 150, "faceProb:  " + QString::number(driver_data.getFaceProb(), 'f', 2));
+
+    p.drawText(1550, 250, "leftEyeProb:  " + QString::number(driver_data.getLeftEyeProb(), 'f', 2));
+    p.drawText(1550, 300, "rightEyeProb:  " + QString::number(driver_data.getRightEyeProb(), 'f', 2));
+    p.drawText(1550, 350, "leftBlinkProb:  " + QString::number(driver_data.getLeftBlinkProb(), 'f', 2));
+    p.drawText(1550, 400, "rightBlinkProb:  " + QString::number(driver_data.getRightBlinkProb(), 'f', 2));
+    p.drawText(1550, 500, "sunglassesProb:  " + QString::number(driver_data.getSunglassesProb(), 'f', 2));
+
+    // rec_stat and toggle
+    if (s->scene.rec_stat && !s->scene.rec_stat2) {
+      if (recorder) recorder->toggle();
+      s->scene.rec_stat2 = s->scene.rec_stat;
+    } else if (!s->scene.rec_stat && s->scene.rec_stat2) {
+      if (recorder) recorder->toggle();
+      s->scene.rec_stat = s->scene.rec_stat2;
+    }
+
+    QRect rec = {1800, 885, 140, 140};
+    p.setBrush(Qt::NoBrush);
+    if (s->scene.rec_stat3) p.setBrush(Qt::red);
+    p.setPen(QPen(QColor(255, 255, 255, 80), 6));
+    p.drawEllipse(rec);
+    p.setPen(QColor(255, 255, 255, 200));
+    p.drawText(rec, Qt::AlignCenter, QString("REC"));
+  }
 }

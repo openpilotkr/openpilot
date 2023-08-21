@@ -261,7 +261,17 @@ void MapWindow::initializeGL() {
 
   m_map->setMargins({0, 350, 0, 50});
   m_map->setPitch(MIN_PITCH);
-  m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj");
+  QString MAPBOX_STYLE = QString::fromStdString(Params().get("OPKRMapboxStyleSelect"));
+  QString MAPBOX_CUSTOM = QString::fromStdString(Params().get("MapboxStyleCustom")); // set the param with yours(pubulished style from Mapbox website)
+  if (MAPBOX_STYLE == "0") {
+    m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
+  } else if (MAPBOX_STYLE == "1") {
+    m_map->setStyleUrl("mapbox://styles/multikyd/ckwbf0oig3swu14lc482wqvfz"); // opkr
+  } else if (MAPBOX_STYLE == "2" && !Params().get("MapboxStyleCustom").empty()) {
+    m_map->setStyleUrl(MAPBOX_CUSTOM); // yours
+  } else {
+    m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
+  }
 
   QObject::connect(m_map.data(), &QMapboxGL::mapChanged, [=](QMapboxGL::MapChange change) {
     // set global animation duration to 0 ms so visibility changes are instant

@@ -17,12 +17,14 @@ FRAME_FINGERPRINT = 100  # 1s
 
 EventName = car.CarEvent.EventName
 
+CAR_NAME = Params().get("CarModel", encoding="utf8")
 
 def get_startup_event(car_recognized, controller_available, fw_seen):
-  if is_comma_remote() and is_tested_branch():
-    event = EventName.startup
-  else:
-    event = EventName.startupMaster
+  #if is_comma_remote() and is_tested_branch():
+  #  event = EventName.startup
+  #else:
+  #  event = EventName.startupMaster
+  event = EventName.startup
 
   if not car_recognized:
     if fw_seen:
@@ -195,6 +197,10 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
   if candidate is None:
     cloudlog.event("car doesn't match any fingerprints", fingerprints=fingerprints, error=True)
     candidate = "mock"
+
+  if CAR_NAME is not None:
+    candidate = CAR_NAME.rstrip('\n')
+
 
   CarInterface, CarController, CarState = interfaces[candidate]
   CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long_allowed, docs=False)

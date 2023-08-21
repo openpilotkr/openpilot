@@ -10,7 +10,10 @@
 
 
 const int btn_size = 192;
-const int img_size = (btn_size / 4) * 3;
+const int img_size = (btn_size / 4) * 3; // 144
+
+#include <QTimer>
+#include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 
 
 // ***** onroad widgets *****
@@ -35,6 +38,17 @@ class ExperimentalButton : public QPushButton {
 public:
   explicit ExperimentalButton(QWidget *parent = 0);
   void updateState(const UIState &s);
+
+protected:
+  inline QColor redColor(int alpha = 255) { return QColor(201, 34, 49, alpha); }
+  inline QColor blackColor(int alpha = 255) { return QColor(0, 0, 0, alpha); }
+  inline QColor whiteColor(int alpha = 255) { return QColor(255, 255, 255, alpha); }
+  inline QColor yellowColor(int alpha = 255) { return QColor(218, 202, 37, alpha); }
+  inline QColor ochreColor(int alpha = 255) { return QColor(218, 111, 37, alpha); }
+  inline QColor greenColor(int alpha = 255) { return QColor(0, 255, 0, alpha); }
+  inline QColor blueColor(int alpha = 255) { return QColor(0, 0, 255, alpha); }
+  inline QColor orangeColor(int alpha = 255) { return QColor(255, 175, 3, alpha); }
+  inline QColor greyColor(int alpha = 1) { return QColor(191, 191, 191, alpha); }
 
 private:
   void paintEvent(QPaintEvent *event) override;
@@ -77,6 +91,11 @@ class AnnotatedCameraWidget : public CameraWidget {
   Q_PROPERTY(bool rightHandDM MEMBER rightHandDM);
   Q_PROPERTY(int status MEMBER status);
 
+  Q_PROPERTY(bool is_over_sl MEMBER is_over_sl);
+  Q_PROPERTY(bool lead_stat MEMBER lead_stat);
+  Q_PROPERTY(float dist_rel MEMBER dist_rel);
+  Q_PROPERTY(float vel_rel MEMBER vel_rel);
+
 public:
   explicit AnnotatedCameraWidget(VisionStreamType type, QWidget* parent = 0);
   void updateState(const UIState &s);
@@ -84,11 +103,22 @@ public:
   MapSettingsButton *map_settings_btn;
 
 private:
+  void drawIcon(QPainter &p, int x, int y, QPixmap &img, QBrush bg = QColor(0,0,0,0), float opacity = 1.0, bool rotation = false, float angle = 0);
   void drawText(QPainter &p, int x, int y, const QString &text, int alpha = 255);
+  void uiText(QPainter &p, int x, int y, const QString &text, int alpha = 255, bool custom_color = false);
+  void debugText(QPainter &p, int x, int y, const QString &text, int alpha = 255, int fontsize = 30, bool bold = false);
+
 
   QVBoxLayout *main_layout;
   ExperimentalButton *experimental_btn;
   QPixmap dm_img;
+  QPixmap engage_img;
+  QPixmap experimental_img;
+  QPixmap gear_img_p;
+  QPixmap gear_img_r;
+  QPixmap gear_img_n;
+  QPixmap gear_img_d;
+
   float speed;
   QString speedUnit;
   float setSpeed;
@@ -108,8 +138,18 @@ private:
   int skip_frame_count = 0;
   bool wide_cam_requested = false;
 
+  bool is_over_sl = false;
+  bool lead_stat = false;
+  float dist_rel = 0;
+  float vel_rel = 0;
+
+  // neokii screen recorder. thx for sharing your source. 
+  ScreenRecoder* recorder;
+  std::shared_ptr<QTimer> record_timer;
+
 protected:
   void paintGL() override;
+  void paintEvent(QPaintEvent *event) override;
   void initializeGL() override;
   void showEvent(QShowEvent *event) override;
   void updateFrameMat() override;
@@ -117,9 +157,16 @@ protected:
   void drawLead(QPainter &painter, const cereal::RadarState::LeadData::Reader &lead_data, const QPointF &vd);
   void drawHud(QPainter &p);
   void drawDriverState(QPainter &painter, const UIState *s);
+  void drawWheelState(QPainter &painter, const UIState *s);
   inline QColor redColor(int alpha = 255) { return QColor(201, 34, 49, alpha); }
   inline QColor whiteColor(int alpha = 255) { return QColor(255, 255, 255, alpha); }
   inline QColor blackColor(int alpha = 255) { return QColor(0, 0, 0, alpha); }
+  inline QColor yellowColor(int alpha = 255) { return QColor(218, 202, 37, alpha); }
+  inline QColor ochreColor(int alpha = 255) { return QColor(218, 111, 37, alpha); }
+  inline QColor greenColor(int alpha = 255) { return QColor(0, 255, 0, alpha); }
+  inline QColor blueColor(int alpha = 255) { return QColor(0, 0, 255, alpha); }
+  inline QColor orangeColor(int alpha = 255) { return QColor(255, 175, 3, alpha); }
+  inline QColor greyColor(int alpha = 1) { return QColor(191, 191, 191, alpha); }
 
   double prev_draw_t = 0;
   FirstOrderFilter fps_filter;

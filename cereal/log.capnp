@@ -340,6 +340,9 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   fanSpeedPercentDesired @10 :UInt16;
   screenBrightnessPercent @37 :Int8;
 
+  storageUsage @45 :UInt8;
+  ipAddress @46 :Text;
+
   struct ThermalZone {
     name @0 :Text;
     temp @1 :Float32;
@@ -680,15 +683,42 @@ struct ControlsState @0x97ff69c53601abf1 {
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
 
+  # atom
+  alertTextMsg1  @66 :Text;
+  alertTextMsg2  @67 :Text;
+  alertTextMsg3  @68 :Text;
+  # opkr
+  lateralControlMethod  @69 :UInt8;
+  limitSpeedCamera @70 :Float32 = 0;
+  limitSpeedCameraDist @71 :Float32 = 0;
+  steerRatio @72 :Float32;
+  mapSign @73 :Float32;
+  mapSignCam @74 :Float32;
+  dynamicTRMode @75 :UInt8;
+  dynamicTRValue @76 :Float32;
+  pauseSpdLimit @77 :Bool;
+  accel @78 :Float32;
+  safetySpeed @79 :Float32;
+  steeringAngleDesiredDeg @80 :Float32;
+  gapBySpeedOn @81 :Bool;
+
+  pandaSafetyModel @83 :Text;
+  interfaceSafetyModel @84 :Text;
+  rxChecks @85 :Bool;
+  mismatchCounter @86 :Bool;
+  expModeTemp @87 :Bool;
+  btnPressing @88 :UInt8;
+
+
   lateralControlState :union {
     indiState @52 :LateralINDIState;
     pidState @53 :LateralPIDState;
+    lqrState @55 :LateralLQRState;
     angleState @58 :LateralAngleState;
     debugState @59 :LateralDebugState;
     torqueState @60 :LateralTorqueState;
+    atomState @82  :LateralATOMState;
     curvatureState @65 :LateralCurvatureState;
-
-    lqrStateDEPRECATED @55 :LateralLQRState;
   }
 
   enum OpenpilotState @0xdbe58b96d2d1ac61 {
@@ -754,6 +784,37 @@ struct ControlsState @0x97ff69c53601abf1 {
     actualLateralAccel @9 :Float32;
     desiredLateralAccel @10 :Float32;
    }
+
+  struct LateralATOMState {
+    active @0 :Bool;
+    steeringAngleDeg @1 :Float32;
+    i @2 :Float32;
+    output @3 :Float32;
+    lqrOutput @4 :Float32;
+    saturated @5 :Bool;
+    steeringAngleDesiredDeg @6 :Float32;
+    error @7 :Float32;
+    errorRate @8 :Float32;
+    p1 @9 :Float32;
+    i1 @10 :Float32;
+    d1 @11 :Float32;
+    f1 @12 :Float32;
+    selected @13 :Float32;
+    steeringRateDeg @14 :Float32;
+    angleError @15 :Float32;
+    p2 @16 :Float32;
+    i2 @17 :Float32;
+    f2 @18 :Float32;
+    steeringAccelDeg @19 :Float32;
+    rateSetPoint @20 :Float32;
+    accelSetPoint @21 :Float32;
+    accelError @22 :Float32;
+    delayedOutput @23 :Float32;
+    delta @24 :Float32;
+    steeringRateDesiredDeg @25 :Float32;
+    actualLateralAccel @26 :Float32;
+    desiredLateralAccel @27 :Float32;
+  }
 
   struct LateralLQRState {
     active @0 :Bool;
@@ -999,12 +1060,22 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   solverExecutionTime @35 :Float32;
   personality @36 :LongitudinalPersonality;
 
+  # opkr
+  dynamicTRMode @37 :UInt8;
+  dynamicTRValue @38 :Float32;
+
+  e2eX @39 :List(Float64) = [0.];
+  lead0Obstacle @40 :List(Float64) = [0.];
+  lead1Obstacle @41 :List(Float64) = [0.];
+  cruiseTarget @42 :List(Float64) = [0.];
+
   enum LongitudinalPlanSource {
     cruise @0;
     lead0 @1;
     lead1 @2;
     lead2 @3;
     e2e @4;
+    stop @5;
   }
 
   # deprecated
@@ -1049,11 +1120,11 @@ struct UiPlan {
 
 struct LateralPlan @0xe1e9318e2ae8b51e {
   modelMonoTime @31 :UInt64;
-  laneWidthDEPRECATED @0 :Float32;
-  lProbDEPRECATED @5 :Float32;
-  rProbDEPRECATED @7 :Float32;
+  laneWidth @0 :Float32;
+  lProb @5 :Float32;
+  rProb @7 :Float32;
   dPathPoints @20 :List(Float32);
-  dProbDEPRECATED @21 :Float32;
+  dProb @21 :Float32;
 
   mpcSolutionValid @9 :Bool;
   desire @17 :Desire;
@@ -1074,6 +1145,15 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
     x @0 :List(List(Float32));
     u @1 :List(Float32);
   }
+
+  # opkr
+  outputScale @34 :Float32;
+  standstillElapsedTime @35 :Float32;
+  vCruiseSet @36 :Float32;
+  vCurvature @37 :Float32;
+  lanelessMode @38 :Bool;
+  modelSpeed @39 :Float32;
+  totalCameraOffset @40 :Float32;
 
   enum Desire {
     none @0;
@@ -1994,6 +2074,45 @@ struct LiveTorqueParametersData {
   useParams @12 :Bool;
 }
 
+struct LiveENaviData {
+  speedLimit @0 :Int32;
+  safetyDistance @1 :Float32;
+  safetySign @2 :Int32;
+  turnInfo @3 :Int32;
+  distanceToTurn @4 :Float32;
+  safetySignCam @5 :Int32;
+  connectionAlive @6 :Bool;
+  roadLimitSpeed @7 :Int32;
+  linkLength @8 :Int32;
+  currentLinkAngle @9 :Int32;
+  nextLinkAngle @10 :Int32;
+  roadName @11 :Text;
+  isHighway @12 :Bool;
+  isTunnel @13 :Bool;
+  opkr0 @14 :Text;
+  opkr1 @15 :Text;
+  opkr2 @16 :Text;
+  opkr3 @17 :Text;
+  opkr4 @18 :Text;
+  opkr5 @19 :Text;
+  opkr6 @20 :Text;
+  opkr7 @21 :Text;
+  opkr8 @22 :Text;
+  opkr9 @23 :Text;
+  wazeAlertId @24 :Int8;
+  wazeAlertDistance @25 :Int32;
+  wazeRoadSpeedLimit @26 :Int32;
+  wazeRoadName @27 :Text;
+  wazeNavSign @28 :Int64;
+  wazeNavDistance @29 :Int32;
+  wazeCurrentSpeed @30 :Int32;
+  wazeAlertType @31 :Text;
+  opkrLatitude @32 :Float32;
+  opkrLongitude @33 :Float32;
+  wazeLatitude @34 :Float32;
+  wazeLongitude @35 :Float32;
+}
+
 struct LiveMapDataDEPRECATED {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
@@ -2012,6 +2131,31 @@ struct LiveMapDataDEPRECATED {
   roadCurvature @9 :List(Float32);
   distToTurn @10 :Float32;
   mapValid @11 :Bool;
+}
+
+struct LiveMapData {
+  speedLimitValid @0 :Bool;
+  speedLimit @1 :Float32;
+  speedLimitAheadValid @2 :Bool;
+  speedLimitAhead @3 :Float32;
+  speedLimitAheadDistance @4 :Float32;
+  turnSpeedLimitValid @5 :Bool;
+  turnSpeedLimit @6 :Float32;
+  turnSpeedLimitEndDistance @7 :Float32;
+  turnSpeedLimitSign @8 :Int16;
+  turnSpeedLimitsAhead @9 :List(Float32);
+  turnSpeedLimitsAheadDistances @10 :List(Float32);
+  turnSpeedLimitsAheadSigns @11 :List(Int16);
+  lastGpsTimestamp @12 :Int64;  # Milliseconds since January 1, 1970.
+  currentRoadName @13 :Text;
+  lastGpsLatitude @14 :Float64;
+  lastGpsLongitude @15 :Float64;
+  lastGpsSpeed @16 :Float32;
+  lastGpsBearingDeg @17 :Float32;
+  lastGpsAccuracy @18 :Float32;
+  lastGpsBearingAccuracyDeg @19 :Float32;
+  roadCameraOffset @20 :Float32;
+  ref @21 :Text;
 }
 
 struct CameraOdometry {
@@ -2263,6 +2407,10 @@ struct Event {
     livestreamRoadEncodeData @120 :EncodeData;
     livestreamWideRoadEncodeData @121 :EncodeData;
     livestreamDriverEncodeData @122 :EncodeData;
+
+    # OPKR Navi
+    liveENaviData @123: LiveENaviData;
+    liveMapData @124: LiveMapData;
 
     # *********** Custom: reserved for forks ***********
     customReserved0 @107 :Custom.CustomReserved0;

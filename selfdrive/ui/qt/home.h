@@ -69,6 +69,14 @@ private:
   DriverViewWindow *driver_view;
   QStackedLayout *slayout;
 
+  int clip( int &x, int lo, int hi);
+  void mousePressCommon(QMouseEvent* e, int nDir);
+  void mousePressPID( QMouseEvent* e, int nDir );
+  void mousePressINDI(QMouseEvent* e, int nDir);
+  void mousePressLQR(QMouseEvent* e, int nDir);
+  void mousePressTORQ(QMouseEvent* e, int nDir);
+  void mousePressMULTI(QMouseEvent* e, int nDir);
+
 private slots:
   void updateState(const UIState &s);
 };

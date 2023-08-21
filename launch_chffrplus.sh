@@ -11,7 +11,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 function agnos_init {
   # wait longer for weston to come up
   if [ -f "$BASEDIR/prebuilt" ]; then
-    sleep 3
+    sleep 10
   fi
 
   # TODO: move this to agnos
@@ -29,6 +29,28 @@ function agnos_init {
     fi
     $DIR/system/hardware/tici/updater $AGNOS_PY $MANIFEST
   fi
+
+  # ssh key restore, by opkr
+  if [ -f "/data/params/d/OpkrSSHLegacy" ]; then
+    SSH_KEY=$(cat /data/params/d/OpkrSSHLegacy)
+  else
+    echo "1" > /data/params/d/SshEnabled
+    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
+    chmod 600 /data/params/d/GithubSshKeys
+  fi
+  if [ "$SSH_KEY" == "1" ]; then
+    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
+    chmod 600 /data/params/d/GithubSshKeys
+  fi
+
+  if [ ! -f "/data/params/d/GithubSshKeys" ]; then
+    echo "1" > /data/params/d/SshEnabled
+    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
+    chmod 600 /data/params/d/GithubSshKeys
+  fi
+
+  # opkr car list
+  cat /data/openpilot/selfdrive/car/hyundai/values.py | grep ' = "' | grep -v "Smart" | awk -F'"' '{print $2}' > /data/CarList
 }
 
 function launch {
@@ -84,7 +106,28 @@ function launch {
 
   # start manager
   cd selfdrive/manager
-  ./build.py && ./manager.py
+  if [ -f "/data/params/d/OSMEnable" ]; then
+    OSM_ENABLE=$(cat /data/params/d/OSMEnable)
+  fi
+  if [ -f "/data/params/d/OSMSpeedLimitEnable" ]; then
+    OSM_SL_ENABLE=$(cat /data/params/d/OSMSpeedLimitEnable)
+  fi
+  if [ -f "/data/params/d/CurvDecelOption" ]; then
+    OSM_CURV_ENABLE=$(cat /data/params/d/CurvDecelOption)
+  fi
+  if [ -f "/data/params/d/OSMOfflineUse" ]; then
+    OSM_OFFLINE_ENABLE=$(cat /data/params/d/OSMOfflineUse)
+  fi
+
+  if [ "$OSM_ENABLE" == "1" ] || [ "$OSM_SL_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "3" ]; then
+    if [ "$OSM_OFFLINE_ENABLE" == "1" ]; then
+      ./custom_dep.py && ./build.py && ./local_osm_install.py && ./manager.py
+    else
+      ./custom_dep.py && ./build.py && ./manager.py
+    fi
+  else
+    ./build.py && ./manager.py
+  fi
 
   # if broken, keep on screen error
   while true; do sleep 1; done

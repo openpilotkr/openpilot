@@ -157,6 +157,89 @@ static void update_state(UIState *s) {
   SubMaster &sm = *(s->sm);
   UIScene &scene = s->scene;
 
+  if (sm.updated("controlsState")) {
+    scene.controls_state = sm["controlsState"].getControlsState();
+    scene.lateralControlMethod = scene.controls_state.getLateralControlMethod();
+    if (scene.lateralControlMethod == 0) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getPidState().getOutput();
+    } else if (scene.lateralControlMethod == 1) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getIndiState().getOutput();
+    } else if (scene.lateralControlMethod == 2) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getLqrState().getOutput();
+    } else if (scene.lateralControlMethod == 3) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getTorqueState().getOutput();
+    } else if (scene.lateralControlMethod == 4) {
+      scene.output_scale = scene.controls_state.getLateralControlState().getAtomState().getOutput();
+      scene.multi_lat_selected = scene.controls_state.getLateralControlState().getAtomState().getSelected();
+    }
+
+    scene.alertTextMsg1 = scene.controls_state.getAlertTextMsg1(); //debug1
+    scene.alertTextMsg2 = scene.controls_state.getAlertTextMsg2(); //debug2
+    scene.alertTextMsg3 = scene.controls_state.getAlertTextMsg3(); //debug3
+
+    scene.limitSpeedCamera = scene.controls_state.getLimitSpeedCamera();
+    scene.limitSpeedCameraDist = scene.controls_state.getLimitSpeedCameraDist();
+    scene.mapSign = scene.controls_state.getMapSign();
+    scene.mapSignCam = scene.controls_state.getMapSignCam();
+    scene.steerRatio = scene.controls_state.getSteerRatio();
+    scene.dynamic_tr_mode = scene.controls_state.getDynamicTRMode();
+    scene.dynamic_tr_value = scene.controls_state.getDynamicTRValue();
+    scene.pause_spdlimit = scene.controls_state.getPauseSpdLimit();
+    scene.accel = scene.controls_state.getAccel();
+    scene.ctrl_speed = scene.controls_state.getSafetySpeed();
+    scene.desired_angle_steers = scene.controls_state.getSteeringAngleDesiredDeg();
+    scene.gap_by_speed_on = scene.controls_state.getGapBySpeedOn();
+    scene.enabled = scene.controls_state.getEnabled();
+    scene.experimental_mode = scene.controls_state.getExperimentalMode();
+    scene.exp_mode_temp = scene.controls_state.getExpModeTemp();
+    scene.btn_pressing = scene.controls_state.getBtnPressing();
+  }
+  if (sm.updated("carState")) {
+    scene.car_state = sm["carState"].getCarState();
+    auto cs_data = sm["carState"].getCarState();
+    auto cruiseState = scene.car_state.getCruiseState();
+    scene.awake = cruiseState.getCruiseSwState();
+
+    if (scene.leftBlinker!=cs_data.getLeftBlinker() || scene.rightBlinker!=cs_data.getRightBlinker()) {
+      scene.blinker_blinkingrate = 120;
+    }
+    scene.brakePress = cs_data.getBrakePressed();
+    scene.gasPress = cs_data.getGasPressed();
+    scene.brakeLights = cs_data.getBrakeLights();
+    scene.getGearShifter = cs_data.getGearShifter();
+    scene.leftBlinker = cs_data.getLeftBlinker();
+    scene.rightBlinker = cs_data.getRightBlinker();
+    scene.leftblindspot = cs_data.getLeftBlindspot();
+    scene.rightblindspot = cs_data.getRightBlindspot();
+    scene.tpmsUnit = cs_data.getTpms().getUnit();
+    scene.tpmsPressureFl = cs_data.getTpms().getFl();
+    scene.tpmsPressureFr = cs_data.getTpms().getFr();
+    scene.tpmsPressureRl = cs_data.getTpms().getRl();
+    scene.tpmsPressureRr = cs_data.getTpms().getRr();
+    scene.radarDistance = cs_data.getRadarDistance();
+    scene.standStill = cs_data.getStandStill();
+    scene.vSetDis = cs_data.getVSetDis();
+    scene.cruiseAccStatus = cs_data.getCruiseAccStatus();
+    scene.driverAcc = cs_data.getDriverAcc();
+    scene.angleSteers = cs_data.getSteeringAngleDeg();
+    scene.cruise_gap = cs_data.getCruiseGapSet();
+    scene.autoHold = cs_data.getAutoHold();
+    scene.steer_warning = cs_data.getSteerFaultTemporary();
+    scene.a_req_value = cs_data.getAReqValue();
+    scene.engine_rpm = cs_data.getEngineRpm();
+    scene.gear_step = cs_data.getGearStep();
+    scene.charge_meter = cs_data.getChargeMeter();
+  }
+
+  if (sm.updated("liveParameters")) {
+    //scene.liveParams = sm["liveParameters"].getLiveParameters();
+    auto live_data = sm["liveParameters"].getLiveParameters();
+    scene.liveParams.angleOffset = live_data.getAngleOffsetDeg();
+    scene.liveParams.angleOffsetAverage = live_data.getAngleOffsetAverageDeg();
+    scene.liveParams.stiffnessFactor = live_data.getStiffnessFactor();
+    scene.liveParams.steerRatio = live_data.getSteerRatio();
+  }
+
   if (sm.updated("liveCalibration")) {
     auto live_calib = sm["liveCalibration"].getLiveCalibration();
     auto rpy_list = live_calib.getRpyCalib();
@@ -182,6 +265,19 @@ static void update_state(UIState *s) {
     scene.calibration_valid = live_calib.getCalStatus() == cereal::LiveCalibrationData::Status::CALIBRATED;
     scene.calibration_wide_valid = wfde_list.size() == 3;
   }
+  if (sm.updated("deviceState")) {
+    scene.deviceState = sm["deviceState"].getDeviceState();
+    scene.cpuPerc = scene.deviceState.getCpuUsagePercent()[0];
+    scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
+    scene.ambientTemp = scene.deviceState.getAmbientTempC();
+    scene.fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
+    scene.storageUsage = scene.deviceState.getStorageUsage();
+    scene.ipAddress = scene.deviceState.getIpAddress();
+  }
+  if (sm.updated("peripheralState")) {
+    scene.peripheralState = sm["peripheralState"].getPeripheralState();
+    scene.fanSpeedRpm = scene.peripheralState.getFanSpeedRpm();
+  }
   if (sm.updated("pandaStates")) {
     auto pandaStates = sm["pandaStates"].getPandaStates();
     if (pandaStates.size() > 0) {
@@ -191,21 +287,127 @@ static void update_state(UIState *s) {
         scene.ignition = false;
         for (const auto& pandaState : pandaStates) {
           scene.ignition |= pandaState.getIgnitionLine() || pandaState.getIgnitionCan();
+          scene.controlAllowed = pandaState.getControlsAllowed();
         }
       }
     }
   } else if ((s->sm->frame - s->sm->rcv_frame("pandaStates")) > 5*UI_FREQ) {
     scene.pandaType = cereal::PandaState::PandaType::UNKNOWN;
   }
+  if (sm.updated("ubloxGnss")) {
+    auto ub_data = sm["ubloxGnss"].getUbloxGnss();
+    if (ub_data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
+      scene.satelliteCount = ub_data.getMeasurementReport().getNumMeas();
+    }
+  }
+  if (sm.updated("gpsLocationExternal")) {
+    scene.gpsAccuracy = sm["gpsLocationExternal"].getGpsLocationExternal().getAccuracy();
+    auto ge_data = sm["gpsLocationExternal"].getGpsLocationExternal();
+    scene.gpsAccuracyUblox = ge_data.getAccuracy();
+    scene.altitudeUblox = ge_data.getAltitude();
+    scene.bearingUblox = ge_data.getBearingDeg();
+  }
   if (sm.updated("carParams")) {
-    scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
+    auto cp_data = sm["carParams"].getCarParams();
+    scene.longitudinal_control = cp_data.getOpenpilotLongitudinalControl();
+    scene.steer_actuator_delay = cp_data.getSteerActuatorDelay();
+    scene.car_fingerprint = cp_data.getCarFingerprint();
   }
   if (sm.updated("wideRoadCameraState")) {
     auto cam_state = sm["wideRoadCameraState"].getWideRoadCameraState();
     float scale = (cam_state.getSensor() == cereal::FrameData::ImageSensor::AR0231) ? 6.0f : 1.0f;
     scene.light_sensor = std::max(100.0f - scale * cam_state.getExposureValPercent(), 0.0f);
   }
-  scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+
+  if (sm.updated("lateralPlan")) {
+    scene.lateral_plan = sm["lateralPlan"].getLateralPlan();
+    auto lp_data = sm["lateralPlan"].getLateralPlan();
+    scene.lateralPlan.laneWidth = lp_data.getLaneWidth();
+    scene.lateralPlan.dProb = lp_data.getDProb();
+    scene.lateralPlan.lProb = lp_data.getLProb();
+    scene.lateralPlan.rProb = lp_data.getRProb();
+    scene.lateralPlan.standstillElapsedTime = lp_data.getStandstillElapsedTime();
+    scene.lateralPlan.lanelessModeStatus = lp_data.getLanelessMode();
+    scene.lateralPlan.totalCameraOffset = lp_data.getTotalCameraOffset();
+  }
+  if (sm.updated("longitudinalPlan")) {
+    scene.longitudinal_plan = sm["longitudinalPlan"].getLongitudinalPlan();
+    auto lop_data = sm["longitudinalPlan"].getLongitudinalPlan();
+    for (int i = 0; i < std::size(scene.longitudinalPlan.e2ex); i++) {
+      scene.longitudinalPlan.e2ex[i] = lop_data.getE2eX()[i];
+    }
+    for (int i = 0; i < std::size(scene.longitudinalPlan.lead0); i++) {
+      scene.longitudinalPlan.lead0[i] = lop_data.getLead0Obstacle()[i];
+    }
+    for (int i = 0; i < std::size(scene.longitudinalPlan.lead1); i++) {
+      scene.longitudinalPlan.lead1[i] = lop_data.getLead1Obstacle()[i];
+    }
+    for (int i = 0; i < std::size(scene.longitudinalPlan.cruisetg); i++) {
+      scene.longitudinalPlan.cruisetg[i] = lop_data.getCruiseTarget()[i];
+    }
+  }
+  // opkr
+  if (sm.updated("liveENaviData")) {
+    scene.live_enavi_data = sm["liveENaviData"].getLiveENaviData();
+    auto lme_data = sm["liveENaviData"].getLiveENaviData();
+    scene.liveENaviData.eopkrspeedlimit = lme_data.getSpeedLimit();
+    scene.liveENaviData.eopkrsafetydist = lme_data.getSafetyDistance();
+    scene.liveENaviData.eopkrsafetysign = lme_data.getSafetySign();
+    scene.liveENaviData.eopkrturninfo = lme_data.getTurnInfo();
+    scene.liveENaviData.eopkrdisttoturn = lme_data.getDistanceToTurn();
+    scene.liveENaviData.eopkrconalive = lme_data.getConnectionAlive();
+    scene.liveENaviData.eopkrroadlimitspeed = lme_data.getRoadLimitSpeed();
+    scene.liveENaviData.eopkrlinklength = lme_data.getLinkLength();
+    scene.liveENaviData.eopkrcurrentlinkangle = lme_data.getCurrentLinkAngle();
+    scene.liveENaviData.eopkrnextlinkangle = lme_data.getNextLinkAngle();
+    scene.liveENaviData.eopkrroadname = lme_data.getRoadName();
+    scene.liveENaviData.eopkrishighway = lme_data.getIsHighway();
+    scene.liveENaviData.eopkristunnel = lme_data.getIsTunnel();
+    if (scene.OPKR_Debug) {
+      scene.liveENaviData.eopkr0 = lme_data.getOpkr0();
+      scene.liveENaviData.eopkr1 = lme_data.getOpkr1();
+      scene.liveENaviData.eopkr2 = lme_data.getOpkr2();
+      scene.liveENaviData.eopkr3 = lme_data.getOpkr3();
+      scene.liveENaviData.eopkr4 = lme_data.getOpkr4();
+      scene.liveENaviData.eopkr5 = lme_data.getOpkr5();
+      scene.liveENaviData.eopkr6 = lme_data.getOpkr6();
+      scene.liveENaviData.eopkr7 = lme_data.getOpkr7();
+      scene.liveENaviData.eopkr8 = lme_data.getOpkr8();
+      scene.liveENaviData.eopkr9 = lme_data.getOpkr9();
+    }
+    if (scene.navi_select == 2) {
+      scene.liveENaviData.ewazealertid = lme_data.getWazeAlertId();
+      scene.liveENaviData.ewazealertdistance = lme_data.getWazeAlertDistance();
+      scene.liveENaviData.ewazeroadspeedlimit = lme_data.getWazeRoadSpeedLimit();
+      scene.liveENaviData.ewazecurrentspeed = lme_data.getWazeCurrentSpeed();
+      scene.liveENaviData.ewazeroadname = lme_data.getWazeRoadName();
+      scene.liveENaviData.ewazenavsign = lme_data.getWazeNavSign();
+      scene.liveENaviData.ewazenavdistance = lme_data.getWazeNavDistance();
+      scene.liveENaviData.ewazealerttype = lme_data.getWazeAlertType();
+    }
+  }
+  if (sm.updated("liveMapData")) {
+    scene.live_map_data = sm["liveMapData"].getLiveMapData();
+    auto lmap_data = sm["liveMapData"].getLiveMapData();
+    scene.liveMapData.ospeedLimit = lmap_data.getSpeedLimit();
+    scene.liveMapData.ospeedLimitAhead = lmap_data.getSpeedLimitAhead();
+    scene.liveMapData.ospeedLimitAheadDistance = lmap_data.getSpeedLimitAheadDistance();
+    scene.liveMapData.oturnSpeedLimit = lmap_data.getTurnSpeedLimit();
+    scene.liveMapData.oturnSpeedLimitEndDistance = lmap_data.getTurnSpeedLimitEndDistance();
+    scene.liveMapData.oturnSpeedLimitSign = lmap_data.getTurnSpeedLimitSign();
+    scene.liveMapData.ocurrentRoadName = lmap_data.getCurrentRoadName();
+    scene.liveMapData.oref = lmap_data.getRef();
+  }
+
+  if (s->sm->frame % (8*UI_FREQ) == 0) {
+  	s->is_OpenpilotViewEnabled = Params().getBool("IsOpenpilotViewEnabled");
+  }
+
+  if (!s->is_OpenpilotViewEnabled) {
+    scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  } else {
+    scene.started = sm["deviceState"].getDeviceState().getStarted();
+  }
 }
 
 void ui_update_params(UIState *s) {
@@ -221,7 +423,11 @@ void UIState::updateStatus() {
     if (state == cereal::ControlsState::OpenpilotState::PRE_ENABLED || state == cereal::ControlsState::OpenpilotState::OVERRIDING) {
       status = STATUS_OVERRIDE;
     } else {
-      status = controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
+      if (scene.comma_stock_ui == 2) {
+        status = controls_state.getEnabled() ? STATUS_DND : STATUS_DISENGAGED;
+      } else {
+        status = controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
+      }
     }
   }
 
@@ -234,13 +440,94 @@ void UIState::updateStatus() {
     started_prev = scene.started;
     emit offroadTransition(!scene.started);
   }
+
+  // this is useful to save compiling time before depart when you use remote ignition
+  if (!scene.auto_gitpull && (sm->frame - scene.started_frame > 30*UI_FREQ)) {
+    if (Params().getBool("GitPullOnBoot")) {
+      scene.auto_gitpull = true;
+      std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+    } else if (sm->frame - scene.started_frame > 60*UI_FREQ) {
+      scene.auto_gitpull = true;
+      std::system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &");
+    }
+  }
+
+  if (!scene.read_params_once) {
+    Params params;
+    // user param value init
+    scene.driving_record = params.getBool("OpkrDrivingRecord");
+    scene.nDebugUi1 = params.getBool("DebugUi1");
+    scene.nDebugUi2 = params.getBool("DebugUi2");
+    scene.nDebugUi3 = params.getBool("DebugUi3");
+    scene.forceGearD = params.getBool("JustDoGearD");
+    scene.nOpkrBlindSpotDetect = params.getBool("OpkrBlindSpotDetect");
+    scene.laneless_mode = std::stoi(params.get("LanelessMode"));
+    scene.recording_count = std::stoi(params.get("RecordingCount"));
+    scene.recording_quality = std::stoi(params.get("RecordingQuality"));
+    scene.monitoring_mode = params.getBool("OpkrMonitoringMode");
+    scene.brightness = std::stoi(params.get("OpkrUIBrightness"));
+    scene.nVolumeBoost = std::stoi(params.get("OpkrUIVolumeBoost"));
+    scene.autoScreenOff = std::stoi(params.get("OpkrAutoScreenOff"));
+    scene.brightness_off = std::stoi(params.get("OpkrUIBrightnessOff"));
+    scene.cameraOffset = std::stoi(params.get("CameraOffsetAdj"));
+    scene.pathOffset = std::stoi(params.get("PathOffsetAdj"));
+    scene.pidKp = std::stoi(params.get("PidKp"));
+    scene.pidKi = std::stoi(params.get("PidKi"));
+    scene.pidKd = std::stoi(params.get("PidKd"));
+    scene.pidKf = std::stoi(params.get("PidKf"));
+    scene.torqueKp = std::stoi(params.get("TorqueKp"));
+    scene.torqueKf = std::stoi(params.get("TorqueKf"));
+    scene.torqueKi = std::stoi(params.get("TorqueKi"));
+    scene.torqueFriction = std::stoi(params.get("TorqueFriction"));
+    scene.torqueMaxLatAccel = std::stoi(params.get("TorqueMaxLatAccel"));
+    scene.indiInnerLoopGain = std::stoi(params.get("InnerLoopGain"));
+    scene.indiOuterLoopGain = std::stoi(params.get("OuterLoopGain"));
+    scene.indiTimeConstant = std::stoi(params.get("TimeConstant"));
+    scene.indiActuatorEffectiveness = std::stoi(params.get("ActuatorEffectiveness"));
+    scene.lqrScale = std::stoi(params.get("Scale"));
+    scene.lqrKi = std::stoi(params.get("LqrKi"));
+    scene.lqrDcGain = std::stoi(params.get("DcGain"));
+    scene.navi_select = std::stoi(params.get("OPKRNaviSelect"));
+    scene.radar_long_helper = std::stoi(params.get("RadarLongHelper"));
+    scene.live_tune_panel_enable = params.getBool("OpkrLiveTunePanelEnable");
+    scene.bottom_text_view = std::stoi(params.get("BottomTextView"));
+    scene.max_animated_rpm = std::stoi(params.get("AnimatedRPMMax"));
+    scene.show_error = params.getBool("ShowError");
+    scene.speedlimit_signtype = params.getBool("OpkrSpeedLimitSignType");
+    scene.sl_decel_off = params.getBool("SpeedLimitDecelOff");
+    scene.osm_enabled = params.getBool("OSMEnable") || params.getBool("OSMSpeedLimitEnable") || std::stoi(params.get("CurvDecelOption")) == 1 || std::stoi(params.get("CurvDecelOption")) == 3;
+    scene.animated_rpm = params.getBool("AnimatedRPM");
+    scene.lateralControlMethod = std::stoi(params.get("LateralControlMethod"));
+    scene.do_not_disturb_mode = std::stoi(params.get("DoNotDisturbMode"));
+    scene.depart_chime_at_resume = params.getBool("DepartChimeAtResume");
+    scene.OPKR_Debug = params.getBool("OPKRDebug");
+    scene.low_ui_profile = params.getBool("LowUIProfile");
+    scene.stock_lkas_on_disengagement = params.getBool("StockLKASEnabled");
+    scene.ufc_mode = params.getBool("UFCModeEnabled");
+
+    if (scene.autoScreenOff > 0) {
+      scene.nTime = scene.autoScreenOff * 60 * UI_FREQ;
+    } else if (scene.autoScreenOff == 0) {
+      scene.nTime = 30 * UI_FREQ;
+    } else if (scene.autoScreenOff == -1) {
+      scene.nTime = 15 * UI_FREQ;
+    } else if (scene.autoScreenOff == -2) {
+      scene.nTime = 5 * UI_FREQ;
+    } else {
+      scene.nTime = -1;
+    }
+    scene.comma_stock_ui = std::stoi(params.get("CommaStockUI"));
+    scene.opkr_livetune_ui = params.getBool("OpkrLiveTunePanelEnable");
+    scene.read_params_once = true;
+  }
 }
 
 UIState::UIState(QObject *parent) : QObject(parent) {
   sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
-    "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "roadCameraState",
+    "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "peripheralState", "roadCameraState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "liveLocationKalman", "driverStateV2",
-    "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "uiPlan",
+    "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "uiPlan", "liveParameters",
+    "ubloxGnss", "gpsLocationExternal", "lateralPlan", "longitudinalPlan", "liveENaviData", "liveMapData",
   });
 
   Params params;
@@ -316,9 +603,39 @@ void Device::updateBrightness(const UIState &s) {
     clipped_brightness = std::clamp(100.0f * clipped_brightness, 10.0f, 100.0f);
   }
 
+  if (s.scene.comma_stock_ui == 2 && (s.scene.do_not_disturb_mode == 1 || s.scene.do_not_disturb_mode == 3)) {
+    if (s.scene.touched2) {
+      sleep_time = 10 * UI_FREQ;
+    } else if (sleep_time > 0) {
+      sleep_time--;
+    } else if (s.scene.started && sleep_time == -1) {
+      sleep_time = 10 * UI_FREQ;
+    }
+  } else if (s.scene.autoScreenOff != -3 && s.scene.touched2) {
+    sleep_time = s.scene.nTime;
+  } else if (s.scene.controls_state.getAlertSize() != cereal::ControlsState::AlertSize::NONE && s.scene.autoScreenOff != -3) {
+    sleep_time = s.scene.nTime;
+  } else if (sleep_time > 0 && s.scene.autoScreenOff != -3) {
+    sleep_time--;
+  } else if (s.scene.started && sleep_time == -1 && s.scene.autoScreenOff != -3) {
+    sleep_time = s.scene.nTime;
+  }
+
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
     brightness = 0;
+  } else if ((s.scene.enabled && s.scene.comma_stock_ui == 2 && (s.scene.do_not_disturb_mode == 1 || s.scene.do_not_disturb_mode == 3)) && s.scene.started && sleep_time == 0) {
+    brightness = 0;
+  } else if (s.scene.started && sleep_time == 0 && s.scene.autoScreenOff != -3) {
+    if (s.scene.brightness_off < 4) {
+      brightness = 0;
+    } else if (s.scene.brightness_off < 9) {
+      brightness = 1;
+    } else {
+      brightness = s.scene.brightness_off * 0.01 * brightness;
+    }
+  } else if ( s.scene.brightness ) {
+    brightness = s.scene.brightness;
   }
 
   if (brightness != last_brightness) {

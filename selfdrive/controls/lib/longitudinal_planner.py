@@ -87,14 +87,21 @@ class LongitudinalPlanner:
       j = np.zeros(len(T_IDXS_MPC))
     return x, v, a, j
 
-  def update(self, sm):
+  def update(self, sm, CP):
     if self.param_read_counter % 50 == 0:
       self.read_param()
     self.param_read_counter += 1
     self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
     v_ego = sm['carState'].vEgo
-    v_cruise_kph = min(sm['controlsState'].vCruise, V_CRUISE_MAX)
+    v_cruise_kph = sm['controlsState'].vCruise
+
+    if CP.sccBus != 0:
+      v_cruise_kph = sm['carState'].vSetDis
+    else:
+      v_cruise_kph = sm['controlsState'].vCruise
+
+    v_cruise_kph = min(v_cruise_kph, V_CRUISE_MAX)
     v_cruise = v_cruise_kph * CV.KPH_TO_MS
 
     long_control_off = sm['controlsState'].longControlState == LongCtrlState.off
@@ -133,7 +140,7 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=self.personality)
+    self.mpc.update(sm['radarState'], sm['carState'], sm['modelV2'], v_cruise, x, v, a, j, personality=self.personality)
 
     self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
@@ -170,5 +177,13 @@ class LongitudinalPlanner:
 
     longitudinalPlan.solverExecutionTime = self.mpc.solve_time
     longitudinalPlan.personality = self.personality
+
+    longitudinalPlan.dynamicTRMode = int(self.mpc.dynamic_TR_mode)
+    longitudinalPlan.dynamicTRValue = float(self.mpc.t_follow)
+
+    longitudinalPlan.e2eX = self.mpc.e2e_x.tolist()
+    longitudinalPlan.lead0Obstacle = self.mpc.lead_0_obstacle.tolist()
+    longitudinalPlan.lead1Obstacle = self.mpc.lead_1_obstacle.tolist()
+    longitudinalPlan.cruiseTarget = self.mpc.cruise_target.tolist()
 
     pm.send('longitudinalPlan', plan_send)

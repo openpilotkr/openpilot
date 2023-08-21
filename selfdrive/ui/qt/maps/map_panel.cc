@@ -19,7 +19,7 @@ MapPanel::MapPanel(const QMapboxGLSettings &mapboxSettings, QWidget *parent) : Q
   });
   QObject::connect(map, &MapWindow::requestVisible, [=](bool visible) {
     // when we show the map for a new route, signal HomeWindow to hide the sidebar
-    if (visible) { emit mapPanelRequested(); }
+    if (visible) { uiState()->scene.mapbox_running = true; emit mapPanelRequested(); }
     setVisible(visible);
   });
   QObject::connect(map, &MapWindow::requestSettings, [=](bool settings) {

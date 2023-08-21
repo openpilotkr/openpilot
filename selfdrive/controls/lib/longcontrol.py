@@ -1,4 +1,4 @@
-from cereal import car
+from cereal import car, log
 from openpilot.common.numpy_fast import clip, interp
 from openpilot.common.realtime import DT_CTRL
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, apply_deadzone
@@ -6,7 +6,12 @@ from openpilot.selfdrive.controls.lib.pid import PIDController
 from openpilot.selfdrive.modeld.constants import T_IDXS
 
 LongCtrlState = car.CarControl.Actuators.LongControlState
+from openpilot.common.conversions import Conversions as CV
+from openpilot.common.params import Params
+from decimal import Decimal
 
+import openpilot.common.log as trace1
+LongitudinalPlanSource = log.LongitudinalPlan.LongitudinalPlanSource
 
 def long_control_state_trans(CP, active, long_control_state, v_ego, v_target,
                              v_target_1sec, brake_pressed, cruise_standstill):
@@ -60,12 +65,24 @@ class LongControl:
     self.v_pid = 0.0
     self.last_output_accel = 0.0
 
+    self.long_stat = ""
+    self.long_plan_source = ""
+
+    self.long_log = Params().get_bool("LongLogDisplay")
+    self.stopping_dist = float(Decimal(Params().get("StoppingDist", encoding="utf8"))*Decimal('0.1'))
+
+    self.loc_timer = 0
   def reset(self, v_pid):
     """Reset PID controller and change setpoint"""
     self.pid.reset()
     self.v_pid = v_pid
 
-  def update(self, active, CS, long_plan, accel_limits, t_since_plan):
+  def update(self, active, CS, long_plan, accel_limits, t_since_plan, CP, radarState):
+    self.loc_timer += 1
+    if self.loc_timer > 100:
+      self.loc_timer = 0
+      self.long_log = Params().get_bool("LongLogDisplay")
+
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
     # Interp control trajectory
     speeds = long_plan.speeds
@@ -93,6 +110,14 @@ class LongControl:
     self.pid.pos_limit = accel_limits[1]
 
     output_accel = self.last_output_accel
+
+    if radarState is None:
+      dRel = 150
+      vRel = 0
+    else:
+      dRel = radarState.leadOne.dRel
+      vRel = radarState.leadOne.vRel
+
     self.long_control_state = long_control_state_trans(self.CP, active, self.long_control_state, CS.vEgo,
                                                        v_target, v_target_1sec, CS.brakePressed,
                                                        CS.cruiseState.standstill)
@@ -129,4 +154,36 @@ class LongControl:
 
     self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
 
-    return self.last_output_accel
+    if self.long_control_state == LongCtrlState.stopping:
+      self.long_stat = "STP"
+    elif self.long_control_state == LongCtrlState.starting:
+      self.long_stat = "STR"
+    elif self.long_control_state == LongCtrlState.pid:
+      self.long_stat = "PID"
+    elif self.long_control_state == LongCtrlState.off:
+      self.long_stat = "OFF"
+    else:
+      self.long_stat = "---"
+
+    if long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead0:
+      self.long_plan_source = "lead0"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead1:
+      self.long_plan_source = "lead1"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.lead2:
+      self.long_plan_source = "lead2"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.cruise:
+      self.long_plan_source = "cruise"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.e2e:
+      self.long_plan_source = "e2e"
+    elif long_plan.longitudinalPlanSource == LongitudinalPlanSource.stop:
+      self.long_plan_source = "stop"
+    else:
+      self.long_plan_source = "---"
+
+    if CP.sccBus != 0 and self.long_log:
+      str_log3 = 'LS={:s}  LP={:s}  AQ/AR/AT/FA={:+04.2f}/{:+04.2f}/{:+04.2f}/{:+04.2f}  GB={}  ED/RD={:04.1f}/{:04.1f}  TG={:03.0f}/{:03.0f}'.format(self.long_stat, \
+       self.long_plan_source, CP.aqValue, CP.aqValueRaw, a_target, self.last_output_accel, int(CS.gasPressed or CS.brakePressed), dRel, CS.radarDistance, \
+       (v_target*CV.MS_TO_MPH) if CS.isMph else (v_target*CV.MS_TO_KPH), (v_target_1sec*CV.MS_TO_MPH) if CS.isMph else (v_target_1sec*CV.MS_TO_KPH))
+      trace1.printf2('{}'.format(str_log3))
+
+    return self.last_output_accel, a_target

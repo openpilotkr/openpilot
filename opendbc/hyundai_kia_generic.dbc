@@ -1514,6 +1514,9 @@ BO_ 865 ADAS_PRK_11: 8 ADAS_PRK
 
 BO_ 882 ELECT_GEAR: 8 XXX
  SG_ Elect_Gear_Shifter : 16|4@1+ (1,0) [0|7] ""  CLU
+ SG_ Elect_Gear_Shifter_NEXO : 16|16@1+ (1,0) [0|65535] ""  CLU
+ SG_ Elect_Gear_Step : 22|3@0+ (1,0) [0|7] "" XXX
+ SG_ Elect_Motor_Speed : 0|8@1+ (1,0) [0|255] "" XXX
 
 BO_ 881 E_EMS11: 8 XXX
  SG_ Brake_Pedal_Pos : 0|8@1+ (1,0) [0|127] "" XXX
@@ -1523,6 +1526,8 @@ BO_ 881 E_EMS11: 8 XXX
  SG_ Cruise_Limit_Target : 23|8@1+ (1,0) [0|15] "" XXX
  SG_ Accel_Pedal_Pos : 31|8@1+ (1,0) [0|254] "" XXX
  SG_ CR_Vcu_AccPedDep_Pos : 56|8@1+ (1,0) [0|254] "" XXX
+ SG_ Engine_Run : 14|1@0+ (1,0) [0|1] "" XXX
+ SG_ N : 18|13@1+ (1,0) [0|15] "" XXX
 
 BO_ 1355 EV_PC6: 8 CGW
  SG_ CF_Vcu_SbwWarnMsg : 16|3@1+ (1,0) [0|7] "" Vector__XXX
@@ -1643,6 +1648,8 @@ BO_ 1348 Navi_HU: 8 XXX
  SG_ SpeedLim_Nav_General : 29|1@0+ (1,0) [0|1] "" XXX
  SG_ SpeedLim_Nav_Cam : 30|1@0+ (1,0) [0|1] "" XXX
 
+BO_ 1291 EV_Info: 8 XXX
+ SG_ OPKR_EV_Charge_Level : 17|7@1+ (1,0) [0|100] "%" XXX
 CM_ "BO_ E_EMS11: All (plug-in) hybrids use this gas signal: CR_Vcu_AccPedDep_Pos, and all EVs use the Accel_Pedal_Pos signal. See hyundai/values.py for a specific car list";
 CM_ SG_ 871 CF_Lvr_IsgState "Idle Stop and Go";
 CM_ SG_ 1348 SpeedLim_Nav_Clu "Speed limit displayed on Nav, Cluster and HUD";
@@ -1660,3 +1667,4 @@ VAL_ 1157 LFA_SysWarning 0 "no_message" 1 "switching_to_hda" 2 "switching_to_scc
 VAL_ 1157 LFA_Icon_State 0 "no_wheel" 1 "white_wheel" 2 "green_wheel" 3 "green_wheel_blink";
 VAL_ 1157 HDA_SysWarning 0 "no_message" 1 "driving_convenience_systems_cancelled" 2 "highway_drive_assist_system_cancelled";
 VAL_ 1322 CF_Clu_Gear 1 "P" 2 "R" 4 "N" 8 "D";
+VAL_ 882 Elect_Gear_Shifter_NEXO  1546 "D" 2314 "N" 2566 "R" 2569 "P";

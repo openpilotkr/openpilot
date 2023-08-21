@@ -24,6 +24,7 @@ protected:
 
 signals:
   void closeSettings();
+  void offroadTransition(bool offroad);
   void reviewTrainingGuide();
   void showDriverView();
   void expandToggleDescription(const QString &param);
@@ -47,6 +48,7 @@ private slots:
   void poweroff();
   void reboot();
   void updateCalibDescription();
+  void onroadRefresh();
 
 private:
   Params params;
@@ -65,8 +67,6 @@ private:
   Params params;
   std::map<std::string, ParamControl*> toggles;
   ButtonParamControl *long_personality_setting;
-
-  void updateToggles();
 };
 
 class SoftwarePanel : public ListWidget {
@@ -82,11 +82,45 @@ private:
   bool is_onroad = false;
 
   QLabel *onroadLbl;
+  LabelControl *gitRemoteLbl;
+  LabelControl *gitBranchLbl;
+  LabelControl *gitCommitLbl;
+  LabelControl *lastUpdateLbl;
+
   LabelControl *versionLbl;
   ButtonControl *installBtn;
   ButtonControl *downloadBtn;
   ButtonControl *targetBranchBtn;
+  ButtonControl *updateBtn;
 
   Params params;
   ParamWatcher *fs_watch;
+};
+
+class UIPanel : public QFrame {
+  Q_OBJECT
+
+public:
+  explicit UIPanel(QWidget *parent = nullptr);
+};
+
+class DrivingPanel : public QFrame {
+  Q_OBJECT
+
+public:
+  explicit DrivingPanel(QWidget *parent = nullptr);
+};
+
+class DeveloperPanel : public QFrame {
+  Q_OBJECT
+
+public:
+  explicit DeveloperPanel(QWidget *parent = nullptr);
+};
+
+class TuningPanel : public QFrame {
+  Q_OBJECT
+
+public:
+  explicit TuningPanel(QWidget *parent = nullptr);
 };

@@ -13,7 +13,9 @@ from openpilot.common.numpy_fast import clip
 from openpilot.selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from openpilot.selfdrive.locationd.models.constants import GENERATED_DIR
 from openpilot.system.swaglog import cloudlog
+from decimal import Decimal
 
+STIFFNESS_FACTOR = float(Decimal(Params().get("TireStiffnessFactorAdj", encoding="utf8")) * Decimal('0.01'))
 
 MAX_ANGLE_OFFSET_DELTA = 20 * DT_MDL  # Max 20 deg/s
 ROLL_MAX_DELTA = math.radians(20.0) * DT_MDL  # 20deg in 1 second is well within curvature limits
@@ -168,7 +170,7 @@ def main(sm=None, pm=None):
   if not REPLAY:
     # When driving in wet conditions the stiffness can go down, and then be too low on the next drive
     # Without a way to detect this we have to reset the stiffness every drive
-    params['stiffnessFactor'] = 1.0
+    params['stiffnessFactor'] = STIFFNESS_FACTOR
 
   pInitial = None
   if DEBUG:

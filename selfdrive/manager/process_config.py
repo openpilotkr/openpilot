@@ -32,12 +32,17 @@ def ublox(started, params, CP: car.CarParams) -> bool:
 def qcomgps(started, params, CP: car.CarParams) -> bool:
   return started and not ublox_available()
 
+EnableLogger = Params().get_bool('OpkrEnableLogger')
+EnableUploader = Params().get_bool('OpkrEnableUploader')
+EnableOSM = Params().get_bool('OSMEnable') or Params().get_bool('OSMSpeedLimitEnable') or Params().get("CurvDecelOption", encoding="utf8") == "1" or Params().get("CurvDecelOption", encoding="utf8") == "3"
+EnableExternalNavi = Params().get("OPKRNaviSelect", encoding="utf8") == "1" or Params().get("OPKRNaviSelect", encoding="utf8") == "2"
+
 procs = [
   NativeProcess("camerad", "system/camerad", ["./camerad"], callback=driverview),
   NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
-  NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
+  #NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
   NativeProcess("proclogd", "system/proclogd", ["./proclogd"]),
-  PythonProcess("logmessaged", "system.logmessaged", offroad=True),
+  #PythonProcess("logmessaged", "system.logmessaged", offroad=True),
   PythonProcess("micd", "system.micd", callback=iscar),
   PythonProcess("timezoned", "system.timezoned", enabled=not PC, offroad=True),
 
@@ -45,7 +50,7 @@ procs = [
   NativeProcess("dmonitoringmodeld", "selfdrive/modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM), callback=driverview),
   NativeProcess("encoderd", "system/loggerd", ["./encoderd"]),
   NativeProcess("stream_encoderd", "system/loggerd", ["./encoderd", "--stream"], onroad=False, callback=notcar),
-  NativeProcess("loggerd", "system/loggerd", ["./loggerd"], onroad=False, callback=logging),
+  #NativeProcess("loggerd", "system/loggerd", ["./loggerd"], onroad=False, callback=logging),
   NativeProcess("modeld", "selfdrive/modeld", ["./modeld"]),
   NativeProcess("mapsd", "selfdrive/navd", ["./mapsd"]),
   NativeProcess("navmodeld", "selfdrive/modeld", ["./navmodeld"]),
@@ -57,7 +62,7 @@ procs = [
   PythonProcess("calibrationd", "selfdrive.locationd.calibrationd"),
   PythonProcess("torqued", "selfdrive.locationd.torqued"),
   PythonProcess("controlsd", "selfdrive.controls.controlsd"),
-  PythonProcess("deleter", "system.loggerd.deleter", offroad=True),
+  #PythonProcess("deleter", "system.loggerd.deleter", offroad=True),
   PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", enabled=(not PC or WEBCAM), callback=driverview),
   PythonProcess("laikad", "selfdrive.locationd.laikad"),
   PythonProcess("rawgpsd", "system.sensord.rawgps.rawgpsd", enabled=TICI, onroad=False, callback=qcomgps),
@@ -69,14 +74,34 @@ procs = [
   PythonProcess("plannerd", "selfdrive.controls.plannerd"),
   PythonProcess("radard", "selfdrive.controls.radard"),
   PythonProcess("thermald", "selfdrive.thermald.thermald", offroad=True),
-  PythonProcess("tombstoned", "selfdrive.tombstoned", enabled=not PC, offroad=True),
-  PythonProcess("updated", "selfdrive.updated", enabled=not PC, onroad=False, offroad=True),
-  PythonProcess("uploader", "system.loggerd.uploader", offroad=True),
-  PythonProcess("statsd", "selfdrive.statsd", offroad=True),
+  #PythonProcess("tombstoned", "selfdrive.tombstoned", enabled=not PC, offroad=True),
+  #PythonProcess("updated", "selfdrive.updated", enabled=not PC, onroad=False, offroad=True),
+  #PythonProcess("uploader", "system.loggerd.uploader", offroad=True),
+  #PythonProcess("statsd", "selfdrive.statsd", offroad=True),
 
   # debug procs
   NativeProcess("bridge", "cereal/messaging", ["./bridge"], onroad=False, callback=notcar),
   PythonProcess("webjoystick", "tools.bodyteleop.web", onroad=False, callback=notcar),
 ]
+
+if EnableLogger:
+  procs += [
+    NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
+    PythonProcess("logmessaged", "system.logmessaged", offroad=True),
+    NativeProcess("loggerd", "system/loggerd", ["./loggerd"], onroad=False, callback=logging),
+  ]
+if EnableUploader:
+  procs += [
+    PythonProcess("deleter", "system.loggerd.deleter", offroad=True),
+    PythonProcess("uploader", "system.loggerd.uploader", offroad=True),
+  ]
+if EnableOSM:
+  procs += [
+    PythonProcess("mapd", "selfdrive.mapd.mapd"),
+  ]
+if EnableExternalNavi:
+  procs += [
+    PythonProcess("navid", "selfdrive.enavi.navi_external"),
+  ]
 
 managed_processes = {p.name: p for p in procs}

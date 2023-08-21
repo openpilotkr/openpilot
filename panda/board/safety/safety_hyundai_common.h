@@ -57,6 +57,16 @@ void hyundai_common_cruise_state_check(const int cruise_engaged) {
   }
 }
 
+void hyundai_common_cruise_state_check_alt(const int cruise_engaged) {
+  if (cruise_engaged && !cruise_engaged_prev) {
+    controls_allowed = true;
+  }
+  if (!cruise_engaged) {
+    controls_allowed = false;
+  }
+  cruise_engaged_prev = cruise_engaged;
+}
+
 void hyundai_common_cruise_buttons_check(const int cruise_button, const int main_button) {
   if ((cruise_button == HYUNDAI_BTN_RESUME) || (cruise_button == HYUNDAI_BTN_SET) || (cruise_button == HYUNDAI_BTN_CANCEL) ||
       (main_button != 0)) {

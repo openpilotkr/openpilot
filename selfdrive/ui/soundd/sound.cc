@@ -1,3 +1,5 @@
+#include <string>  //opkr
+
 #include "selfdrive/ui/soundd/sound.h"
 
 #include <cmath>
@@ -8,6 +10,8 @@
 
 #include "cereal/messaging/messaging.h"
 #include "common/util.h"
+
+#include "common/params.h"
 
 // TODO: detect when we can't play sounds
 // TODO: detect when we can't display the UI
@@ -36,7 +40,16 @@ void Sound::update() {
   if (sm.updated("microphone")) {
     float volume = util::map_val(sm["microphone"].getMicrophone().getFilteredSoundPressureWeightedDb(), 30.f, 60.f, 0.f, 1.f);
     volume = QAudio::convertVolume(volume, QAudio::LogarithmicVolumeScale, QAudio::LinearVolumeScale);
-    Hardware::set_volume(volume);
+
+    if (std::stof(Params().get("CommaStockUI")) > 1.0 && std::stof(Params().get("DoNotDisturbMode")) > 1.0) {
+      Hardware::set_volume(0.0);
+    } else if ((std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01) < -0.03) {
+      Hardware::set_volume(0.0);
+    } else if ((std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01) > 0.03) {
+      Hardware::set_volume(std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01);
+    } else {
+      Hardware::set_volume(volume);
+    }
   }
 
   setAlert(Alert::get(sm, 0));

@@ -166,8 +166,12 @@ class Tici(HardwareBase):
     return NetworkType.none
 
   def get_modem(self):
-    objects = self.mm.GetManagedObjects(dbus_interface="org.freedesktop.DBus.ObjectManager", timeout=TIMEOUT)
-    modem_path = list(objects.keys())[0]
+    try:
+      objects = self.mm.GetManagedObjects(dbus_interface="org.freedesktop.DBus.ObjectManager", timeout=TIMEOUT)
+      modem_path = list(objects.keys())[0]
+    except:
+      modem_path = "/"
+      pass
     return self.bus.get_object(MM, modem_path)
 
   def get_wlan(self):
@@ -600,6 +604,23 @@ class Tici(HardwareBase):
     time.sleep(1)
     gpio_set(GPIO.STM_BOOT0, 0)
 
+  def get_storage_usage_percent(self):
+    percent = 0
+    try:
+      out = subprocess.check_output("df -h | grep /data | awk '{print $5}'", shell=True)
+      percent = int(out.strip().decode().replace('%',''))
+    except Exception:
+      pass
+    return percent
+
+  def get_ip_address(self):
+    ipaddress = ""
+    try:
+      out = subprocess.check_output("hostname -I", shell=True)
+      ipaddress = str(out.strip().decode()).replace(' ', '\n')
+    except Exception:
+      pass
+    return ipaddress
 
 if __name__ == "__main__":
   t = Tici()

@@ -15,6 +15,9 @@ from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, get_fri
 from openpilot.selfdrive.controls.lib.events import Events
 from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
 
+from openpilot.common.params import Params
+from decimal import Decimal
+
 ButtonType = car.CarState.ButtonEvent.Type
 GearShifter = car.CarState.GearShifter
 EventName = car.CarEvent.EventName
@@ -50,7 +53,8 @@ def get_torque_params(candidate):
   elif candidate in params:
     out = params[candidate]
   else:
-    raise NotImplementedError(f"Did not find torque params for {candidate}")
+    return None
+    #raise NotImplementedError(f"Did not find torque params for {candidate}")
   return {key: out[i] for i, key in enumerate(params['legend'])}
 
 
@@ -74,15 +78,20 @@ class CarInterfaceBase(ABC):
       self.CS = CarState(CP)
 
       self.cp = self.CS.get_can_parser(CP)
+      self.cp2 = self.CS.get_can2_parser(CP)
       self.cp_cam = self.CS.get_cam_can_parser(CP)
       self.cp_adas = self.CS.get_adas_can_parser(CP)
       self.cp_body = self.CS.get_body_can_parser(CP)
       self.cp_loopback = self.CS.get_loopback_can_parser(CP)
-      self.can_parsers = [self.cp, self.cp_cam, self.cp_adas, self.cp_body, self.cp_loopback]
+      self.can_parsers = [self.cp, self.cp2, self.cp_cam, self.cp_adas, self.cp_body, self.cp_loopback]
 
     self.CC = None
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
+
+    self.ufc_mode = Params().get_bool("UFCModeEnabled")
+    self.steer_warning_fix_enabled = Params().get_bool("SteerWarningFix")
+    self.user_specific_feature = int(Params().get("UserSpecificFeature", encoding="utf8"))
 
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
@@ -145,7 +154,10 @@ class CarInterfaceBase(ABC):
     ret.carFingerprint = candidate
 
     # Car docs fields
-    ret.maxLateralAccel = get_torque_params(candidate)['MAX_LAT_ACCEL_MEASURED']
+    if get_torque_params(candidate) is not None:
+      ret.maxLateralAccel = get_torque_params(candidate)['MAX_LAT_ACCEL_MEASURED']
+    else:
+      ret.maxLateralAccel = float(Decimal(Params().get("TorqueMaxLatAccel", encoding="utf8")) * Decimal('0.1'))
     ret.autoResumeSng = True  # describes whether car can resume from a stop automatically
 
     # standard ALC params
@@ -160,8 +172,8 @@ class CarInterfaceBase(ABC):
     ret.openpilotLongitudinalControl = False
     ret.stopAccel = -2.0
     ret.stoppingDecelRate = 0.8 # brake_travel/s while trying to stop
-    ret.vEgoStopping = 0.5
-    ret.vEgoStarting = 0.5
+    ret.vEgoStopping = 0.7
+    ret.vEgoStarting = 0.7
     ret.stoppingControl = True
     ret.longitudinalTuning.deadzoneBP = [0.]
     ret.longitudinalTuning.deadzoneV = [0.]
@@ -174,6 +186,15 @@ class CarInterfaceBase(ABC):
     ret.longitudinalActuatorDelayLowerBound = 0.15
     ret.longitudinalActuatorDelayUpperBound = 0.15
     ret.steerLimitTimer = 1.0
+
+    ret.vCruisekph = 0
+    ret.resSpeed = 0
+    ret.vFuture = 0
+    ret.vFutureA = 0
+    ret.aqValue = 0
+    ret.aqValueRaw = 0
+    ret.standStill = False
+
     return ret
 
   @staticmethod
@@ -181,14 +202,33 @@ class CarInterfaceBase(ABC):
     params = get_torque_params(candidate)
 
     tune.init('torque')
-    tune.torque.useSteeringAngle = use_steering_angle
-    tune.torque.kp = 1.0
-    tune.torque.kf = 1.0
-    tune.torque.ki = 0.1
-    tune.torque.friction = params['FRICTION']
-    tune.torque.latAccelFactor = params['LAT_ACCEL_FACTOR']
-    tune.torque.latAccelOffset = 0.0
-    tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
+
+    if params is not None:
+      tune.torque.useSteeringAngle = use_steering_angle
+      tune.torque.kp = 1.0
+      tune.torque.kf = 1.0
+      tune.torque.ki = 0.1
+      tune.torque.friction = params['FRICTION']
+      tune.torque.latAccelFactor = params['LAT_ACCEL_FACTOR']
+      tune.torque.latAccelOffset = 0.0
+      tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
+    else:
+      TorqueKp = float(Decimal(Params().get("TorqueKp", encoding="utf8")) * Decimal('0.1'))
+      TorqueKf = float(Decimal(Params().get("TorqueKf", encoding="utf8")) * Decimal('0.1'))
+      TorqueKi = float(Decimal(Params().get("TorqueKi", encoding="utf8")) * Decimal('0.1'))
+      TorqueFriction = float(Decimal(Params().get("TorqueFriction", encoding="utf8")) * Decimal('0.01'))
+      TorqueUseAngle = Params().get_bool('TorqueUseAngle')
+      TorqueLatAccelFactor = float(Decimal(Params().get("TorqueMaxLatAccel", encoding="utf8")) * Decimal('0.1'))
+      TorqueAngDeadZone = float(Decimal(Params().get("TorqueAngDeadZone", encoding="utf8")) * Decimal('0.1'))
+
+      tune.torque.useSteeringAngle = TorqueUseAngle
+      tune.torque.kp = TorqueKp
+      tune.torque.kf = TorqueKf
+      tune.torque.ki = TorqueKi
+      tune.torque.friction = TorqueFriction
+      tune.torque.latAccelFactor = TorqueLatAccelFactor
+      tune.torque.latAccelOffset = 0.0
+      tune.torque.steeringAngleDeadzoneDeg = TorqueAngDeadZone
 
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
@@ -235,17 +275,24 @@ class CarInterfaceBase(ABC):
                            enable_buttons=(ButtonType.accelCruise, ButtonType.decelCruise)):
     events = Events()
 
-    if cs_out.doorOpen:
-      events.add(EventName.doorOpen)
-    if cs_out.seatbeltUnlatched:
-      events.add(EventName.seatbeltNotLatched)
-    if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
-       cs_out.gearShifter not in extra_gears):
-      events.add(EventName.wrongGear)
-    if cs_out.gearShifter == GearShifter.reverse:
-      events.add(EventName.reverseGear)
-    if not cs_out.cruiseState.available:
-      events.add(EventName.wrongCarMode)
+    if self.user_specific_feature == 11:
+      if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
+        cs_out.gearShifter not in extra_gears) and cs_out.cruiseState.enabled:
+        events.add(EventName.gearNotD)
+      if cs_out.gearShifter == GearShifter.reverse:
+        events.add(EventName.reverseGear)
+    else:
+      if cs_out.doorOpen:
+        events.add(EventName.doorOpen)
+      if cs_out.seatbeltUnlatched:
+        events.add(EventName.seatbeltNotLatched)
+      if cs_out.gearShifter != GearShifter.drive and (extra_gears is None or
+        cs_out.gearShifter not in extra_gears) and cs_out.cruiseState.enabled:
+        events.add(EventName.wrongGear)
+      if cs_out.gearShifter == GearShifter.reverse:
+        events.add(EventName.reverseGear)
+      if not cs_out.cruiseState.available and cs_out.cruiseState.enabled:
+        events.add(EventName.wrongCarMode)
     if cs_out.espDisabled:
       events.add(EventName.espDisabled)
     if cs_out.stockFcw:
@@ -256,7 +303,7 @@ class CarInterfaceBase(ABC):
       events.add(EventName.speedTooHigh)
     if cs_out.cruiseState.nonAdaptive:
       events.add(EventName.wrongCruiseMode)
-    if cs_out.brakeHoldActive and self.CP.openpilotLongitudinalControl:
+    if cs_out.brakeHoldActive and self.CP.openpilotLongitudinalControl and not self.ufc_mode:
       events.add(EventName.brakeHold)
     if cs_out.parkingBrake:
       events.add(EventName.parkBrake)
@@ -271,7 +318,7 @@ class CarInterfaceBase(ABC):
       if not self.CP.pcmCruise and (b.type in enable_buttons and not b.pressed):
         events.add(EventName.buttonEnable)
       # Disable on rising and falling edge of cancel for both stock and OP long
-      if b.type == ButtonType.cancel:
+      if b.type == ButtonType.cancel and not self.ufc_mode:
         events.add(EventName.buttonCancel)
 
     # Handle permanent and temporary steering faults

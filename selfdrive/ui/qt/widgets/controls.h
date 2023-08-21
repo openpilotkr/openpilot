@@ -11,6 +11,8 @@
 #include "selfdrive/ui/qt/widgets/input.h"
 #include "selfdrive/ui/qt/widgets/toggle.h"
 
+QFrame *horizontal_line(QWidget *parent = nullptr);
+
 class ElidedLabel : public QLabel {
   Q_OBJECT
 
@@ -56,6 +58,8 @@ public:
   QLabel *icon_label;
   QPixmap icon_pixmap;
 
+  AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
+
 public slots:
   void showDescription() {
     description->setVisible(true);
@@ -65,7 +69,7 @@ signals:
   void showDescriptionEvent();
 
 protected:
-  AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
+  //AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
   void hideEvent(QHideEvent *e) override;
 
   QHBoxLayout *hlayout;
@@ -74,6 +78,36 @@ protected:
 private:
   ElidedLabel *value;
   QLabel *description = nullptr;
+};
+
+class MenuControl : public AbstractControl {
+  Q_OBJECT
+
+public:
+  MenuControl(const QString &str_param , const QString &title, const QString &desc = "", const QString &icon = "",  QWidget *parent = nullptr);
+
+private:
+  void refresh();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QLabel label;
+  Params params;
+
+  float  m_dValue;
+  
+ private:
+   float   m_nDelta, m_nMax, m_nMin;
+   QStringList  m_strList;
+
+   float      m_nValue;
+   QString  m_strValue;
+
+public:
+   void SetControl( float nMin=0, float nMax=100, float nDelta = 1 )  { m_nDelta = nDelta; m_nMin = nMin;  m_nMax = nMax; }
+   void SetString( const QString strList );
+   void SetString( float nValue, const QString str );
 };
 
 // widget to display a value

@@ -1,18 +1,22 @@
 import math
 
 from cereal import car, log
+import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.numpy_fast import clip, interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.modeld.constants import T_IDXS
 
+from openpilot.selfdrive.car.hyundai.values import Buttons
+from openpilot.common.params import Params
+
 # WARNING: this value was determined based on the model's training distribution,
 #          model predictions above this speed can be unpredictable
 # V_CRUISE's are in kph
-V_CRUISE_MIN = 8
-V_CRUISE_MAX = 145
+V_CRUISE_MIN = 30
+V_CRUISE_MAX = 160
 V_CRUISE_UNSET = 255
-V_CRUISE_INITIAL = 40
+V_CRUISE_INITIAL = 30
 V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 105
 IMPERIAL_INCREMENT = 1.6  # should be CV.MPH_TO_KPH, but this causes rounding errors
 
@@ -47,13 +51,45 @@ class VCruiseHelper:
     self.button_timers = {ButtonType.decelCruise: 0, ButtonType.accelCruise: 0}
     self.button_change_states = {btn: {"standstill": False, "enabled": False} for btn in self.button_timers}
 
+    self.sm = messaging.SubMaster(['liveENaviData', 'liveMapData'])
+
+    self.params = Params()
+    self.is_kph = self.params.get_bool("IsMetric")
+    self.variable_cruise = self.params.get_bool("OpkrVariableCruise")
+
+    self.osm_waze_spdlimit_offset = int(self.params.get("OpkrSpeedLimitOffset", encoding="utf8"))
+    self.osm_waze_spdlimit_offset_option = int(self.params.get("OpkrSpeedLimitOffsetOption", encoding="utf8"))
+    self.osm_speedlimit_enabled = self.params.get_bool("OSMSpeedLimitEnable")
+    self.osm_waze_speedlimit = 255
+    self.pause_spdlimit = False
+    self.osm_waze_off_spdlimit_init = False
+
+    self.navi_selection = int(self.params.get("OPKRNaviSelect", encoding="utf8"))
+
+    self.osm_waze_custom_spdlimit_c = list(map(int, self.params.get("OSMCustomSpeedLimitC", encoding="utf8").split(',')))
+    self.osm_waze_custom_spdlimit_t = list(map(int, self.params.get("OSMCustomSpeedLimitT", encoding="utf8").split(',')))
+
+    self.pause_spdlimit_push = False
+    self.pause_spdlimit_push_cnt = 0
+
+    self.second2 = 0.0
+
+    self.cruise_over_maxspeed = self.params.get_bool("CruiseOverMaxSpeed")
+    self.cruise_road_limit_spd_enabled = self.params.get_bool("CruiseSetwithRoadLimitSpeedEnabled")
+    self.cruise_road_limit_spd_offset = int(self.params.get("CruiseSetwithRoadLimitSpeedOffset", encoding="utf8"))
+
+    self.cruise_road_limit_spd_switch = True
+    self.cruise_road_limit_spd_switch_prev = 0
+
+    self.setspdfive = self.params.get_bool("SetSpeedFive") 
+
   @property
   def v_cruise_initialized(self):
     return self.v_cruise_kph != V_CRUISE_UNSET
 
   def update_v_cruise(self, CS, enabled, is_metric):
     self.v_cruise_kph_last = self.v_cruise_kph
-
+    self.sm.update(0)
     if CS.cruiseState.available:
       if not self.CP.pcmCruise:
         # if stock cruise is completely disabled, then we can use our own set speed logic
@@ -61,11 +97,126 @@ class VCruiseHelper:
         self.v_cruise_cluster_kph = self.v_cruise_kph
         self.update_button_timers(CS, enabled)
       else:
-        self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
-        self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
+        m_unit = CV.MS_TO_KPH if self.is_kph else CV.MS_TO_MPH
+        if not self.CP.carName == "hyundai":
+          self.v_cruise_kph = CS.cruiseState.speed * m_unit
+          self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * m_unit
+        else:
+          t_speed = 30 if self.is_kph else 20
+          if self.cruise_road_limit_spd_enabled and not self.cruise_road_limit_spd_switch and self.cruise_road_limit_spd_switch_prev != 0 and self.cruise_road_limit_spd_switch_prev != self.sm['liveENaviData'].roadLimitSpeed:
+            self.cruise_road_limit_spd_switch = True
+            self.cruise_road_limit_spd_switch_prev = 0
+          if self.variable_cruise and CS.cruiseState.modeSel != 0 and self.CP.vCruisekph > t_speed:
+            self.v_cruise_kph = self.CP.vCruisekph
+            self.v_cruise_kph_last = self.v_cruise_kph
+            self.v_cruise_cluster_kph = self.v_cruise_kph
+          elif CS.cruiseButtons == Buttons.RES_ACCEL or CS.cruiseButtons == Buttons.SET_DECEL:
+            if self.cruise_road_limit_spd_enabled and CS.cruiseButtons == Buttons.SET_DECEL:
+              if 1 < int(self.sm['liveENaviData'].roadLimitSpeed) < 150:
+                self.cruise_road_limit_spd_switch = True
+              else:
+                self.cruise_road_limit_spd_switch = False
+            elif self.cruise_road_limit_spd_enabled and CS.cruiseButtons == Buttons.RES_ACCEL:
+              self.cruise_road_limit_spd_switch_prev = self.sm['liveENaviData'].roadLimitSpeed
+              self.cruise_road_limit_spd_switch = False
+            self.v_cruise_kph = round(CS.cruiseState.speed * m_unit)
+            self.v_cruise_cluster_kph = self.v_cruise_kph
+            self.v_cruise_kph_last = self.v_cruise_kph
+            if self.osm_speedlimit_enabled or self.navi_selection == 2:
+              self.osm_waze_off_spdlimit_init = True
+              if self.navi_selection == 2:
+                self.osm_waze_speedlimit = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
+              elif self.osm_speedlimit_enabled:
+                self.osm_waze_speedlimit = round(self.sm['liveMapData'].speedLimit)
+          elif CS.driverAcc and self.variable_cruise and (self.cruise_over_maxspeed or self.cruise_road_limit_spd_enabled) and t_speed <= self.v_cruise_kph < round(CS.vEgo*m_unit):
+            self.cruise_road_limit_spd_switch_prev = self.sm['liveENaviData'].roadLimitSpeed
+            self.cruise_road_limit_spd_switch = False
+            self.v_cruise_kph = round(CS.vEgo*m_unit)
+            self.v_cruise_cluster_kph = self.v_cruise_kph
+            self.v_cruise_kph_last = self.v_cruise_kph
+          elif self.variable_cruise and self.cruise_road_limit_spd_enabled and int(self.v_cruise_kph) != (int(self.sm['liveENaviData'].roadLimitSpeed) + self.cruise_road_limit_spd_offset) and \
+           29 < int(self.sm['liveENaviData'].roadLimitSpeed) < 150 and self.cruise_road_limit_spd_switch:
+            self.v_cruise_kph = int(self.sm['liveENaviData'].roadLimitSpeed) + self.cruise_road_limit_spd_offset
+            self.v_cruise_cluster_kph = self.v_cruise_kph
+            self.v_cruise_kph_last = self.v_cruise_kph
+          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection == 2) and self.osm_waze_off_spdlimit_init:
+            if self.navi_selection == 2:
+              osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
+              osm_waze_speedlimitdist_ = round(self.sm['liveENaviData'].wazeAlertDistance)
+            elif self.osm_speedlimit_enabled:
+              osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+              osm_waze_speedlimitdist_ = 0
+            else:
+              osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+              osm_waze_speedlimitdist_ = 0
+            if self.osm_waze_spdlimit_offset_option == 0:
+              osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset)
+            elif self.osm_waze_spdlimit_offset_option == 1:
+              osm_waze_speedlimit = osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
+            elif self.osm_waze_spdlimit_offset_option in (2,3):
+              osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
+            if CS.cruiseButtons == Buttons.GAP_DIST:
+              self.osm_waze_speedlimit = 255
+              self.pause_spdlimit = False
+            elif osm_waze_speedlimitdist_ > 0:
+              self.pause_spdlimit = False
+            elif self.osm_waze_speedlimit == osm_waze_speedlimit_:
+              self.pause_spdlimit = True
+            elif osm_waze_speedlimit != self.v_cruise_kph:
+              if self.navi_selection == 2 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
+                self.v_cruise_kph = osm_waze_speedlimit
+                self.v_cruise_kph_last = self.v_cruise_kph
+                self.v_cruise_cluster_kph = self.v_cruise_kph
+              elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
+                self.v_cruise_kph = osm_waze_speedlimit
+                self.v_cruise_kph_last = self.v_cruise_kph
+          elif self.variable_cruise and CS.cruiseState.modeSel != 0 and not (self.osm_speedlimit_enabled or self.navi_selection == 2):
+            if self.sm['liveENaviData'].safetyDistance > 600: # temporary pause to limit spd in safety section
+              self.second2 += DT_MDL
+              if CS.cruiseButtons == Buttons.GAP_DIST: # push gap 3 times quickly, this is toggle.
+                self.pause_spdlimit_push = True
+                self.second2 = 0.0
+              elif self.pause_spdlimit_push:
+                self.pause_spdlimit_push = False
+                self.pause_spdlimit_push_cnt += 1
+              elif self.pause_spdlimit_push_cnt == 3 and self.second2 > 0.5:
+                self.pause_spdlimit_push_cnt = 0
+                self.pause_spdlimit = not self.pause_spdlimit
+              elif self.second2 > 0.5 and self.pause_spdlimit_push_cnt > 0:
+                self.pause_spdlimit_push_cnt = 0
+            else:
+              self.second2 = 0.0
+              self.pause_spdlimit_push = False
+              self.pause_spdlimit_push_cnt = 0
+              self.pause_spdlimit = False
     else:
-      self.v_cruise_kph = V_CRUISE_UNSET
-      self.v_cruise_cluster_kph = V_CRUISE_UNSET
+      if not self.CP.carName == "hyundai":
+        self.v_cruise_kph = V_CRUISE_UNSET
+        self.v_cruise_cluster_kph = V_CRUISE_UNSET
+      else:
+        # to display maxspeed synced as roadspeedlimit on scc standby
+        if self.variable_cruise and CS.cruiseState.modeSel != 0 and (self.osm_speedlimit_enabled or self.navi_selection == 2):
+          if self.navi_selection == 2:
+            osm_waze_speedlimit_ = round(self.sm['liveENaviData'].wazeRoadSpeedLimit)
+          elif self.osm_speedlimit_enabled:
+            osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+          else:
+            osm_waze_speedlimit_ = round(self.sm['liveMapData'].speedLimit)
+          if self.osm_waze_spdlimit_offset_option == 0:
+            osm_waze_speedlimit = osm_waze_speedlimit_ + round(osm_waze_speedlimit_*0.01*self.osm_waze_spdlimit_offset)
+          elif self.osm_waze_spdlimit_offset_option == 1:
+            osm_waze_speedlimit = osm_waze_speedlimit_ + self.osm_waze_spdlimit_offset
+          elif self.osm_waze_spdlimit_offset_option in (2,3):
+            osm_waze_speedlimit = int(interp(osm_waze_speedlimit_, self.osm_waze_custom_spdlimit_c, self.osm_waze_custom_spdlimit_t))
+          if osm_waze_speedlimit != self.v_cruise_kph:
+            if self.navi_selection == 2 and self.sm['liveENaviData'].wazeRoadSpeedLimit > 9:
+              self.v_cruise_kph = osm_waze_speedlimit
+              self.v_cruise_kph_last = self.v_cruise_kph
+              self.v_cruise_cluster_kph = self.v_cruise_kph
+            elif self.osm_speedlimit_enabled and self.sm['liveMapData'].speedLimit > 9:
+              self.v_cruise_kph = osm_waze_speedlimit
+              self.v_cruise_kph_last = self.v_cruise_kph
+              self.v_cruise_cluster_kph = self.v_cruise_kph
 
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press
@@ -171,7 +322,7 @@ def get_lag_adjusted_curvature(CP, v_ego, psis, curvatures, curvature_rates):
   v_ego = max(MIN_SPEED, v_ego)
 
   # TODO this needs more thought, use .2s extra for now to estimate other delays
-  delay = CP.steerActuatorDelay + .2
+  delay = max(0.01, CP.steerActuatorDelay)
 
   # MPC can plan to turn the wheel and turn back before t_delay. This means
   # in high delay cases some corrections never even get commanded. So just use

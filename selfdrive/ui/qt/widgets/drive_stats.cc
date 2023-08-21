@@ -45,11 +45,11 @@ DriveStats::DriveStats(QWidget* parent) : QFrame(parent) {
   main_layout->addStretch();
   add_stats_layouts(tr("PAST WEEK"), week_);
 
-  if (auto dongleId = getDongleId()) {
-    QString url = CommaApi::BASE_URL + "/v1.1/devices/" + *dongleId + "/stats";
+  /*if (auto dongleId = getDongleId()) {
+    QString url = "https://api.commadotai.com/v1.1/devices/" + *dongleId + "/stats";
     RequestRepeater* repeater = new RequestRepeater(this, url, "ApiCache_DriveStats", 30);
     QObject::connect(repeater, &RequestRepeater::requestDone, this, &DriveStats::parseResponse);
-  }
+  }*/
 
   setStyleSheet(R"(
     DriveStats {

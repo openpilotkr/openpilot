@@ -94,6 +94,10 @@ services = {
   "livestreamWideRoadEncodeData": (False, 20.),
   "livestreamRoadEncodeData": (False, 20.),
   "livestreamDriverEncodeData": (False, 20.),
+
+  # opkr
+  "liveENaviData": (False, 0.),
+  "liveMapData": (False, 0.),
 }
 service_list = {name: Service(new_port(idx), *vals) for  # type: ignore
                 idx, (name, vals) in enumerate(services.items())}
