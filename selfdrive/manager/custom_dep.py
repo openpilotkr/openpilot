@@ -11,7 +11,7 @@ from urllib.request import urlopen
 
 
 # NOTE: Do NOT import anything here that needs be built (e.g. params)
-from common.spinner import Spinner
+from openpilot.common.spinner import Spinner
 
 LIB_INSTALLED = os.path.exists('/data/pyextra/overpy')
 OPSPLINE_SPEC = importlib.util.find_spec('scipy')

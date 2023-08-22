@@ -524,6 +524,7 @@ struct CarParams {
 
   # things we can derive
   rotationalInertia @22 :Float32;    # [kg*m2] body rotational inertia
+  tireStiffnessFactor @96 :Float32;  # scaling factor used in calculating tireStiffness[Front,Rear]
   tireStiffnessFront @23 :Float32;   # [N/rad] front tire coeff of stiff
   tireStiffnessRear @24 :Float32;    # [N/rad] rear tire coeff of stiff
 
@@ -712,6 +713,7 @@ struct CarParams {
     hyundaiCanfd @28;
     hyundaiCommunity2 @29;
     hyundaiCommunity1Legacy @30;
+    volkswagenMqbEvo @31;
   }
 
   enum SteerControlType {

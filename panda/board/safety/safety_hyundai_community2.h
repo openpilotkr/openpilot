@@ -115,9 +115,9 @@ static int hyundai_community2_rx_hook(CANPacket_t *to_push) {
 
     // sample wheel speed, averaging opposite corners
     if (addr == 902 && bus == 0) {
-      uint32_t hyundai_speed = (GET_BYTES(to_push, 0, 4) & 0x3FFFU) + ((GET_BYTES(to_push, 4, 4) >> 16) & 0x3FFFU);  // FL + RR
-      hyundai_speed /= 2;
-      vehicle_moving = hyundai_speed > HYUNDAI_STANDSTILL_THRSLD;
+      uint32_t front_left_speed = GET_BYTES(to_push, 0, 2) & 0x3FFFU;
+      uint32_t rear_right_speed = GET_BYTES(to_push, 6, 2) & 0x3FFFU;
+      vehicle_moving = (front_left_speed > HYUNDAI_STANDSTILL_THRSLD) || (rear_right_speed > HYUNDAI_STANDSTILL_THRSLD);
     }
     generic_rx_checks((addr == 832 && bus == 0));
   }

@@ -1,6 +1,6 @@
-from selfdrive.mapd.lib.NodesData import NodesData, NodeDataIdx
-from selfdrive.mapd.config import QUERY_RADIUS
-from selfdrive.mapd.lib.geo import ref_vectors, R, distance_to_points
+from openpilot.selfdrive.mapd.lib.NodesData import NodesData, NodeDataIdx
+from openpilot.selfdrive.mapd.config import QUERY_RADIUS
+from openpilot.selfdrive.mapd.lib.geo import ref_vectors, R, distance_to_points
 from itertools import compress
 import numpy as np
 

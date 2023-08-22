@@ -1,12 +1,12 @@
 import math
 import numpy as np
 
-from common.numpy_fast import clip
-from common.realtime import DT_CTRL
+from openpilot.common.numpy_fast import clip
+from openpilot.common.realtime import DT_CTRL
 from cereal import log
-from selfdrive.controls.lib.latcontrol import LatControl
+from openpilot.selfdrive.controls.lib.latcontrol import LatControl
 
-from common.params import Params
+from openpilot.common.params import Params
 from decimal import Decimal
 
 class LatControlLQR(LatControl):

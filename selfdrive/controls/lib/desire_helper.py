@@ -1,10 +1,10 @@
 import numpy as np
 from cereal import log
-from common.conversions import Conversions as CV
-from common.realtime import DT_MDL
+from openpilot.common.conversions import Conversions as CV
+from openpilot.common.realtime import DT_MDL
 
-from common.numpy_fast import interp
-from common.params import Params
+from openpilot.common.numpy_fast import interp
+from openpilot.common.params import Params
 from decimal import Decimal
 
 LaneChangeState = log.LateralPlan.LaneChangeState

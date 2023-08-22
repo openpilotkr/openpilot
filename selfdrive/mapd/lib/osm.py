@@ -2,9 +2,9 @@ import os
 import sys
 import subprocess
 import numpy as np
-from selfdrive.mapd.lib.geo import R
+from openpilot.selfdrive.mapd.lib.geo import R
 
-from common.basedir import PYEXTRADIR
+from openpilot.common.basedir import PYEXTRADIR
 sys.path.append(os.path.join(PYEXTRADIR, "pyextra"))
 
 import overpy

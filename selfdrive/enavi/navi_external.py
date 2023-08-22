@@ -8,8 +8,8 @@ import re
 import json
 
 import cereal.messaging as messaging
-from common.params import Params
-from common.realtime import DT_TRML
+from openpilot.common.params import Params
+from openpilot.common.realtime import DT_TRML
 
 import zmq
 

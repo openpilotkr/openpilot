@@ -4,10 +4,10 @@ import subprocess
 import shutil
 
 # NOTE: Do NOT import anything here that needs be built (e.g. params)
-from common.basedir import BASEDIR
-from common.spinner import Spinner
-from selfdrive.mapd.lib.helpers import is_local_osm_installed, timestamp_local_osm_db, is_osm_db_up_to_date
-from selfdrive.manager.custom_dep import wait_for_internet_connection
+from openpilot.common.basedir import BASEDIR
+from openpilot.common.spinner import Spinner
+from openpilot.selfdrive.mapd.lib.helpers import is_local_osm_installed, timestamp_local_osm_db, is_osm_db_up_to_date
+from openpilot.selfdrive.manager.custom_dep import wait_for_internet_connection
 
 
 MAX_BUILD_PROGRESS = 100

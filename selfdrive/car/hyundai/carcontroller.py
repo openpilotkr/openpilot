@@ -1,20 +1,20 @@
 from cereal import car, log, messaging
-from common.conversions import Conversions as CV
-from common.numpy_fast import clip, interp
-from common.realtime import DT_CTRL
+from openpilot.common.conversions import Conversions as CV
+from openpilot.common.numpy_fast import clip, interp
+from openpilot.common.realtime import DT_CTRL
 from opendbc.can.packer import CANPacker
-from selfdrive.car import apply_driver_steer_torque_limits, common_fault_avoidance
-from selfdrive.car.hyundai import hyundaicanfd, hyundaican
-from selfdrive.car.hyundai.hyundaicanfd import CanBus
-from selfdrive.car.hyundai.values import HyundaiFlags, Buttons, CarControllerParams, CANFD_CAR, CAR
+from openpilot.selfdrive.car import apply_driver_steer_torque_limits, common_fault_avoidance
+from openpilot.selfdrive.car.hyundai import hyundaicanfd, hyundaican
+from openpilot.selfdrive.car.hyundai.hyundaicanfd import CanBus
+from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, Buttons, CarControllerParams, CANFD_CAR, CAR
 
-from selfdrive.controls.lib.longcontrol import LongCtrlState
-from selfdrive.car.hyundai.carstate import GearShifter
-from selfdrive.controls.lib.desire_helper import LANE_CHANGE_SPEED_MIN
-from selfdrive.car.hyundai.navicontrol  import NaviControl
+from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
+from openpilot.selfdrive.car.hyundai.carstate import GearShifter
+from openpilot.selfdrive.controls.lib.desire_helper import LANE_CHANGE_SPEED_MIN
+from openpilot.selfdrive.car.hyundai.navicontrol  import NaviControl
 
-from common.params import Params
-import common.log as trace1
+from openpilot.common.params import Params
+import openpilot.common.log as trace1
 from random import randint
 from decimal import Decimal
 
@@ -984,8 +984,10 @@ class CarController:
       if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         # TODO: unclear if this is needed
         jerk = 3.0 if actuators.longControlState == LongCtrlState.pid else 1.0
+        use_fca = self.CP.flags & HyundaiFlags.USE_FCA.value
         can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
-                                                        hud_control.leadVisible, set_speed_in_units, stopping, CC.cruiseControl.override))
+                                                        hud_control.leadVisible, set_speed_in_units, stopping,
+                                                        CC.cruiseControl.override, use_fca))
 
       # 20 Hz LFA MFA message
       if self.frame % 5 == 0 and self.CP.flags & HyundaiFlags.SEND_LFA.value:

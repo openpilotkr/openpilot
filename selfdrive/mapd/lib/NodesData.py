@@ -1,6 +1,6 @@
 import numpy as np
 from enum import Enum
-from selfdrive.mapd.lib.geo import DIRECTION, R, vectors
+from openpilot.selfdrive.mapd.lib.geo import DIRECTION, R, vectors
 from scipy.interpolate import splev, splprep
 
 

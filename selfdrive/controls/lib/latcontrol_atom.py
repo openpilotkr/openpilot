@@ -2,21 +2,21 @@ import math
 import numpy as np
 
 from cereal import log
-from common.realtime import DT_CTRL
-from common.numpy_fast import clip, interp
-from common.filter_simple import FirstOrderFilter
+from openpilot.common.realtime import DT_CTRL
+from openpilot.common.numpy_fast import clip, interp
+from openpilot.common.filter_simple import FirstOrderFilter
 
-from common.params import Params
+from openpilot.common.params import Params
 from decimal import Decimal
-from common.conversions import Conversions as CV
+from openpilot.common.conversions import Conversions as CV
 
-from selfdrive.controls.lib.latcontrol import LatControl
-from selfdrive.controls.lib.pid import PIDController, LatPIDController
+from openpilot.selfdrive.controls.lib.latcontrol import LatControl
+from openpilot.selfdrive.controls.lib.pid import PIDController, LatPIDController
 
-from selfdrive.controls.lib.latcontrol_torque import LatControlTorque
-from selfdrive.controls.lib.latcontrol_lqr import LatControlLQR
-from selfdrive.controls.lib.latcontrol_indi import LatControlINDI
-from selfdrive.controls.lib.latcontrol_pid import LatControlPID
+from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
+from openpilot.selfdrive.controls.lib.latcontrol_lqr import LatControlLQR
+from openpilot.selfdrive.controls.lib.latcontrol_indi import LatControlINDI
+from openpilot.selfdrive.controls.lib.latcontrol_pid import LatControlPID
 
 
 class LatCtrlToqATOM(LatControlTorque):

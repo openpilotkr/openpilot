@@ -5,7 +5,7 @@ import requests
 import email.utils as eut
 import time
 
-from common.basedir import PYEXTRADIR
+from openpilot.common.basedir import PYEXTRADIR
 sys.path.append(os.path.join(PYEXTRADIR, "pyextra"))
 
 import overpy

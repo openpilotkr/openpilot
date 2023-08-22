@@ -1,7 +1,7 @@
-from selfdrive.mapd.lib.WayRelation import WayRelation
-from selfdrive.mapd.lib.WayRelationIndex import WayRelationIndex
-from selfdrive.mapd.lib.Route import Route
-from selfdrive.mapd.config import LANE_WIDTH
+from openpilot.selfdrive.mapd.lib.WayRelation import WayRelation
+from openpilot.selfdrive.mapd.lib.WayRelationIndex import WayRelationIndex
+from openpilot.selfdrive.mapd.lib.Route import Route
+from openpilot.selfdrive.mapd.config import LANE_WIDTH
 import uuid
 
 
