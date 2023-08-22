@@ -1,10 +1,10 @@
 #include "selfdrive/ui/qt/onroad.h"
 
 #include <cmath>
+#include <unistd.h>
 
 #include <QDebug>
 #include <QMouseEvent>
-#include <QFileInfo>
 #include <QDateTime>
 #include <QProcess>
 #include <QTimer>
@@ -65,15 +65,13 @@ void OnroadWindow::updateState(const UIState &s) {
   Alert alert = Alert::get(*(s.sm), s.scene.started_frame);
   if (!s.is_OpenpilotViewEnabled) {
     // opkr
-    if (QFileInfo::exists("/data/log/error.txt") && s.scene.show_error) {
-      QFileInfo fileInfo;
-      fileInfo.setFile("/data/log/error.txt");
-      QDateTime modifiedtime = fileInfo.lastModified();
-      QString modified_time = modifiedtime.toString("yyyy-MM-dd hh:mm:ss ");
-      const std::string txt = util::read_file("/data/log/error.txt");
-      if (RichTextDialog::alert(modified_time + QString::fromStdString(txt), this)) {
-        QProcess::execute("rm -f /data/log/error.txt");
-        QTimer::singleShot(500, []() {});
+    if (s.scene.show_error) {
+      if(access("/data/log/error.txt", F_OK ) != -1) {
+        const std::string txt = util::read_file("/data/log/error.txt");
+        if (RichTextDialog::alert(QString::fromStdString(txt), this)) {
+          QProcess::execute("rm -f /data/log/error.txt");
+          QTimer::singleShot(500, []() {});
+        }
       }
     }
     alerts->updateAlert(alert);

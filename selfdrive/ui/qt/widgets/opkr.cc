@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iterator>
+#include <unistd.h>
 
 #include <QHBoxLayout>
 #include <QTextStream>
@@ -634,29 +635,35 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   btn2.setText(tr("RELOAD"));
 
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
-    QFile branchlistfile("/data/branches");
-    if (branchlistfile.open(QIODevice::ReadOnly)) {
-      QTextStream branchname(&branchlistfile);
-      stringList = QStringList();
-      while (!branchname.atEnd()) {
-        QString line = branchname.readLine();
-        stringList.append(line);
+    if(access("/data/branches", F_OK ) != -1) {
+      QFile branchlistfile("/data/branches");
+      if (branchlistfile.open(QIODevice::ReadOnly)) {
+        QTextStream branchname(&branchlistfile);
+        stringList = QStringList();
+        while (!branchname.atEnd()) {
+          QString line = branchname.readLine();
+          stringList.append(line);
+        }
+        branchlistfile.close();
       }
-      branchlistfile.close();
-    }
-    QString cur = QString::fromStdString(params.get("GitBranch"));
-    selection = MultiOptionDialog::getSelection(tr("Change Your Branch"), stringList, cur, this);
-    if (!selection.isEmpty()) {
-      if (selection != cur) {
-        if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
-          QProcess::execute("touch /data/opkr_compiling");
-          params.put("RunCustomCommand", selection);
+      QString cur = QString::fromStdString(params.get("GitBranch"));
+      selection = MultiOptionDialog::getSelection(tr("Change Your Branch"), stringList, cur, this);
+      if (!selection.isEmpty()) {
+        if (selection != cur) {
+          if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
+            QProcess::execute("touch /data/opkr_compiling");
+            params.put("RunCustomCommand", selection);
+          }
         }
       }
+    } else {
+      ConfirmationDialog::alert(tr("Still getting branches, try again in a while"), this);
     }
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
+    QProcess::execute("rm -f /data/branches");
+    btn1.setText(tr("Push to check"));
     params.put("RunCustomCommand", "3");
   });
 }
