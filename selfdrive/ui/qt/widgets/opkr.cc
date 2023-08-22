@@ -649,43 +649,16 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     if (!selection.isEmpty()) {
       if (selection != cur) {
         if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
-          QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + selection;
-          QString tcmd1 = "git -C /data/openpilot fetch --progress origin &";
-          QProcess::execute("git -C /data/openpilot clean -d -f -f");
-          QProcess::execute(cmd1);
-          QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh");
-          QObject::connect(&textMsgProcess1, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished1(int, QProcess::ExitStatus)));
-          textMsgProcess1.start(tcmd1);
+          QProcess::execute("touch /data/opkr_compiling");
+          params.put("RunCustomCommand", selection);
         }
       }
     }
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
-    btn2.setText(tr("RUNNING"));
-    QString tcmd2 = "git -C /data/openpilot fetch origin &";
-    QProcess::execute("git -C /data/openpilot remote prune origin");
-    QObject::connect(&textMsgProcess2, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished2(int, QProcess::ExitStatus)));
-    textMsgProcess2.start(tcmd2);
+    params.put("RunCustomCommand", "3");
   });
-}
-
-void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exitStatus) {
-  QString cmd2 = "git -C /data/openpilot checkout --track origin/" + selection;
-  QString cmd3 = "git -C /data/openpilot checkout " + selection;
-  if(exitStatus == QProcess::NormalExit) {
-    QProcess::execute(cmd2);
-    QProcess::execute(cmd3);
-    QProcess::execute("touch /data/opkr_compiling");
-    QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
-  }
-}
-
-void BranchSelectCombo::processFinished2(int exitCode, QProcess::ExitStatus exitStatus) {
-  btn2.setText(tr("RELOAD"));
-  if(exitStatus == QProcess::NormalExit) {
-    std::system("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
-  }
 }
 
 TimeZoneSelectCombo::TimeZoneSelectCombo() : AbstractControl("", "", "") 

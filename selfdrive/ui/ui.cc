@@ -445,10 +445,10 @@ void UIState::updateStatus() {
   if (!scene.auto_gitpull && (sm->frame - scene.started_frame > 30*UI_FREQ)) {
     if (Params().getBool("GitPullOnBoot")) {
       scene.auto_gitpull = true;
-      std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+      Params().put("RunCustomCommand", "2", 1);
     } else if (sm->frame - scene.started_frame > 60*UI_FREQ) {
       scene.auto_gitpull = true;
-      std::system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &");
+      Params().put("RunCustomCommand", "1", 1);
     }
   }
 

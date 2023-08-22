@@ -1062,17 +1062,11 @@ class BranchSelectCombo : public AbstractControl
 public:
   BranchSelectCombo();
 
-private slots:
-  void processFinished1(int exitCode, QProcess::ExitStatus exitStatus);
-  void processFinished2(int exitCode, QProcess::ExitStatus exitStatus);
-
 private:
   QPushButton btn1;
   QPushButton btn2;
   Params params;
 
-  QProcess textMsgProcess1;
-  QProcess textMsgProcess2;
   QString selection;
   QStringList stringList;
 };

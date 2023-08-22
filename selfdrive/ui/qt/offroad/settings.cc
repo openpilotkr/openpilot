@@ -328,8 +328,8 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
       desc += tr("Network connection is missing or unstable. Check the connection.");
       ConfirmationDialog::alert(desc, this);
     } else if (commit_local == commit_remote) {
-      std::system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &");
-      desc += tr("Local and remote match. No update required.");
+      params.put("RunCustomCommand", "1", 1);
+      desc += tr("Local and remote match, but running check, try again in few seconds to make sure.");
       ConfirmationDialog::alert(desc, this);
     } else {
       if (QFileInfo::exists("/data/OPKR_Updates.txt")) {
@@ -339,7 +339,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
         if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
           if (ConfirmationDialog::confirm2(tr("Device will be updated and rebooted. Do you want to proceed?"), this)) {
             std::system("touch /data/opkr_compiling");
-            std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+            params.put("RunCustomCommand", "2", 1);
           }
         }
       } else {
@@ -353,7 +353,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
           if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
             if (ConfirmationDialog::confirm2(tr("Device will be updated and rebooted. Do you want to proceed?"), this)) {
               std::system("touch /data/opkr_compiling");
-              std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+              params.put("RunCustomCommand", "2", 1);
             }
           }
         }
