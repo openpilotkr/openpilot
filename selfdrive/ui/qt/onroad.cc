@@ -359,6 +359,8 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   const bool nav_alive = sm.alive("navInstruction") && sm["navInstruction"].getValid();
 
   const auto cs = sm["controlsState"].getControlsState();
+  const auto car_state = sm["carState"].getCarState();
+  const auto nav_instruction = sm["navInstruction"].getNavInstruction();
 
   // Handle older routes where vCruiseCluster is not set
   float v_cruise =  cs.getVCruiseCluster() == 0.0 ? cs.getVCruise() : cs.getVCruiseCluster();
@@ -370,18 +372,18 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
 
   // Handle older routes where vEgoCluster is not set
   float v_ego;
-  if (sm["carState"].getCarState().getVEgoCluster() == 0.0 && !v_ego_cluster_seen) {
-    v_ego = sm["carState"].getCarState().getVEgo();
+  if (car_state.getVEgoCluster() == 0.0 && !v_ego_cluster_seen) {
+    v_ego = car_state.getVEgo();
   } else {
-    //v_ego = sm["carState"].getCarState().getVEgoCluster();
+    //v_ego = car_state.getVEgoCluster();
     //v_ego_cluster_seen = true;
-    v_ego = sm["carState"].getCarState().getVEgo();
+    v_ego = car_state.getVEgo();
   }
   float cur_speed = cs_alive ? std::max<float>(0.0, v_ego) : 0.0;
   cur_speed *= s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH;
 
-  auto speed_limit_sign = sm["navInstruction"].getNavInstruction().getSpeedLimitSign();
-  float speed_limit = nav_alive ? sm["navInstruction"].getNavInstruction().getSpeedLimit() : 0.0;
+  auto speed_limit_sign = nav_instruction.getSpeedLimitSign();
+  float speed_limit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
   speed_limit *= (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   setProperty("speedLimit", speed_limit);
@@ -515,7 +517,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
 
   if (s->scene.btn_pressing > 0) {
     p.setPen(QPen(Qt::white, 15));
-    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+20);
+    p.drawPoint(set_speed_rect.left()+22, set_speed_rect.y()+set_speed_size.height()/2+17);
   }
 
   const QRect sign_rect = set_speed_rect.adjusted(sign_margin, default_size.height(), -sign_margin, -sign_margin);
@@ -907,7 +909,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     // debug info(right panel)
     int width_r = 180;
     int sp_xr = rect().right() - UI_BORDER_SIZE - width_r / 2 - 10;
-    int sp_yr = UI_BORDER_SIZE + 235;
+    int sp_yr = UI_BORDER_SIZE + 245;
     int num_r = 0;
 
     //p.setRenderHint(QPainter::TextAntialiasing);
@@ -1268,7 +1270,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
       sl_opacity = 1;
     }
 
-    if (s->scene.limitSpeedCamera > 19) {
+    if (s->scene.limitSpeedCamera > 21) {
       if (s->scene.speedlimit_signtype) {
         p.setBrush(whiteColor(255/sl_opacity));
         p.drawRoundedRect(rect_si, 8, 8);

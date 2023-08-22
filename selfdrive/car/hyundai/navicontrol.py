@@ -2,13 +2,13 @@
 import math
 import numpy as np
 
-from common.conversions import Conversions as CV
-from selfdrive.car.hyundai.values import Buttons
-from common.numpy_fast import clip, interp
+from openpilot.common.conversions import Conversions as CV
+from openpilot.selfdrive.car.hyundai.values import Buttons
+from openpilot.common.numpy_fast import clip, interp
 from cereal import log
 import cereal.messaging as messaging
 from random import randint, randrange
-from common.params import Params
+from openpilot.common.params import Params
 
 LaneChangeState = log.LateralPlan.LaneChangeState
 

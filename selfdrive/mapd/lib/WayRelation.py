@@ -1,8 +1,8 @@
-from selfdrive.mapd.lib.geo import DIRECTION, R, vectors, bearing_to_points, distance_to_points
-from selfdrive.mapd.lib.osm import create_way
-from common.conversions import Conversions as CV
-from selfdrive.mapd.config import LANE_WIDTH
-from common.basedir import BASEDIR
+from openpilot.selfdrive.mapd.lib.geo import DIRECTION, R, vectors, bearing_to_points, distance_to_points
+from openpilot.selfdrive.mapd.lib.osm import create_way
+from openpilot.common.conversions import Conversions as CV
+from openpilot.selfdrive.mapd.config import LANE_WIDTH
+from openpilot.common.basedir import BASEDIR
 from datetime import datetime as dt
 import numpy as np
 import re

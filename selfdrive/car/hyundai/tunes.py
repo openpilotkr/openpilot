@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from enum import Enum
-from common.params import Params
+from openpilot.common.params import Params
 from decimal import Decimal
 
 class LongTunes(Enum):

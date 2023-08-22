@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 import os
+import time
 import numpy as np
 from cereal import log
-from common.realtime import sec_since_boot
-from common.numpy_fast import clip, interp
-from system.swaglog import cloudlog
+from openpilot.common.numpy_fast import clip, interp
+from openpilot.system.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
-from selfdrive.modeld.constants import index_function
-from selfdrive.car.interfaces import ACCEL_MIN
-from selfdrive.controls.radard import _LEAD_ACCEL_TAU
-from common.conversions import Conversions as CV
+from openpilot.selfdrive.modeld.constants import index_function
+from openpilot.selfdrive.car.interfaces import ACCEL_MIN
+from openpilot.selfdrive.controls.radard import _LEAD_ACCEL_TAU
+from openpilot.common.conversions import Conversions as CV
 
 if __name__ == '__main__':  # generating code
-  from third_party.acados.acados_template import AcadosModel, AcadosOcp, AcadosOcpSolver
+  from openpilot.third_party.acados.acados_template import AcadosModel, AcadosOcp, AcadosOcpSolver
 else:
-  from selfdrive.controls.lib.longitudinal_mpc_lib.c_generated_code.acados_ocp_solver_pyx import AcadosOcpSolverCython
+  from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.c_generated_code.acados_ocp_solver_pyx import AcadosOcpSolverCython
 
 from casadi import SX, vertcat
 
-from common.params import Params
+from openpilot.common.params import Params
 from decimal import Decimal
 
 MODEL_NAME = 'long'
@@ -40,7 +40,7 @@ X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
 J_EGO_COST = 5.0
-A_CHANGE_COST = 100. # 200.
+A_CHANGE_COST = 200.
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .25
 LEAD_DANGER_FACTOR = 0.75
@@ -414,7 +414,8 @@ class LongitudinalMpc:
       # These are not used in ACC mode
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
       x = np.cumsum(np.insert(xforward, 0, x[0]))
-      x = (x[N] + 5.0) * np.ones(N+1)
+      e2ex = (x[N] + 5.0) * np.ones(N+1)
+      x = (x[N] + 5.0) * np.ones(N+1)      
 
       #x[:], v[:], a[:], j[:] = 0.0, 0.0, 0.0, 0.0
       v[:], a[:], j[:] = 0.0, 0.0, 0.0
@@ -427,6 +428,7 @@ class LongitudinalMpc:
       cruise_target = T_IDXS * np.clip(v_cruise, v_ego - 2.0, 1e3) + x[0]
       xforward = ((v[1:] + v[:-1]) / 2) * (T_IDXS[1:] - T_IDXS[:-1])
       x = np.cumsum(np.insert(xforward, 0, x[0]))
+      e2ex = (x[N] + 5.0) * np.ones(N+1)
 
       x_and_cruise = np.column_stack([x, cruise_target])
       x = np.min(x_and_cruise, axis=1)
@@ -449,7 +451,7 @@ class LongitudinalMpc:
     self.params[:,4] = t_follow if not self.custom_tr_enabled else self.t_follow
 
 
-    self.e2e_x = x[:]
+    self.e2e_x = e2ex[:]
     self.lead_0_obstacle = lead_0_obstacle[:]
     self.lead_1_obstacle = lead_1_obstacle[:]
     if self.mode == 'acc':
@@ -475,7 +477,7 @@ class LongitudinalMpc:
         self.source = 'lead1'
 
   def run(self):
-    # t0 = sec_since_boot()
+    # t0 = time.monotonic()
     # reset = 0
     for i in range(N+1):
       self.solver.set(i, 'p', self.params[i])
@@ -506,14 +508,14 @@ class LongitudinalMpc:
 
     self.prev_a = np.interp(T_IDXS + 0.05, T_IDXS, self.a_solution)
 
-    t = sec_since_boot()
+    t = time.monotonic()
     if self.solution_status != 0:
       if t > self.last_cloudlog_t + 5.0:
         self.last_cloudlog_t = t
         cloudlog.warning(f"Long mpc reset, solution_status: {self.solution_status}")
       self.reset()
       # reset = 1
-    # print(f"long_mpc timings: total internal {self.solve_time:.2e}, external: {(sec_since_boot() - t0):.2e} qp {self.time_qp_solution:.2e}, \
+    # print(f"long_mpc timings: total internal {self.solve_time:.2e}, external: {(time.monotonic() - t0):.2e} qp {self.time_qp_solution:.2e}, \
     # lin {self.time_linearization:.2e} qp_iter {qp_iter}, reset {reset}")
 
 

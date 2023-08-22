@@ -123,8 +123,8 @@ Keyboard::Keyboard(QWidget *parent) : QFrame(parent) {
   // numbers + specials
   std::vector<QVector<QString>> numbers = {
     {"1","2","3","4","5","6","7","8","9","0"},
-    {":","/",".","-","(",")","$","&&","@","\""},
-    {"#+=",";",",","?","!","`",BACKSPACE_KEY},
+    {"-","/",":",";","(",")","$","&&","@","\""},
+    {"#+=",".",",","?","!","`",BACKSPACE_KEY},
     {"ABC","  ",".",ENTER_KEY},
   };
   main_layout->addWidget(new KeyboardLayout(this, numbers));

@@ -1,12 +1,12 @@
 import math
 
 from cereal import log
-from common.numpy_fast import interp
-from selfdrive.controls.lib.latcontrol import LatControl
-from selfdrive.controls.lib.pid import PIDController
-from selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
+from openpilot.common.numpy_fast import interp
+from openpilot.selfdrive.controls.lib.latcontrol import LatControl
+from openpilot.selfdrive.controls.lib.pid import PIDController
+from openpilot.selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
 
-from common.params import Params
+from openpilot.common.params import Params
 from decimal import Decimal
 
 # At higher speeds (25+mph) we can assume:
