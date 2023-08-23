@@ -652,7 +652,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         if (selection != cur) {
           if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
             QProcess::execute("touch /data/opkr_compiling");
-            params.put("RunCustomCommand", selection);
+            params.put("RunCustomCommand", selection.toStdString());
           }
         }
       }
