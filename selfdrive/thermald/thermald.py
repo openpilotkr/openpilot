@@ -363,11 +363,11 @@ def thermald_thread(end_event, hw_queue):
     # Custom commands
     if (count % int(1. / DT_TRML)) == 0:
       if params.get("RunCustomCommand") is not None and params.get("RunCustomCommand") != "0":
-        if params.get("RunCustomCommand") == "1":
+        if int(params.get("RunCustomCommand")) == 1:
           os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &")
-        elif params.get("RunCustomCommand") == "2":
+        elif int(params.get("RunCustomCommand")) == 2:
           os.system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &")
-        elif params.get("RunCustomCommand") == "3":
+        elif int(params.get("RunCustomCommand")) == 3:
           os.system("git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches")
         elif len(params.get("RunCustomCommand")) > 2:
           selection = params.get("RunCustomCommand")
