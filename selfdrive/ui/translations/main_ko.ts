@@ -1031,8 +1031,8 @@ This may take up to a minute.</source>
         <translation>네트워크 연결이 끊겼거나 불안정합니다. 연결 상태를 확인하세요.</translation>
     </message>
     <message>
-        <source>Local and remote match. No update required.</source>
-        <translation>로컬과 원격 커밋이 일치합니다. 업데이트가 필요 없습니다.</translation>
+        <source>Local and remote match, but running check, try again in few seconds to make sure.</source>
+        <translation>로컬과 원격 커밋이 일치합니다. 원격지에 업데이트가 있는지 확인중이며, 잠시 후 한번더 시도해 보세요.</translation>
     </message>
     <message>
         <source>Device will be updated and rebooted. Do you want to proceed?</source>
