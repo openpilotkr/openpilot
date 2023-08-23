@@ -659,6 +659,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
     } else {
       ConfirmationDialog::alert(tr("Still getting branches, try again in a while"), this);
     }
+    btn1.setText(QString::fromStdString(params.get("GitBranch")));
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
