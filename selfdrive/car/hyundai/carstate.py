@@ -173,7 +173,10 @@ class CarState(CarStateBase):
     # long press should set scc speed with cluster scc number
     if self.cruise_buttons_time >= 60 and self.cruise_buttons[-1] in (1,2):
       self.cruise_buttons_time = 0
-      set_speed_kph += 10 if self.is_metric else set_speed_kph += 5
+      if self.is_metric:
+        set_speed_kph += 10
+      else:
+        set_speed_kph += 5
       self.cruise_set_speed_kph = int(round(set_speed_kph/10)*10) if self.is_metric else int(round(set_speed_kph/5)*5)
       return self.cruise_set_speed_kph
 
