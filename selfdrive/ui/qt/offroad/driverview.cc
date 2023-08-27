@@ -1,5 +1,6 @@
 #include "selfdrive/ui/qt/offroad/driverview.h"
 
+#include <algorithm>
 #include <QPainter>
 
 #include "selfdrive/ui/qt/qt_window.h"
@@ -19,6 +20,15 @@ DriverViewWindow::DriverViewWindow(QWidget* parent) : QWidget(parent) {
   connect(cameraView, &CameraWidget::vipcThreadFrameReceived, scene, &DriverViewScene::frameUpdated);
   layout->addWidget(scene);
   layout->setCurrentWidget(scene);
+
+  QObject::connect(device(), &Device::interactiveTimeout, this, &DriverViewWindow::closeView);
+}
+
+void DriverViewWindow::closeView() {
+  if (isVisible()) {
+    cameraView->stopVipcThread();
+    emit done();
+  }
 }
 
 void DriverViewWindow::mousePressEvent(QMouseEvent* e) {
@@ -26,8 +36,7 @@ void DriverViewWindow::mousePressEvent(QMouseEvent* e) {
     uiState()->scene.rec_stat = !uiState()->scene.rec_stat;
     return;
   }
-  cameraView->stopVipcThread();
-  emit done();
+  closeView();
 }
 
 DriverViewScene::DriverViewScene(QWidget* parent) : sm({"driverStateV2"}), QWidget(parent) {
@@ -54,7 +63,6 @@ void DriverViewScene::showEvent(QShowEvent* event) {
 
 void DriverViewScene::hideEvent(QHideEvent* event) {
   params.putBool("IsDriverViewEnabled", false);
-  device()->resetInteractiveTimeout();
 }
 
 void DriverViewScene::frameUpdated() {
