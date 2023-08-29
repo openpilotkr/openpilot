@@ -550,6 +550,8 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       messages.append(("E_EMS11", 50))
+      if CP.carFingerprint in (EV_CAR):
+        messages.append(("EV_Info", 0))
     else:
       messages += [
         ("EMS12", 100),
