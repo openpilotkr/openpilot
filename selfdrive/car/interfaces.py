@@ -206,7 +206,7 @@ class CarInterfaceBase(ABC):
     tune.init('torque')
 
     if params is not None:
-      if self.use_live_torque
+      if self.use_live_torque:
         tune.torque.useSteeringAngle = use_steering_angle
         tune.torque.kp = 1.0
         tune.torque.kf = 1.0
