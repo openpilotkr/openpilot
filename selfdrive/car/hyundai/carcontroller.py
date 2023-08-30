@@ -1130,18 +1130,18 @@ class CarController:
                 stock_weight = 0.0
                 self.change_accel_fast = False
                 accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
-            elif 0.1 < self.dRel < (self.stoppingdist + 2.0) and int(self.vRel*3.6) < 0:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.0, 1.0, 2.0], [0.05, 1.0, 5.0]))
+            elif 0.1 < self.dRel < (self.stoppingdist + 2.5) and int(self.vRel*3.6) < 0:
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.0, 1.0, 2.0], [0.05, 0.5, 1.0]))
               self.stopped = False
-            elif 0.1 < self.dRel < (self.stoppingdist + 2.0):
-              accel = min(-0.5, faccel*0.5)
+            elif 0.1 < self.dRel < (self.stoppingdist + 2.5):
+              accel = min(-0.6, faccel*0.5)
               if stopping:
                 self.stopped = True
               else:
                 self.stopped = False
             elif 0.1 < self.dRel < 90:
               self.stopped = False
-              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.0, 30], [0.9, 1.0])
+              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.5, 30], [1.0, 1.0])
               accel = faccel*ddrel_weight
             else:
               self.stopped = False
