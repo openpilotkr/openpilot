@@ -33,6 +33,7 @@ TORQUE_PARAMS_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/params.yam
 TORQUE_OVERRIDE_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/override.yaml')
 TORQUE_SUBSTITUTE_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/substitute.yaml')
 
+UseLiveTorque = Params().get_bool("OpkrLiveTorque")
 
 def get_torque_params(candidate):
   with open(TORQUE_SUBSTITUTE_PATH) as f:
@@ -93,8 +94,7 @@ class CarInterfaceBase(ABC):
     self.ufc_mode = Params().get_bool("UFCModeEnabled")
     self.steer_warning_fix_enabled = Params().get_bool("SteerWarningFix")
     self.user_specific_feature = int(Params().get("UserSpecificFeature", encoding="utf8"))
-    self.use_live_torque = Params().get_bool("OpkrLiveTorque")
-
+    
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
     return ACCEL_MIN, ACCEL_MAX
@@ -206,7 +206,7 @@ class CarInterfaceBase(ABC):
     tune.init('torque')
 
     if params is not None:
-      if self.use_live_torque:
+      if UseLiveTorque:
         tune.torque.useSteeringAngle = use_steering_angle
         tune.torque.kp = 1.0
         tune.torque.kf = 1.0
