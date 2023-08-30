@@ -33,7 +33,7 @@ TORQUE_PARAMS_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/params.yam
 TORQUE_OVERRIDE_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/override.yaml')
 TORQUE_SUBSTITUTE_PATH = os.path.join(BASEDIR, 'selfdrive/car/torque_data/substitute.yaml')
 
-UseLiveTorque = Params().get_bool("OpkrLiveTorque")
+UseLiveTorque = Params().get_bool("OpkrLiveTorque") if Params().get_bool("OpkrLiveTorque") is not None else False
 
 def get_torque_params(candidate):
   with open(TORQUE_SUBSTITUTE_PATH) as f:
