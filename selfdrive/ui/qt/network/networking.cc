@@ -1,4 +1,4 @@
-#include "selfdrive/ui/qt/offroad/networking.h"
+#include "selfdrive/ui/qt/network/networking.h"
 
 #include <algorithm>
 
@@ -146,7 +146,6 @@ AdvancedNetworking::AdvancedNetworking(QWidget* parent, WifiManager* wifi): QWid
   // SSH keys
   list->addItem(new SshToggle());
   list->addItem(new SshControl());
-  list->addItem(new SshLegacyToggle());
 
   // Roaming toggle
   const bool roamingEnabled = params.getBool("GsmRoaming");

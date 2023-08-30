@@ -59,6 +59,7 @@ class HyundaiFlags(IntFlag):
   CANFD_ALT_GEARS_2 = 64
   SEND_LFA = 128
   USE_FCA = 256
+  CANFD_HDA2_ALT_STEERING = 512
 
 
 class CAR:
@@ -76,6 +77,7 @@ class CAR:
   KONA = "HYUNDAI KONA 2020"
   KONA_EV = "HYUNDAI KONA ELECTRIC 2019"
   KONA_EV_2022 = "HYUNDAI KONA ELECTRIC 2022"
+  KONA_EV_2ND_GEN = "HYUNDAI KONA ELECTRIC 2ND GEN"
   KONA_HEV = "HYUNDAI KONA HYBRID 2020"
   SANTA_FE = "HYUNDAI SANTA FE 2019"
   SANTA_FE_2022 = "HYUNDAI SANTA FE 2022"
@@ -101,7 +103,6 @@ class CAR:
   GRANDEUR_FL_IG = "HYUNDAI GRANDEUR FL (IG)"
   GRANDEUR_HEV_FL_IG = "HYUNDAI GRANDEUR HYBRID FL (IG)"
   NEXO_FE = "HYUNDAI NEXO (FE)"
-  KONA_EV_2ND_GEN = "HYUNDAI KONA EV 2ND GEN"
 
   # Kia
   KIA_FORTE = "KIA FORTE E 2018 & GT 2021"
@@ -188,6 +189,7 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
   CAR.KONA_EV_2022: HyundaiCarInfo("Hyundai Kona Electric 2022", car_parts=CarParts.common([CarHarness.hyundai_o])),
   CAR.KONA_HEV: HyundaiCarInfo("Hyundai Kona Hybrid 2020", video_link="https://youtu.be/0dwpAHiZgFo",
                                                                       car_parts=CarParts.common([CarHarness.hyundai_i])),  # TODO: check packages
+  CAR.KONA_EV_2ND_GEN: HyundaiCarInfo("Hyundai Kona Electric (with HDA II, Korea only) 2023", car_parts=CarParts.common([CarHarness.hyundai_r])),
   CAR.SANTA_FE: HyundaiCarInfo("Hyundai Santa Fe 2019-20", "All", car_parts=CarParts.common([CarHarness.hyundai_d])),
   CAR.SANTA_FE_2022: HyundaiCarInfo("Hyundai Santa Fe 2021-23", "All", video_link="https://youtu.be/VnHzSTygTS4",
                                                                       car_parts=CarParts.common([CarHarness.hyundai_l])),
@@ -212,8 +214,6 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
     HyundaiCarInfo("Hyundai Ioniq 5 (with HDA II) 2022-23", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_q])),
   ],
   CAR.IONIQ_6: [
-    # TODO: unknown
-    HyundaiCarInfo("Hyundai Ioniq 6 (without HDA II) 2023", "Highway Driving Assist", car_parts=CarParts.common([CarHarness.hyundai_k])),
     HyundaiCarInfo("Hyundai Ioniq 6 (with HDA II) 2023", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_p])),
   ],
   CAR.TUCSON_4TH_GEN: [
@@ -231,7 +231,6 @@ CAR_INFO: Dict[str, Optional[Union[HyundaiCarInfo, List[HyundaiCarInfo]]]] = {
   CAR.GRANDEUR_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL", "All", car_parts=CarParts.common([CarHarness.hyundai_k])),
   CAR.GRANDEUR_HEV_FL_IG: HyundaiCarInfo("Hyundai Grandeur IG FL Hybrid", "All", car_parts=CarParts.common([CarHarness.hyundai_k])),
   CAR.NEXO_FE: HyundaiCarInfo("Hyundai Nexo", "All"),
-  CAR.KONA_EV_2ND_GEN: HyundaiCarInfo("Hyundai Kona Electric (with HDA II Korea only) 2023", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_r])),
 
   # Kia
   CAR.KIA_FORTE: [
@@ -1451,14 +1450,24 @@ FW_VERSIONS = {
       b'\xf1\x00OSP LKA  AT EUR RHD 1.00 1.02 99211-J9110 802',
       b'\xf1\x00OSP LKA  AT AUS RHD 1.00 1.04 99211-J9200 904',
       b'\xf1\x00OSP LKA  AT EUR LHD 1.00 1.04 99211-J9200 904',
+      b'\xf1\x00OSP LKA  AT EUR RHD 1.00 1.04 99211-J9200 904',
     ],
     (Ecu.eps, 0x7D4, None): [
       b'\xf1\x00OSP MDPS C 1.00 1.02 56310K4260\x00 4OEPC102',
       b'\xf1\x00OSP MDPS C 1.00 1.02 56310/K4970 4OEPC102',
       b'\xf1\x00OSP MDPS C 1.00 1.02 56310/K4271 4OEPC102',
+      b'\xf1\x00OSP MDPS C 1.00 1.02 56310K4971\x00 4OEPC102',
     ],
     (Ecu.fwdRadar, 0x7D0, None): [
       b'\xf1\x00YB__ FCA -----      1.00 1.01 99110-K4500      \x00\x00\x00',
+    ],
+  },
+  CAR.KONA_EV_2ND_GEN: {
+    (Ecu.fwdRadar, 0x7d0, None): [
+      b'\xf1\x00SXev RDR -----      1.00 1.00 99110-BF000         ',
+    ],
+    (Ecu.fwdCamera, 0x7c4, None): [
+      b'\xf1\x00SX2EMFC  AT KOR LHD 1.00 1.00 99211-BF000 230410',
     ],
   },
   CAR.KIA_NIRO_EV: {
@@ -1607,6 +1616,14 @@ FW_VERSIONS = {
       b'\xf1\x816U2VC051\x00\x00\xf1\x006U2V0_C2\x00\x006U2VC051\x00\x00DJF0T16NL2\x9eA\x80\x01',
       b'\xf1\x816U2VA051\x00\x00\xf1\x006U2V0_C2\x00\x006U2VA051\x00\x00DJF0T16NL1\x00\x00\x00\x00',
       b'\xf1\x87\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xf1\x816T6B8051\x00\x00\xf1\x006T6H0_C2\x00\x006T6B8051\x00\x00TJFSG24NH27\xa7\xc2\xb4',
+    ],
+  },
+  CAR.K5_HEV_JF: {
+    (Ecu.fwdRadar, 0x7d0, None): [
+      b'\xf1\x00JFhe SCC FNCUP      1.00 1.00 96400-A8000         ',
+    ],
+    (Ecu.fwdCamera, 0x7c4, None): [
+      b'\xf1\x00JFP LKAS AT EUR LHD 1.00 1.03 95895-A8100 160711',
     ],
   },
   CAR.ELANTRA: {
@@ -1840,10 +1857,12 @@ FW_VERSIONS = {
       b'\xf1\x00NX4 FR_CMR AT USA LHD 1.00 1.00 99211-N9220 14K',
       b'\xf1\x00NX4 FR_CMR AT USA LHD 1.00 1.01 99211-N9100 14A',
       b'\xf1\x00NX4 FR_CMR AT USA LHD 1.00 1.00 99211-N9250 14W',
+      b'\xf1\x00NX4 FR_CMR AT EUR LHD 1.00 2.02 99211-N9000 14E',
     ],
     (Ecu.fwdRadar, 0x7d0, None): [
       b'\xf1\x00NX4__               1.00 1.00 99110-N9100         ',
       b'\xf1\x00NX4__               1.01 1.00 99110-N9100         ',
+      b'\xf1\x00NX4__               1.00 1.01 99110-N9000         ',
     ],
   },
   CAR.KIA_SPORTAGE_HYBRID_5TH_GEN: {
@@ -1902,10 +1921,12 @@ FW_VERSIONS = {
     (Ecu.fwdCamera, 0x7c4, None): [
       b'\xf1\x00MQ4 MFC  AT USA LHD 1.00 1.05 99210-R5000 210623',
       b'\xf1\x00MQ4 MFC  AT USA LHD 1.00 1.03 99210-R5000 200903',
+      b'\xf1\x00MQ4 MFC  AT USA LHD 1.00 1.00 99210-R5100 221019',
     ],
     (Ecu.fwdRadar, 0x7d0, None): [
       b'\xf1\x00MQ4_ SCC FHCUP      1.00 1.06 99110-P2000         ',
       b'\xf1\x00MQ4_ SCC F-CUP      1.00 1.06 99110-P2000         ',
+      b'\xf1\x00MQ4_ SCC FHCUP      1.00 1.08 99110-P2000         ',
     ],
   },
   CAR.KIA_NIRO_HEV_2ND_GEN: {
@@ -1943,22 +1964,6 @@ FW_VERSIONS = {
       b'\xf1\x00MQhe SCC FHCUP      1.00 1.07 99110-P4000         ',
     ],
   },
-  CAR.KONA_EV_2ND_GEN: {
-    (Ecu.fwdRadar, 0x7d0, None): [
-      b'\xf1\x00SXev RDR -----      1.00 1.00 99110-BF000         ',
-    ],
-    (Ecu.fwdCamera, 0x7c4, None): [
-      b'\xf1\x00SX2EMFC  AT KOR LHD 1.00 1.00 99211-BF000 230410',
-    ],
-  },
-  CAR.K5_HEV_JF: {
-    (Ecu.fwdCamera, 0x7c4, None): [
-      b'\xf1\x00JFP LKAS AT EUR LHD 1.00 1.03 95895-A8100 160711',
-    ],
-    (Ecu.fwdRadar, 0x7d0, None): [
-      b'\xf1\x00JFhe SCC FNCUP      1.00 1.00 96400-A8000         ',
-    ],
-  },
 }
 
 CHECKSUM = {
@@ -1987,7 +1992,7 @@ CANFD_CAR = {CAR.KIA_EV6, CAR.IONIQ_5, CAR.IONIQ_6, CAR.TUCSON_4TH_GEN, CAR.TUCS
 
 # The radar does SCC on these cars when HDA I, rather than the camera
 CANFD_RADAR_SCC_CAR = {CAR.GENESIS_GV70_1ST_GEN, CAR.KIA_SORENTO_PHEV_4TH_GEN, CAR.KIA_SORENTO_4TH_GEN, CAR.GENESIS_GV80,
-                       CAR.KIA_CARNIVAL_4TH_GEN, CAR.KIA_SORENTO_HEV_4TH_GEN, CAR.KONA_EV_2ND_GEN}
+                       CAR.KIA_CARNIVAL_4TH_GEN, CAR.KIA_SORENTO_HEV_4TH_GEN, CAR.KONA_EV_2ND_GEN, CAR.IONIQ_6}
 
 # The camera does SCC on these cars, rather than the radar
 CAMERA_SCC_CAR = {CAR.KONA_EV_2022, }
@@ -1996,7 +2001,7 @@ CAMERA_SCC_CAR = {CAR.KONA_EV_2022, }
 HYBRID_CAR = {CAR.IONIQ_PHEV, CAR.ELANTRA_HEV_2021, CAR.KIA_NIRO_PHEV, CAR.KIA_NIRO_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_HEV, CAR.IONIQ,
               CAR.IONIQ_HEV_2022, CAR.SANTA_FE_HEV_2022, CAR.SANTA_FE_PHEV_2022, CAR.IONIQ_PHEV_2019, CAR.TUCSON_HYBRID_4TH_GEN,
               CAR.KIA_SPORTAGE_HYBRID_5TH_GEN, CAR.KIA_SORENTO_PHEV_4TH_GEN, CAR.KIA_K5_HEV_2020, CAR.KIA_NIRO_HEV_2ND_GEN,
-              CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.AVANTE_HEV_CN7, CAR.KIA_OPTIMA_H}  # these cars use a different gas signal
+              CAR.KIA_SORENTO_HEV_4TH_GEN, CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.AVANTE_HEV_CN7, CAR.KIA_OPTIMA_H}  # these cars use a different gas signal
 EV_CAR = {CAR.IONIQ_EV_2020, CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.KIA_NIRO_EV, CAR.KIA_NIRO_EV_2ND_GEN, CAR.KONA_EV_2022,
           CAR.KIA_EV6, CAR.IONIQ_5, CAR.IONIQ_6, CAR.GENESIS_GV60_EV_1ST_GEN,
           CAR.NEXO_FE, CAR.SOUL_EV_SK3, CAR.KONA_EV_2ND_GEN}
