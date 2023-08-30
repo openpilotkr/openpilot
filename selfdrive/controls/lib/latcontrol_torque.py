@@ -75,6 +75,7 @@ class LatControlTorque(LatControl):
     if self.lt_timer > 100:
       self.lt_timer = 0
       self.live_tune_enabled = self.params.get_bool("OpkrLiveTunePanelEnable")
+      self.live_torque_params = self.params.get_bool("OpkrLiveTorque")
     if self.live_tune_enabled:
       self.live_tune()
 
