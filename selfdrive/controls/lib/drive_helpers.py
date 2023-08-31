@@ -93,6 +93,7 @@ class VCruiseHelper:
     self.v_cruise_kph_last = self.v_cruise_kph
     self.sm.update(0)
     if CS.cruiseState.available:
+      m_unit = CV.MS_TO_KPH if self.is_kph else CV.MS_TO_MPH
       if not self.CP.pcmCruise:
         if self.CP.carName == "hyundai":
           self.v_cruise_kph = CS.cruiseState.speed * m_unit
@@ -103,7 +104,6 @@ class VCruiseHelper:
           self.v_cruise_cluster_kph = self.v_cruise_kph
           self.update_button_timers(CS, enabled)
       else:
-        m_unit = CV.MS_TO_KPH if self.is_kph else CV.MS_TO_MPH
         if not self.CP.carName == "hyundai":
           self.v_cruise_kph = CS.cruiseState.speed * m_unit
           self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * m_unit
