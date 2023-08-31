@@ -21,7 +21,7 @@ if [ "$?" == "0" ]; then
   if [ "$HASH" != "$REMOTE_HASH" ]; then
     IS_LANGFILE_CHANGED=$(git diff @{upstream} | grep translations)
     if [ "$IS_LANGFILE_CHANGED" != "" ]; then
-      rm -f /data/openpilot/selfdrive/ui/translations/*.qm    
+      git reset --hard
     fi
     git pull origin $BRANCH
     touch /data/opkr_compiling

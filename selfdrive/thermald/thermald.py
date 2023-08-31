@@ -123,8 +123,8 @@ def hw_state_thread(end_event, hw_queue):
 
         # Log modem version once
         if AGNOS and ((modem_version is None) or (modem_nv is None)):
-          modem_version = HARDWARE.get_modem_version()  # pylint: disable=assignment-from-none
-          modem_nv = HARDWARE.get_modem_nv()  # pylint: disable=assignment-from-none
+          modem_version = HARDWARE.get_modem_version()
+          modem_nv = HARDWARE.get_modem_nv()
 
           if (modem_version is not None) and (modem_nv is not None):
             cloudlog.event("modem version", version=modem_version, nv=modem_nv)
@@ -175,7 +175,7 @@ def hw_state_thread(end_event, hw_queue):
     time.sleep(DT_TRML)
 
 
-def thermald_thread(end_event, hw_queue):
+def thermald_thread(end_event, hw_queue) -> None:
   pm = messaging.PubMaster(['deviceState'])
   sm = messaging.SubMaster(["peripheralState", "gpsLocationExternal", "controlsState", "pandaStates"], poll=["pandaStates"])
 
@@ -187,10 +187,10 @@ def thermald_thread(end_event, hw_queue):
   startup_conditions: Dict[str, bool] = {}
   startup_conditions_prev: Dict[str, bool] = {}
 
-  off_ts = None
-  started_ts = None
+  off_ts: Optional[float] = None
+  started_ts: Optional[float] = None
   started_seen = False
-  startup_blocked_ts = None
+  startup_blocked_ts: Optional[float] = None
   thermal_status = ThermalStatus.yellow
 
   last_hw_state = HardwareState(
@@ -359,6 +359,28 @@ def thermald_thread(end_event, hw_queue):
     elif onroadrefresh:
        onroadrefresh = False
        onroad_conditions["onroad_refresh"] = True
+
+    # Custom commands
+    if (count % int(1. / DT_TRML)) == 0:
+      if params.get("RunCustomCommand") is not None and params.get("RunCustomCommand") != "0":
+        if len(params.get("RunCustomCommand")) > 2:
+          selection = params.get("RunCustomCommand").decode()
+          command1 = "git -C /data/openpilot clean -d -f -f; git -C /data/openpilot remote set-branches --add origin " + selection
+          os.system(command1)
+          os.system("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh")
+          os.system("git -C /data/openpilot fetch --progress origin")
+          command2 = "git -C /data/openpilot checkout --track origin/" + selection
+          command3 = "git -C /data/openpilot checkout " + selection
+          os.system(command2)
+          os.system(command3)
+          os.system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh")
+        elif int(params.get("RunCustomCommand")) == 1:
+          os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh")
+        elif int(params.get("RunCustomCommand")) == 2:
+          os.system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh")
+        elif int(params.get("RunCustomCommand")) == 3:
+          os.system("git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches")
+        params.put("RunCustomCommand", "0")
 
     # Handle offroad/onroad transition
     should_start = all(onroad_conditions.values())

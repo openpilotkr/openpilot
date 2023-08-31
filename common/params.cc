@@ -414,6 +414,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"NavHome", PERSISTENT},
     {"NavWork", PERSISTENT},
     {"NavList", PERSISTENT},
+    {"RunCustomCommand", CLEAR_ON_MANAGER_START},
 };
 
 } // namespace

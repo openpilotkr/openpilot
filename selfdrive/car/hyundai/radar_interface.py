@@ -52,10 +52,10 @@ class RadarInterface(RadarInterfaceBase):
   def update(self, can_strings):
     if USE_RADAR_TRACK or self.CP.carFingerprint in CANFD_CAR:
       if self.radar_off_can or (self.rcp is None):
-        return None
+        return super().update(None)
     else:
       if self.radar_off_can:
-        return None
+        return super().update(None)
 
     vls = self.rcp.update_strings(can_strings)
     self.updated_messages.update(vls)

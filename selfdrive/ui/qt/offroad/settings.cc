@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cmath>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include <QDebug>
 #include <QProcess> // opkr
@@ -43,7 +45,8 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       tr("openpilot Longitudinal Control (Alpha)"),
       QString("<b>%1</b><br><br>%2")
       .arg(tr("WARNING: openpilot longitudinal control is in alpha for this car and will disable Automatic Emergency Braking (AEB)."))
-      .arg(tr("On this car, openpilot defaults to the car's built-in ACC instead of openpilot's longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when enabling openpilot longitudinal control alpha.")),
+      .arg(tr("On this car, openpilot defaults to the car's built-in ACC instead of openpilot's longitudinal control. "
+              "Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when enabling openpilot longitudinal control alpha.")),
       "../assets/offroad/icon_speed_limit.png",
     },
     {
@@ -106,7 +109,8 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
 
   std::vector<QString> longi_button_texts{tr("Aggressive"), tr("Standard"), tr("Relaxed")};
   long_personality_setting = new ButtonParamControl("LongitudinalPersonality", tr("Driving Personality"),
-                                          tr("Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars."),
+                                          tr("Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. "
+                                             "In relaxed mode openpilot will stay further away from lead cars."),
                                           "../assets/offroad/icon_speed_limit.png",
                                           longi_button_texts);
   for (auto &[param, title, desc, icon] : toggle_defs) {
@@ -328,8 +332,8 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
       desc += tr("Network connection is missing or unstable. Check the connection.");
       ConfirmationDialog::alert(desc, this);
     } else if (commit_local == commit_remote) {
-      std::system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh &");
-      desc += tr("Local and remote match. No update required.");
+      params.put("RunCustomCommand", "1", 1);
+      desc += tr("Local and remote match, but running check, try again in few seconds to make sure.");
       ConfirmationDialog::alert(desc, this);
     } else {
       if (QFileInfo::exists("/data/OPKR_Updates.txt")) {
@@ -339,7 +343,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
         if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
           if (ConfirmationDialog::confirm2(tr("Device will be updated and rebooted. Do you want to proceed?"), this)) {
             std::system("touch /data/opkr_compiling");
-            std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+            params.put("RunCustomCommand", "2", 1);
           }
         }
       } else {
@@ -353,7 +357,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
           if (UpdateInfoDialog::confirm(desc + "\n" + QString::fromStdString(txt), this)) {
             if (ConfirmationDialog::confirm2(tr("Device will be updated and rebooted. Do you want to proceed?"), this)) {
               std::system("touch /data/opkr_compiling");
-              std::system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh &");
+              params.put("RunCustomCommand", "2", 1);
             }
           }
         }
@@ -712,6 +716,10 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     }
     SettingsWindow {
       background-color: black;
+    }
+    QStackedWidget, ScrollView {
+      background-color: #292929;
+      border-radius: 30px;
     }
   )");
 }

@@ -31,7 +31,7 @@ Sound::Sound(QObject *parent) : sm({"controlsState", "microphone"}) {
   QTimer *timer = new QTimer(this);
   QObject::connect(timer, &QTimer::timeout, this, &Sound::update);
   timer->start(1000 / UI_FREQ);
-};
+}
 
 void Sound::update() {
   sm.update(0);
@@ -40,7 +40,7 @@ void Sound::update() {
   if (sm.updated("microphone")) {
     float volume = util::map_val(sm["microphone"].getMicrophone().getFilteredSoundPressureWeightedDb(), 30.f, 60.f, 0.f, 1.f);
     volume = QAudio::convertVolume(volume, QAudio::LogarithmicVolumeScale, QAudio::LinearVolumeScale);
-
+    // set volume on changes
     if (std::stof(Params().get("CommaStockUI")) > 1.0 && std::stof(Params().get("DoNotDisturbMode")) > 1.0) {
       Hardware::set_volume(0.0);
     } else if ((std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01) < -0.03) {
@@ -48,7 +48,9 @@ void Sound::update() {
     } else if ((std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01) > 0.03) {
       Hardware::set_volume(std::stof(Params().get("OpkrUIVolumeBoost")) * 0.01);
     } else {
-      Hardware::set_volume(volume);
+      if (std::exchange(current_volume, std::nearbyint(volume * 10)) != current_volume) {
+      	Hardware::set_volume(volume);
+      }
     }
   }
 

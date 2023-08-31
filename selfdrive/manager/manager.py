@@ -10,7 +10,7 @@ from typing import List, Tuple, Union
 from cereal import log
 import cereal.messaging as messaging
 import openpilot.selfdrive.sentry as sentry
-from openpilot.common.basedir import PYEXTRADIR
+from openpilot.common.basedir import BASEDIR, PYEXTRADIR
 from openpilot.common.params import Params, ParamKeyType
 from openpilot.common.text_window import TextWindow
 from openpilot.selfdrive.boardd.set_time import set_time
@@ -239,6 +239,7 @@ def manager_init() -> None:
     ("NavWork", ""),
     ("NavList", ""),
     ("MapboxToken", ""),
+    ("RunCustomCommand", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

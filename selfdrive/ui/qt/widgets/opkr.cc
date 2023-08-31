@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iterator>
+#include <unistd.h>
 
 #include <QHBoxLayout>
 #include <QTextStream>
@@ -634,58 +635,38 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   btn2.setText(tr("RELOAD"));
 
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
-    QFile branchlistfile("/data/branches");
-    if (branchlistfile.open(QIODevice::ReadOnly)) {
-      QTextStream branchname(&branchlistfile);
-      stringList = QStringList();
-      while (!branchname.atEnd()) {
-        QString line = branchname.readLine();
-        stringList.append(line);
+    if(access("/data/branches", F_OK ) != -1) {
+      QFile branchlistfile("/data/branches");
+      if (branchlistfile.open(QIODevice::ReadOnly)) {
+        QTextStream branchname(&branchlistfile);
+        stringList = QStringList();
+        while (!branchname.atEnd()) {
+          QString line = branchname.readLine();
+          stringList.append(line);
+        }
+        branchlistfile.close();
       }
-      branchlistfile.close();
-    }
-    QString cur = QString::fromStdString(params.get("GitBranch"));
-    selection = MultiOptionDialog::getSelection(tr("Change Your Branch"), stringList, cur, this);
-    if (!selection.isEmpty()) {
-      if (selection != cur) {
-        if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
-          QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + selection;
-          QString tcmd1 = "git -C /data/openpilot fetch --progress origin &";
-          QProcess::execute("git -C /data/openpilot clean -d -f -f");
-          QProcess::execute(cmd1);
-          QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh");
-          QObject::connect(&textMsgProcess1, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished1(int, QProcess::ExitStatus)));
-          textMsgProcess1.start(tcmd1);
+      QString cur = QString::fromStdString(params.get("GitBranch"));
+      selection = MultiOptionDialog::getSelection(tr("Change Your Branch"), stringList, cur, this);
+      if (!selection.isEmpty()) {
+        if (selection != cur) {
+          if (ConfirmationDialog::confirm2(tr("Now will checkout the branch") +", <" + selection + ">. " + tr("The device will be rebooted if completed."), this)) {
+            QProcess::execute("touch /data/opkr_compiling");
+            params.put("RunCustomCommand", selection.toStdString());
+          }
         }
       }
+    } else {
+      ConfirmationDialog::alert(tr("Still getting branches, try again in a while"), this);
     }
+    btn1.setText(QString::fromStdString(params.get("GitBranch")));
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
-    btn2.setText(tr("RUNNING"));
-    QString tcmd2 = "git -C /data/openpilot fetch origin &";
-    QProcess::execute("git -C /data/openpilot remote prune origin");
-    QObject::connect(&textMsgProcess2, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished2(int, QProcess::ExitStatus)));
-    textMsgProcess2.start(tcmd2);
+    QProcess::execute("rm -f /data/branches");
+    btn1.setText(tr("Push to check"));
+    params.put("RunCustomCommand", "3");
   });
-}
-
-void BranchSelectCombo::processFinished1(int exitCode, QProcess::ExitStatus exitStatus) {
-  QString cmd2 = "git -C /data/openpilot checkout --track origin/" + selection;
-  QString cmd3 = "git -C /data/openpilot checkout " + selection;
-  if(exitStatus == QProcess::NormalExit) {
-    QProcess::execute(cmd2);
-    QProcess::execute(cmd3);
-    QProcess::execute("touch /data/opkr_compiling");
-    QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
-  }
-}
-
-void BranchSelectCombo::processFinished2(int exitCode, QProcess::ExitStatus exitStatus) {
-  btn2.setText(tr("RELOAD"));
-  if(exitStatus == QProcess::NormalExit) {
-    std::system("git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches");
-  }
 }
 
 TimeZoneSelectCombo::TimeZoneSelectCombo() : AbstractControl("", "", "") 

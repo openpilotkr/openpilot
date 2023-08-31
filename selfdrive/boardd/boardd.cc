@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <future>
+#include <memory>
 #include <thread>
 
 #include "cereal/gen/cpp/car.capnp.h"
@@ -480,6 +481,8 @@ void panda_state_thread(std::vector<Panda *> pandas, bool spoofing_started) {
     auto ignition_opt = send_panda_states(&pm, pandas, spoofing_started);
 
     if (!ignition_opt) {
+      LOGE("Failed to get ignition_opt");
+      rk.keepTime();
       continue;
     }
 
