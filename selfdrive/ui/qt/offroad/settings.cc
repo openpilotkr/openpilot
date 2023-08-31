@@ -454,6 +454,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   //layout->addWidget(new OPKRServerSelect());
   //layout->addWidget(new OPKRServerAPI());
   layout->addWidget(new OPKRMapboxStyle());
+  layout->addWidget(horizontal_line());
   layout->addWidget(new OPKRBottomTextView());
   layout->addWidget(new RPMAnimatedToggle());
   layout->addWidget(new RPMAnimatedMaxValue());
