@@ -184,16 +184,15 @@ class CarState(CarStateBase):
       return self.cruise_set_speed_kph
     elif self.prev_cruise_btn != self.cruise_buttons[-1]:
       self.prev_cruise_btn = self.cruise_buttons[-1]
-      if self.brake_check:
-        if self.cruise_buttons[-1] == Buttons.GAP_DIST:  # mode change
-          self.cruise_set_mode += 1
-          if self.cruise_set_mode > 5:
-            self.cruise_set_mode = 0
-          return None
-        elif not self.prev_acc_set_btn: # first scc active
-          self.prev_acc_set_btn = self.exp_engage_available
-          self.cruise_set_speed_kph = max(int(round(self.clu_Vanz)), 10 if self.is_metric else 5)
-          return self.cruise_set_speed_kph
+      if self.cruise_buttons[-1] == Buttons.GAP_DIST and not self.acc_active:  # mode change
+        self.cruise_set_mode += 1
+        if self.cruise_set_mode > 5:
+          self.cruise_set_mode = 0
+        return None
+      elif not self.prev_acc_set_btn: # first scc active
+        self.prev_acc_set_btn = self.exp_engage_available
+        self.cruise_set_speed_kph = max(int(round(self.clu_Vanz)), 10 if self.is_metric else 5)
+        return self.cruise_set_speed_kph
 
       if self.cruise_buttons[-1] == Buttons.RES_ACCEL:   # up 
         if self.set_spd_five:
@@ -308,6 +307,24 @@ class CarState(CarStateBase):
     self.cruise_buttons[-1] = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
     ret.cruiseButtons = self.cruise_buttons[-1]
 
+    # TODO: Find brake pressure
+    ret.brake = 0
+    ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
+
+    if self.CP.autoHoldAvailable:
+      ret.brakeHoldActive = cp.vl["TCS15"]["AVH_LAMP"] == 2  # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
+      ret.autoHold = ret.brakeHoldActive
+
+    ret.parkingBrake = cp.vl["TCS13"]["PBRAKE_ACT"] == 1
+    ret.accFaulted = cp.vl["TCS13"]["ACCEnable"] != 0  # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
+
+    if ret.brakePressed:
+      self.brake_check = True
+      self.acc_active = False
+    if self.cruise_buttons[-1] == 4:
+      self.cancel_check = True
+    ret.brakeLights = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed)
+
     # cruise state
     if self.CP.openpilotLongitudinalControl and (self.CP.sccBus <= 0 and self.long_alt not in (1, 2)):
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
@@ -317,16 +334,22 @@ class CarState(CarStateBase):
       if self.cruise_buttons[-1] == 1 or self.cruise_buttons[-1] == 2:
         self.exp_engage_available = True
         self.brake_check = False
+        set_speed = self.cruise_speed_button_long()
+        if not self.brake_check:
+          speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
+          ret.cruiseState.speed = set_speed * speed_conv
+          ret.cruiseAccStatus = True
+          self.acc_active = ret.cruiseAccStatus
+        else:
+          ret.cruiseState.speed = 0
       elif self.cruise_buttons[-1] == 4:
         self.exp_engage_available = False
+        ret.cruiseState.speed = 0
+        ret.cruiseAccStatus = False
+        self.acc_active = ret.cruiseAccStatus
       ret.cruiseState.available = self.exp_engage_available
       ret.cruiseState.enabled = ret.cruiseState.available
-      set_speed = self.cruise_speed_button_long()
-      if ret.cruiseState.enabled and not self.brake_check:
-        speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
-        ret.cruiseState.speed = set_speed * speed_conv
-      else:
-        ret.cruiseState.speed = 0
+
     else:
       ret.cruiseState.available = cp_scc.vl["SCC11"]["MainMode_ACC"] != 0
       ret.cruiseState.enabled = cp_scc.vl["SCC12"]["ACCMode"] != 0
@@ -368,25 +391,6 @@ class CarState(CarStateBase):
       if self.cruise_gap < 1:
         self.cruise_gap = 4
       self.prev_gap_button = self.cruise_buttons[-1]
-
-
-    # TODO: Find brake pressure
-    ret.brake = 0
-    ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
-
-    if self.CP.autoHoldAvailable:
-      ret.brakeHoldActive = cp.vl["TCS15"]["AVH_LAMP"] == 2  # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
-      ret.autoHold = ret.brakeHoldActive
-
-    ret.parkingBrake = cp.vl["TCS13"]["PBRAKE_ACT"] == 1
-    ret.accFaulted = cp.vl["TCS13"]["ACCEnable"] != 0  # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-
-    if ret.brakePressed:
-      self.brake_check = True
-    if self.cruise_buttons[-1] == 4:
-      self.cancel_check = True
-
-    ret.brakeLights = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed)
 
     if self.CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       if self.CP.carFingerprint in HYBRID_CAR:
