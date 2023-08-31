@@ -1131,6 +1131,19 @@ class CarController:
                     accel = aReqValue
                   elif self.dRel < 0.1:
                     accel = faccel
+              elif not self.experimental_mode_temp:
+                if stopping:
+                  self.smooth_start = True
+                  accel = min(-0.5, accel, faccel*0.5)
+                elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis)*0.9:
+                  accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
+                else:
+                  if self.smooth_start:
+                    self.smooth_start = False
+                    self.experimental_mode_temp = True
+                    accel = aReqValue
+                  elif self.dRel < 0.1:
+                    accel = faccel
               else:
                 accel = aReqValue
           else:
