@@ -435,7 +435,7 @@ UIPanel::UIPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(recorddelbtn);
   layout->addWidget(horizontal_line());
   layout->addWidget(new EnableLogger());
-  layout->addWidget(new EnableUploader());
+  //layout->addWidget(new EnableUploader());
   const char* realdata_del = "rm -rf /data/media/0/realdata/*";
   auto realdatadelbtn = new ButtonControl(tr("Delete All Driving Logs"), tr("RUN"));
   QObject::connect(realdatadelbtn, &ButtonControl::clicked, [=]() {
