@@ -1023,7 +1023,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     if (minv > s->scene.tpmsPressureRr) {minv = s->scene.tpmsPressureRr;}
 
     if (((maxv - minv) > 3 && s->scene.tpmsUnit != 2) || ((maxv - minv) > 0.2 && s->scene.tpmsUnit == 2)) {
-      p.setBrush(QColor(255, 0, 0, 150));
+      p.setPen(redColor(200));
     }
     if (s->scene.tpmsUnit != 0) {
       debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 32);
