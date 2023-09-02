@@ -234,14 +234,14 @@ void tick_handler(void) {
       }
 
       // exit controls allowed if unused by openpilot for a few seconds
-      if (controls_allowed && !heartbeat_engaged) {
-        heartbeat_engaged_mismatches += 1U;
-        if (heartbeat_engaged_mismatches >= 3U) {
-          controls_allowed = false;
-        }
-      } else {
-        heartbeat_engaged_mismatches = 0U;
-      }
+      // if (controls_allowed && !heartbeat_engaged) {
+      //   heartbeat_engaged_mismatches += 1U;
+      //   if (heartbeat_engaged_mismatches >= 3U) {
+      //     controls_allowed = false;
+      //   }
+      // } else {
+      //   heartbeat_engaged_mismatches = 0U;
+      // }
 
       if (!heartbeat_disabled) {
         // if the heartbeat has been gone for a while, go to SILENT safety mode and enter power save
