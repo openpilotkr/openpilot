@@ -238,7 +238,6 @@ class Controls:
     self.prof = Profiler(False)  # off by default
 
     self.hkg_stock_lkas = True
-    self.hkg_stock_lkas_timer = 0
 
     self.mpc_frame = 0
     self.mpc_frame_sr = 0
@@ -916,15 +915,8 @@ class Controls:
     if self.stock_lkas_on_disengaged_status and self.CP.carName == "hyundai":
       if self.enabled:
         self.hkg_stock_lkas = False
-        self.hkg_stock_lkas_timer = 0
       elif not self.enabled and not self.hkg_stock_lkas:
-        self.hkg_stock_lkas_timer += 1
-        if self.hkg_stock_lkas_timer > 300:
-          self.hkg_stock_lkas = True
-          self.hkg_stock_lkas_timer = 0
-        elif CS.gearShifter != GearShifter.drive and self.hkg_stock_lkas_timer > 150:
-          self.hkg_stock_lkas = True
-          self.hkg_stock_lkas_timer = 0
+        self.hkg_stock_lkas = True
       if not self.hkg_stock_lkas:
         # send car controls over can
         now_nanos = self.can_log_mono_time if REPLAY else int(time.monotonic() * 1e9)
