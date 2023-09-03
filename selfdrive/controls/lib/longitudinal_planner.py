@@ -65,6 +65,8 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
 
+    self.is_metric = self.params.get_bool('IsMetric')
+
   def read_param(self):
     try:
       self.personality = int(self.params.get('LongitudinalPersonality'))
@@ -102,7 +104,7 @@ class LongitudinalPlanner:
       v_cruise_kph = sm['controlsState'].vCruise
 
     v_cruise_kph = min(v_cruise_kph, V_CRUISE_MAX)
-    v_cruise = v_cruise_kph * CV.KPH_TO_MS
+    v_cruise = v_cruise_kph * (CV.KPH_TO_MS if self.is_metric else CV.MPH_TO_MS)
 
     long_control_off = sm['controlsState'].longControlState == LongCtrlState.off
     force_slow_decel = sm['controlsState'].forceDecel
