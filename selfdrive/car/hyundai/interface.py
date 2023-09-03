@@ -369,7 +369,7 @@ class CarInterface(CarInterfaceBase):
       ret.enableBsm = 0x58b in fingerprint[0]
       ret.mdpsBus = 1 if 593 in fingerprint[1] and 1296 not in fingerprint[1] else 0
       ret.sasBus = 1 if 688 in fingerprint[1] and 1296 not in fingerprint[1] else 0
-      ret.sccBus = 2 if int(Params().get("OPKRLongAlt", encoding="utf8")) in (1, 2) else 0
+      ret.sccBus = 2 if int(Params().get("OPKRLongAlt", encoding="utf8")) in (1, 2) and not Params().get_bool("ExperimentalLongitudinalEnabled") else 0
       #ret.sccBus = 0 if 1056 in fingerprint[0] else 1 if 1056 in fingerprint[1] and 1296 not in fingerprint[1] else 2 if 1056 in fingerprint[2] else -1
       ret.fcaBus = 0 if 909 in fingerprint[0] else 2 if 909 in fingerprint[2] else -1
       ret.bsmAvailable = True if 1419 in fingerprint[0] else False
@@ -397,7 +397,13 @@ class CarInterface(CarInterfaceBase):
       if ret.flags & HyundaiFlags.CANFD_CAMERA_SCC:
         ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_CAMERA_SCC
     else:
-      if candidate in LEGACY_SAFETY_MODE_CAR_ALT or (candidate in LEGACY_SAFETY_MODE_CAR and Params().get_bool("UFCModeEnabled")):
+      if Params().get_bool("ExperimentalLongitudinalEnabled"):
+        if candidate in LEGACY_SAFETY_MODE_CAR:
+          # these cars require a special panda safety mode due to missing counters and checksums in the messages
+          ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
+        else:
+          ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundai, 0)]
+      elif candidate in LEGACY_SAFETY_MODE_CAR_ALT or (candidate in LEGACY_SAFETY_MODE_CAR and Params().get_bool("UFCModeEnabled")):
         ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity1Legacy)]
       elif Params().get_bool("UFCModeEnabled"):
         ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiCommunity1)]
@@ -424,7 +430,7 @@ class CarInterface(CarInterfaceBase):
       else:
         ret.pcmCruise = not ret.openpilotLongitudinalControl
 
-    if ret.openpilotLongitudinalControl and int(Params().get("OPKRLongAlt", encoding="utf8")) not in (1, 2):
+    if (ret.openpilotLongitudinalControl and int(Params().get("OPKRLongAlt", encoding="utf8")) not in (1, 2)) or Params().get_bool("ExperimentalLongitudinalEnabled"):
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_LONG
     if candidate in HYBRID_CAR:
       ret.safetyConfigs[-1].safetyParam |= Panda.FLAG_HYUNDAI_HYBRID_GAS

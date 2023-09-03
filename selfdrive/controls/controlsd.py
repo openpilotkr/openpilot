@@ -134,6 +134,7 @@ class Controls:
     self.cruise_road_limit_spd_switch_prev = 0
     
     self.long_alt = int(self.params.get("OPKRLongAlt", encoding="utf8"))
+    self.exp_long_enabled = self.params.get_bool("ExperimentalLongitudinalEnabled")
 
     # detect sound card presence and ensure successful init
     sounds_available = HARDWARE.get_sound_card_online()
@@ -912,7 +913,7 @@ class Controls:
     if current_alert:
       hudControl.visualAlert = current_alert.visual_alert
 
-    if self.stock_lkas_on_disengaged_status and self.CP.carName == "hyundai":
+    if self.stock_lkas_on_disengaged_status and self.CP.carName == "hyundai" and not self.exp_long_enabled:
       if self.enabled:
         self.hkg_stock_lkas = False
       elif not self.enabled and not self.hkg_stock_lkas:
