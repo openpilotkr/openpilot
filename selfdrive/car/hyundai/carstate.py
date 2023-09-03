@@ -348,6 +348,7 @@ class CarState(CarStateBase):
         if not self.brake_check:
           speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
           ret.cruiseState.speed = set_speed * speed_conv
+          ret.cruiseState.speedCluster = set_speed * speed_conv
           ret.cruiseAccStatus = True
           self.acc_active = ret.cruiseAccStatus
         else:
