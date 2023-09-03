@@ -87,6 +87,7 @@ class LateralPlanner:
     self.lll_prob = self.rll_prob = self.d_prob = self.lll_std = self.rll_std = 0.
     self.camera_offset = CAMERA_OFFSET
     self.path_offset = PATH_OFFSET
+    self.path_offset2 = 0.0
     self.left_curv_offset = int(self.params.get("LeftCurvOffsetAdj", encoding="utf8"))
     self.right_curv_offset = int(self.params.get("RightCurvOffsetAdj", encoding="utf8"))
     self.drive_routine_on_co = self.params.get_bool("RoutineDriveOn")
@@ -162,18 +163,52 @@ class LateralPlanner:
       right_edge_prob = np.clip(1.0 - md.roadEdgeStds[1], 0.0, 1.0)
 
       self.timer3 += DT_MDL
-      if self.timer3 > 3.0:
+      if self.timer3 > 1.0:
         self.timer3 = 0.0
         if right_nearside_prob < 0.1 and left_nearside_prob < 0.1:
-          self.road_edge_offset = 0.0
+          if self.road_edge_offset != 0.0:
+            if self.road_edge_offset > 0.0:
+              self.road_edge_offset -= max(0.01, round((self.road_edge_offset/5), 2))
+              if self.road_edge_offset < 0.0:
+                self.road_edge_offset = 0.0
+            elif self.road_edge_offset < 0.0:
+              self.road_edge_offset += max(0.01, round((self.road_edge_offset/5), 2))
+              if self.road_edge_offset > 0.0:
+                self.road_edge_offset = 0.0
         elif right_edge_prob > 0.3 and right_nearside_prob < 0.2 and right_close_prob > 0.5 and left_nearside_prob >= right_nearside_prob:
-          self.road_edge_offset = self.right_edge_offset
+          if self.right_edge_offset != 0.0 and self.road_edge_offset != self.right_edge_offset:
+            if self.road_edge_offset < self.right_edge_offset:
+              self.road_edge_offset += max(0.01, round((self.right_edge_offset/5), 2))
+              if self.road_edge_offset > self.right_edge_offset:
+                self.road_edge_offset = self.right_edge_offset
+            elif self.road_edge_offset > self.right_edge_offset:
+              self.road_edge_offset -= max(0.01, round((self.right_edge_offset/5), 2))
+              if self.road_edge_offset < self.right_edge_offset:
+                self.road_edge_offset = self.right_edge_offset
         elif left_edge_prob > 0.3 and left_nearside_prob < 0.2 and left_close_prob > 0.5 and right_nearside_prob >= left_nearside_prob:
-          self.road_edge_offset = self.left_edge_offset
+          if self.left_edge_offset != 0.0 and self.road_edge_offset != self.left_edge_offset:
+            if self.road_edge_offset < self.left_edge_offset:
+              self.road_edge_offset += max(0.01, round((self.left_edge_offset/5), 2))
+              if self.road_edge_offset > self.left_edge_offset:
+                self.road_edge_offset = self.left_edge_offset
+            elif self.road_edge_offset > self.left_edge_offset:
+              self.road_edge_offset -= max(0.01, round((self.left_edge_offset/5), 2))
+              if self.road_edge_offset < self.left_edge_offset:
+                self.road_edge_offset = self.left_edge_offset
         else:
-          self.road_edge_offset = 0.0
+          if self.road_edge_offset != 0.0:
+            if self.road_edge_offset > 0.0:
+              self.road_edge_offset -= max(0.01, round((self.road_edge_offset/5), 2))
+              if self.road_edge_offset < 0.0:
+                self.road_edge_offset = 0.0
+            elif self.road_edge_offset < 0.0:
+              self.road_edge_offset += max(0.01, round((self.road_edge_offset/5), 2))
+              if self.road_edge_offset > 0.0:
+                self.road_edge_offset = 0.0
+        self.path_offset2 = self.road_edge_offset
     else:
       self.road_edge_offset = 0.0
+      self.path_offset2 = self.road_edge_offset
     if self.speed_offset:
       speed_offset = -interp(v_ego, [0, 11.1, 16.6, 22.2, 31], [0.10, 0.05, 0.02, 0.01, 0.0])
     else:
@@ -209,7 +244,7 @@ class LateralPlanner:
         self.path_offset = (float(Decimal(self.params.get("PathOffsetAdj", encoding="utf8")) * Decimal('0.001')))
     # Reduce reliance on lanelines that are too far apart or
     # will be in a few seconds
-    path_xyz[:, 1] += self.path_offset
+    path_xyz[:, 1] += (self.path_offset+self.path_offset2)
     l_prob, r_prob = self.lll_prob, self.rll_prob
     width_pts = self.rll_y - self.lll_y
     prob_mods = []

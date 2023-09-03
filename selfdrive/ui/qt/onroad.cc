@@ -614,8 +614,8 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int debug_y2 = 1050-UI_BORDER_SIZE+(s->scene.mapbox_running ? 8:0)-(s->scene.animated_rpm?60:0);
   if (s->scene.nDebugUi1 && s->scene.comma_stock_ui != 1) {
     p.setFont(InterFont(s->scene.mapbox_running?25:30, QFont::DemiBold));
-    uiText(p, s->scene.low_ui_profile?(s->scene.mapbox_running?275:350):205, debug_y1, s->scene.alertTextMsg1.c_str());
-    uiText(p, s->scene.low_ui_profile?(s->scene.mapbox_running?275:350):205, debug_y2, s->scene.alertTextMsg2.c_str());
+    uiText(p, s->scene.low_ui_profile?(s->scene.mapbox_running?275:320):205, debug_y1, s->scene.alertTextMsg1.c_str());
+    uiText(p, s->scene.low_ui_profile?(s->scene.mapbox_running?275:320):205, debug_y2, s->scene.alertTextMsg2.c_str());
   }
   if (s->scene.nDebugUi3 && s->scene.comma_stock_ui != 1) {
     p.setFont(InterFont(s->scene.mapbox_running?26:35, QFont::DemiBold));
@@ -1023,7 +1023,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     if (minv > s->scene.tpmsPressureRr) {minv = s->scene.tpmsPressureRr;}
 
     if (((maxv - minv) > 3 && s->scene.tpmsUnit != 2) || ((maxv - minv) > 0.2 && s->scene.tpmsUnit == 2)) {
-      p.setBrush(QColor(255, 0, 0, 150));
+      p.setPen(redColor(200));
     }
     if (s->scene.tpmsUnit != 0) {
       debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 32);
@@ -1328,6 +1328,28 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
             p.drawText(rect_d, Qt::AlignCenter, QString::number(round(s->scene.limitSpeedCameraDist*0.000621*100)/100, 'f', 2) + "mi");
           }
         }
+      }
+    } else if (s->scene.navi_select == 0 && speedLimit > 1 && (has_us_speed_limit || has_eu_speed_limit)) {
+      if (s->scene.speedlimit_signtype || has_us_speed_limit) {
+        p.setBrush(whiteColor(255/sl_opacity));
+        p.drawRoundedRect(rect_si, 8, 8);
+        p.setBrush(Qt::NoBrush);
+        p.setPen(QPen(QColor(0, 0, 0, 255/sl_opacity), 12));
+        p.drawRoundedRect(rect_s, 8, 8);
+        p.setPen(QPen(QColor(255, 255, 255, 255/sl_opacity), 10));
+        p.drawRoundedRect(rect_so, 8, 8);
+        p.setPen(blackColor(255/sl_opacity));
+        debugText(p, rect_so.center().x(), rect_so.center().y()-45, "SPEED", 255/sl_opacity, 36, true);
+        debugText(p, rect_so.center().x(), rect_so.center().y()-12, "LIMIT", 255/sl_opacity, 36, true);
+        debugText(p, rect_so.center().x(), rect_so.center().y()+UI_BORDER_SIZE+(speedLimit<100?60:50), QString::number(std::nearbyint(speedLimit)), 255/sl_opacity, speedLimit<100?110:90, true);
+      } else {
+        p.setBrush(whiteColor(255/sl_opacity));
+        p.drawEllipse(rect_si);
+        p.setBrush(Qt::NoBrush);
+        p.setPen(QPen(redColor(255/sl_opacity), 20));
+        p.drawEllipse(rect_s);
+        p.setPen(blackColor(255/sl_opacity));
+        debugText(p, rect_si.center().x(), rect_si.center().y()+UI_BORDER_SIZE+(speedLimit<100?25:15), QString::number(std::nearbyint(speedLimit)), 255/sl_opacity, speedLimit<100?110:90, true);
       }
     }
   }

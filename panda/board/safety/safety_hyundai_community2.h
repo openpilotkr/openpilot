@@ -119,6 +119,9 @@ static int hyundai_community2_rx_hook(CANPacket_t *to_push) {
       uint32_t rear_right_speed = GET_BYTES(to_push, 6, 2) & 0x3FFFU;
       vehicle_moving = (front_left_speed > HYUNDAI_STANDSTILL_THRSLD) || (rear_right_speed > HYUNDAI_STANDSTILL_THRSLD);
     }
+
+    gas_pressed = brake_pressed = false;
+
     generic_rx_checks((addr == 832 && bus == 0));
   }
   return valid;

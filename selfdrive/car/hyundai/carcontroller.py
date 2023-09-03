@@ -407,9 +407,10 @@ class CarController:
       # steering control
       can_sends.extend(hyundaicanfd.create_steering_messages(self.packer, self.CP, self.CAN, CC.enabled, apply_steer_req, apply_steer))
 
-      # disable LFA on HDA2
+      # prevent LFA from activating on HDA2 by sending "no lane lines detected" to ADAS ECU
       if self.frame % 5 == 0 and hda2:
-        can_sends.append(hyundaicanfd.create_cam_0x2a4(self.packer, self.CAN, CS.cam_0x2a4))
+        can_sends.append(hyundaicanfd.create_suppress_lfa(self.packer, self.CAN, CS.hda2_lfa_block_msg,
+                                                          self.CP.flags & HyundaiFlags.CANFD_HDA2_ALT_STEERING))
 
       # LFA and HDA icons
       if self.frame % 5 == 0 and (not hda2 or hda2_long):
@@ -428,26 +429,7 @@ class CarController:
           self.accel_last = accel
       else:
         # button presses
-        if (self.frame - self.last_button_frame) * DT_CTRL > 0.25:
-          # cruise cancel
-          if CC.cruiseControl.cancel:
-            if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
-              can_sends.append(hyundaicanfd.create_acc_cancel(self.packer, self.CP, self.CAN, CS.cruise_info))
-              self.last_button_frame = self.frame
-            else:
-              for _ in range(20):
-                can_sends.append(hyundaicanfd.create_buttons(self.packer, self.CP, self.CAN, CS.buttons_counter+1, Buttons.CANCEL))
-              self.last_button_frame = self.frame
-
-          # cruise standstill resume
-          elif CC.cruiseControl.resume:
-            if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
-              # TODO: resume for alt button cars
-              pass
-            else:
-              for _ in range(20):
-                can_sends.append(hyundaicanfd.create_buttons(self.packer, self.CP, self.CAN, CS.buttons_counter+1, Buttons.RES_ACCEL))
-              self.last_button_frame = self.frame
+        can_sends.extend(self.create_button_messages(CC, CS, use_clu11=False))
     else:
       if CS.cruise_active and CS.lead_distance > 149 and self.dRel < ((CS.out.vEgo * CV.MS_TO_KPH)+5) < 100 and \
       self.vRel*3.6 < -(CS.out.vEgo * CV.MS_TO_KPH * 0.16) and CS.out.vEgo > 7 and abs(CS.out.steeringAngleDeg) < 10 and not self.longcontrol:
@@ -971,15 +953,7 @@ class CarController:
         can_sends.append(hyundaican.create_mdps12(self.packer, self.frame, CS.mdps12))
 
       # if not self.CP.openpilotLongitudinalControl:
-      #   if CC.cruiseControl.cancel:
-      #     can_sends.append(hyundaican.create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL))
-      #   elif CC.cruiseControl.resume:
-      #     # send resume at a max freq of 10Hz
-      #     if (self.frame - self.last_button_frame) * DT_CTRL > 0.1:
-      #       # send 25 messages at a time to increases the likelihood of resume being accepted
-      #       can_sends.extend([hyundaican.create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL)] * 25)
-      #       if (self.frame - self.last_button_frame) * DT_CTRL >= 0.15:
-      #         self.last_button_frame = self.frame
+      #   can_sends.extend(self.create_button_messages(CC, CS, use_clu11=True))
 
       if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         # TODO: unclear if this is needed
@@ -1135,17 +1109,17 @@ class CarController:
                 self.change_accel_fast = False
                 accel = accel * (1.0 - stock_weight) + aReqValue * stock_weight
             elif 0.1 < self.dRel < (self.stoppingdist + 2.0) and int(self.vRel*3.6) < 0:
-              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.0, 1.0, 2.0], [0.05, 1.0, 5.0]))
+              accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.0, 1.0, 2.0], [0.05, 0.5, 1.0]))
               self.stopped = False
             elif 0.1 < self.dRel < (self.stoppingdist + 2.0):
-              accel = min(-0.5, faccel*0.5)
+              accel = min(-0.6, faccel*0.5)
               if stopping:
                 self.stopped = True
               else:
                 self.stopped = False
             elif 0.1 < self.dRel < 90:
               self.stopped = False
-              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.0, 30], [0.9, 1.0])
+              ddrel_weight = interp(self.dRel, [self.stoppingdist+2.0, 30], [1.0, 1.0])
               accel = faccel*ddrel_weight
             else:
               self.stopped = False
@@ -1158,6 +1132,19 @@ class CarController:
                 else:
                   self.smooth_start = False
                   if self.sm['liveENaviData'].isHighway or CS.highway_cam != 0 or (not self.experimental_mode_temp):
+                    accel = aReqValue
+                  elif self.dRel < 0.1:
+                    accel = faccel
+              elif not self.experimental_mode_temp:
+                if stopping:
+                  self.smooth_start = True
+                  accel = min(-0.5, accel, faccel*0.5)
+                elif self.smooth_start and CS.clu_Vanz < round(CS.VSetDis)*0.9:
+                  accel = interp(CS.clu_Vanz, [0, round(CS.VSetDis)], [min(accel*0.6, faccel*0.6), aReqValue])
+                else:
+                  if self.smooth_start:
+                    self.smooth_start = False
+                    self.experimental_mode_temp = True
                     accel = aReqValue
                   elif self.dRel < 0.1:
                     accel = faccel
@@ -1262,3 +1249,39 @@ class CarController:
 
     self.frame += 1
     return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp, self.btnsignal if self.btnsignal is not None else 0
+
+  def create_button_messages(self, CC: car.CarControl, CS: car.CarState, use_clu11: bool):
+    can_sends = []
+    if use_clu11:
+      if CC.cruiseControl.cancel:
+        can_sends.append(hyundaican.create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL, self.CP.carFingerprint))
+      elif CC.cruiseControl.resume:
+        # send resume at a max freq of 10Hz
+        if (self.frame - self.last_button_frame) * DT_CTRL > 0.1:
+          # send 25 messages at a time to increases the likelihood of resume being accepted
+          can_sends.extend([hyundaican.create_clu11(self.packer, self.frame, CS.clu11, Buttons.RES_ACCEL, self.CP.carFingerprint)] * 25)
+          if (self.frame - self.last_button_frame) * DT_CTRL >= 0.15:
+            self.last_button_frame = self.frame
+    else:
+      if (self.frame - self.last_button_frame) * DT_CTRL > 0.25:
+        # cruise cancel
+        if CC.cruiseControl.cancel:
+          if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
+            can_sends.append(hyundaicanfd.create_acc_cancel(self.packer, self.CP, self.CAN, CS.cruise_info))
+            self.last_button_frame = self.frame
+          else:
+            for _ in range(20):
+              can_sends.append(hyundaicanfd.create_buttons(self.packer, self.CP, self.CAN, CS.buttons_counter+1, Buttons.CANCEL))
+            self.last_button_frame = self.frame
+
+        # cruise standstill resume
+        elif CC.cruiseControl.resume:
+          if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
+            # TODO: resume for alt button cars
+            pass
+          else:
+            for _ in range(20):
+              can_sends.append(hyundaicanfd.create_buttons(self.packer, self.CP, self.CAN, CS.buttons_counter+1, Buttons.RES_ACCEL))
+            self.last_button_frame = self.frame
+
+    return can_sends

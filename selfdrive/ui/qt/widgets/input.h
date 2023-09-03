@@ -12,18 +12,18 @@
 #include "common/params.h"
 
 
-class QDialogBase : public QDialog {
+class DialogBase : public QDialog {
   Q_OBJECT
 
 protected:
-  QDialogBase(QWidget *parent);
+  DialogBase(QWidget *parent);
   bool eventFilter(QObject *o, QEvent *e) override;
 
 public slots:
   int exec() override;
 };
 
-class InputDialog : public QDialogBase {
+class InputDialog : public DialogBase {
   Q_OBJECT
 
 public:
@@ -52,7 +52,7 @@ signals:
   void emitText(const QString &text);
 };
 
-class ConfirmationDialog : public QDialogBase {
+class ConfirmationDialog : public DialogBase {
   Q_OBJECT
 
 public:
@@ -66,7 +66,7 @@ public:
 };
 
 // larger ConfirmationDialog for rich text
-class RichTextDialog : public QDialogBase {
+class RichTextDialog : public DialogBase {
   Q_OBJECT
 
 public:
@@ -74,7 +74,7 @@ public:
   static bool alert(const QString &prompt_text, QWidget *parent);
 };
 
-class MultiOptionDialog : public QDialogBase {
+class MultiOptionDialog : public DialogBase {
   Q_OBJECT
 
 public:
@@ -84,7 +84,7 @@ public:
 };
 
 // UpdateInfoDialog
-class UpdateInfoDialog : public QDialogBase {
+class UpdateInfoDialog : public DialogBase {
   Q_OBJECT
 
 public:
@@ -94,7 +94,7 @@ public:
 };
 
 // Git Pull Cancel
-class GitPullCancel : public QDialogBase {
+class GitPullCancel : public DialogBase {
   Q_OBJECT
 
 public:
