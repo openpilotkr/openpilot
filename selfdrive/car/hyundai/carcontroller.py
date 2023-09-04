@@ -255,6 +255,9 @@ class CarController:
     self.exp_mode_push = False
     self.exp_mode_push_cnt = 0
 
+    self.counter_init = False
+    self.radarDisableOverlapTimer = 0
+
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
       self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.5f}/{:0.2f}'.format(CP.lateralTuning.pid.kpV[1], CP.lateralTuning.pid.kiV[1], CP.lateralTuning.pid.kf, CP.lateralTuning.pid.kd)
@@ -398,6 +401,26 @@ class CarController:
       # for blinkers
       if self.CP.flags & HyundaiFlags.ENABLE_BLINKERS:
         can_sends.append([0x7b1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", self.CAN.ECAN])
+
+    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and False: # ToDo
+      addr, bus = 0x7d0, 0
+      self.radarDisableOverlapTimer += 1
+      if self.radarDisableOverlapTimer >= 300:
+        if 600 > self.radarDisableOverlapTimer > 336:
+          if self.frame % 41 == 0 or self.radarDisableOverlapTimer == 337:
+            can_sends.append([addr, 0, b"\x02\x10\x03\x00\x00\x00\x00\x00", bus])
+          elif self.frame % 43 == 0 or self.radarDisableOverlapTimer == 337:
+            can_sends.append([addr, 0, b"\x03\x28\x03\x01\x00\x00\x00\x00", bus])
+          elif self.frame % 19 == 0 or self.radarDisableOverlapTimer == 337:
+            self.counter_init = True
+            can_sends.append([addr, 0, b"\x02\x10\x85\x00\x00\x00\x00\x00", bus])  # radar disable
+      else:
+        self.counter_init = False
+        can_sends.append([addr, 0, b"\x02\x10\x90\x00\x00\x00\x00\x00", bus])
+        can_sends.append([addr, 0, b"\x03\x29\x03\x01\x00\x00\x00\x00", bus])
+
+      if (self.frame % 50 == 0 or self.radarDisableOverlapTimer == 337) and self.radarDisableOverlapTimer >= 300:
+        can_sends.append([addr, 0, b"\x02\x3E\x00\x00\x00\x00\x00\x00", bus])
 
     # CAN-FD platforms
     if self.CP.carFingerprint in CANFD_CAR:
@@ -959,14 +982,9 @@ class CarController:
         # TODO: unclear if this is needed
         jerk = 3.0 if actuators.longControlState == LongCtrlState.pid else 1.0
         use_fca = self.CP.flags & HyundaiFlags.USE_FCA.value
-        if not CS.brake_check:
-          can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
-                                                        hud_control.leadVisible, set_speed_in_units, stopping,
-                                                        CC.cruiseControl.override, use_fca))
-        else:
-          can_sends.extend(hyundaican.create_acc_commands(self.packer, False, 0, jerk, int(self.frame / 2),
-                                                        hud_control.leadVisible, set_speed_in_units, stopping,
-                                                        CC.cruiseControl.override, use_fca))
+        can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
+                                                      hud_control.leadVisible, set_speed_in_units, stopping,
+                                                      CC.cruiseControl.override, use_fca))
       # 20 Hz LFA MFA message
       if self.frame % 5 == 0 and self.CP.flags & HyundaiFlags.SEND_LFA.value:
         can_sends.append(hyundaican.create_lfahda_mfc(self.packer, CC.enabled))

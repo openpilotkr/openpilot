@@ -183,6 +183,7 @@ class CarState(CarStateBase):
           set_speed_kph += 5
         elif self.cruise_buttons[-1] == 2:
           set_speed_kph -= 5
+      set_speed_kph = max(10, set_speed_kph) if self.is_metric else max(5, set_speed_kph)
       self.cruise_set_speed_kph = int(round(set_speed_kph/10)*10) if self.is_metric else int(round(set_speed_kph/5)*5)
       return self.cruise_set_speed_kph
 
@@ -330,7 +331,6 @@ class CarState(CarStateBase):
 
     if ret.brakePressed:
       self.brake_check = True
-      self.acc_active = False
     if self.cruise_buttons[-1] == 4:
       self.cancel_check = True
     ret.brakeLights = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed)
@@ -341,25 +341,23 @@ class CarState(CarStateBase):
       #ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0 or cp.vl["EMS16"]["CRUISE_LAMP_M"] != 0
       #ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 or cp.vl["LVR12"]["CF_Lvr_CruiseSet"] != 0
       ret.cruiseState.standstill = False
+      if ret.brakePressed and self.acc_active and not ret.standstill:
+        self.brake_check = True
+        self.acc_active = False
       set_speed = self.cruise_speed_button_long()
       if self.cruise_buttons[-1] == 1 or self.cruise_buttons[-1] == 2:
-        self.exp_engage_available = True
         self.brake_check = False
-        if not self.brake_check:
-          speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
-          ret.cruiseState.speed = set_speed * speed_conv
-          ret.cruiseState.speedCluster = set_speed * speed_conv
-          ret.cruiseAccStatus = True
-          self.acc_active = ret.cruiseAccStatus
-        else:
-          ret.cruiseState.speed = 0
+        self.exp_engage_available = True
+        self.acc_active = self.exp_engage_available
       elif self.cruise_buttons[-1] == 4:
         self.exp_engage_available = False
-        ret.cruiseState.speed = 0
-        ret.cruiseAccStatus = False
-        self.acc_active = ret.cruiseAccStatus
+        self.acc_active = False
+      speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
+      ret.cruiseState.speed = set_speed * speed_conv if self.acc_active else 0
+      ret.cruiseState.speedCluster = set_speed * speed_conv if self.acc_active else 0
       ret.cruiseState.available = self.exp_engage_available
       ret.cruiseState.enabled = ret.cruiseState.available
+      ret.cruiseAccStatus = self.acc_active
 
     else:
       ret.cruiseState.available = cp_scc.vl["SCC11"]["MainMode_ACC"] != 0
@@ -485,7 +483,6 @@ class CarState(CarStateBase):
     self.lkas_error = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] == 7
     if not self.lkas_error:
       self.lkas_button_on = cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"]
-
 
     if not self.exp_long:
       ret.cruiseAccStatus = cp_scc.vl["SCC12"]["ACCMode"] == 1

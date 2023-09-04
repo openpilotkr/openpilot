@@ -325,7 +325,7 @@ class CarInterfaceBase(ABC):
       events.add(EventName.wrongCruiseMode)
     if cs_out.brakeHoldActive and self.CP.openpilotLongitudinalControl and not self.ufc_mode:
       events.add(EventName.brakeHold)
-    if cs_out.parkingBrake:
+    if cs_out.parkingBrake and not self.ufc_mode:
       events.add(EventName.parkBrake)
     if cs_out.accFaulted:
       events.add(EventName.accFaulted)

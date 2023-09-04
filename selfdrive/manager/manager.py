@@ -61,7 +61,7 @@ def manager_init() -> None:
     ("OpkrEnableGetoffAlert", "0"),
     ("OpkrAutoResume", "1"),
     ("OpkrVariableCruise", "1"),
-    ("OpkrLaneChangeSpeed", "30"),
+    ("OpkrLaneChangeSpeed", "20"),
     ("OpkrAutoLaneChangeDelay", "0"),
     ("OpkrSteerAngleCorrection", "0"),
     ("PutPrebuiltOn", "0"),
