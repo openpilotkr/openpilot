@@ -504,6 +504,7 @@ struct CarParams {
   flags @64 :UInt32;         # flags for car specific quirks
   experimentalLongitudinalAvailable @71 :Bool;
   experimentalLong @95 :Bool;
+  experimentalLongAlt @97 :Bool;
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;

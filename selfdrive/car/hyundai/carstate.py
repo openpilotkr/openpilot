@@ -9,7 +9,7 @@ from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
 from openpilot.selfdrive.car.hyundai.hyundaicanfd import CanBus
 from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, CAN_GEARS, CAMERA_SCC_CAR, \
-                                                   CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
+                                                   CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams, LEGACY_SAFETY_MODE_CAR_ALT
 from openpilot.selfdrive.car.interfaces import CarStateBase
 from openpilot.common.params import Params
 
@@ -95,8 +95,9 @@ class CarState(CarStateBase):
 
     self.long_alt = int(Params().get("OPKRLongAlt", encoding="utf8"))
     self.exp_engage_available = False
-    
-    self.exp_long = CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)
+
+    self.exp_long_alt = CP.sccBus <= 0 and CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT and self.CP.openpilotLongitudinalControl
+    self.exp_long = (CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)) or self.exp_long_alt
     self.lead_distance = 0
 
     self.sm = messaging.SubMaster(['controlsState'])
@@ -336,7 +337,7 @@ class CarState(CarStateBase):
     ret.brakeLights = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed)
 
     # cruise state
-    if self.CP.openpilotLongitudinalControl and (self.CP.sccBus <= 0 and self.long_alt not in (1, 2)):
+    if (self.CP.openpilotLongitudinalControl and (self.CP.sccBus <= 0 and self.long_alt not in (1, 2))) or self.exp_long_alt:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       #ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0 or cp.vl["EMS16"]["CRUISE_LAMP_M"] != 0
       #ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 or cp.vl["LVR12"]["CF_Lvr_CruiseSet"] != 0

@@ -81,6 +81,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = float(Decimal(params.get("SteerLimitTimerAdj", encoding="utf8")) * Decimal('0.01'))
 
     ret.experimentalLong = Params().get_bool("ExperimentalLongitudinalEnabled")
+    ret.experimentalLongAlt = candidate in LEGACY_SAFETY_MODE_CAR_ALT
     
     ret.tireStiffnessFactor = 1.
 
@@ -447,14 +448,14 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def init(CP, logcan, sendcan):
-    if CP.openpilotLongitudinalControl and not (CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and CP.experimentalLong: #CP.experimentalLong is LongControl toggle
+    if CP.openpilotLongitudinalControl and not (CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and CP.experimentalLong and not CP.experimentalLongAlt:
       addr, bus = 0x7d0, 0
       if CP.flags & HyundaiFlags.CANFD_HDA2.value:
         addr, bus = 0x730, CanBus(CP).ECAN
       disable_ecu(logcan, sendcan, bus=bus, addr=addr, com_cont_req=b'\x28\x83\x01')
 
     # for blinkers
-    if CP.flags & HyundaiFlags.ENABLE_BLINKERS and CP.experimentalLong:
+    if CP.flags & HyundaiFlags.ENABLE_BLINKERS and CP.experimentalLong and not CP.experimentalLongAlt:
       disable_ecu(logcan, sendcan, bus=CanBus(CP).ECAN, addr=0x7B1, com_cont_req=b'\x28\x83\x01')
 
   def _update(self, c):
