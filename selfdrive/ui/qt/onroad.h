@@ -79,24 +79,6 @@ private:
 // container window for the NVG UI
 class AnnotatedCameraWidget : public CameraWidget {
   Q_OBJECT
-  Q_PROPERTY(float speed MEMBER speed);
-  Q_PROPERTY(QString speedUnit MEMBER speedUnit);
-  Q_PROPERTY(float setSpeed MEMBER setSpeed);
-  Q_PROPERTY(float speedLimit MEMBER speedLimit);
-  Q_PROPERTY(bool is_cruise_set MEMBER is_cruise_set);
-  Q_PROPERTY(bool has_eu_speed_limit MEMBER has_eu_speed_limit);
-  Q_PROPERTY(bool has_us_speed_limit MEMBER has_us_speed_limit);
-  Q_PROPERTY(bool is_metric MEMBER is_metric);
-
-  Q_PROPERTY(bool dmActive MEMBER dmActive);
-  Q_PROPERTY(bool hideBottomIcons MEMBER hideBottomIcons);
-  Q_PROPERTY(bool rightHandDM MEMBER rightHandDM);
-  Q_PROPERTY(int status MEMBER status);
-
-  Q_PROPERTY(bool is_over_sl MEMBER is_over_sl);
-  Q_PROPERTY(bool lead_stat MEMBER lead_stat);
-  Q_PROPERTY(float dist_rel MEMBER dist_rel);
-  Q_PROPERTY(float vel_rel MEMBER vel_rel);
 
 public:
   explicit AnnotatedCameraWidget(VisionStreamType type, QWidget* parent = 0);
@@ -140,7 +122,7 @@ private:
   int skip_frame_count = 0;
   bool wide_cam_requested = false;
 
-  bool is_over_sl = false;
+  bool over_sl = false;
   bool lead_stat = false;
   float dist_rel = 0;
   float vel_rel = 0;
