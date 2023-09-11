@@ -270,12 +270,17 @@ void MapWindow::initializeGL() {
   QString MAPBOX_CUSTOM = QString::fromStdString(Params().get("MapboxStyleCustom")); // set the param with yours(pubulished style from Mapbox website)
   if (MAPBOX_STYLE == "0") {
     m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
+    printf("MAPBOX_STYLE_C0");
   } else if (MAPBOX_STYLE == "1") {
-    m_map->setStyleUrl("mapbox://styles/multikyd/ckwbf0oig3swu14lc482wqvfz"); // opkr
+    // m_map->setStyleUrl("mapbox://styles/multikyd/ckwbf0oig3swu14lc482wqvfz"); // opkr
+    m_map->setStyleUrl("mapbox://styles/mapbox/satellite-streets-v12");
+    printf("MAPBOX_STYLE_1");
   } else if (MAPBOX_STYLE == "2" && !Params().get("MapboxStyleCustom").empty()) {
     m_map->setStyleUrl(MAPBOX_CUSTOM); // yours
+    printf("MAPBOX_STYLE_2");
   } else {
     m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
+    printf("MAPBOX_STYLE_CE");
   }
 
   QObject::connect(m_map.data(), &QMapboxGL::mapChanged, [=](QMapboxGL::MapChange change) {
