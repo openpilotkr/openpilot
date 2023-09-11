@@ -6002,7 +6002,7 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn1.setFixedSize(250, 100);
+  btn1.setFixedSize(200, 100);
   btn2.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6011,7 +6011,7 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn2.setFixedSize(250, 100);
+  btn2.setFixedSize(200, 100);
   btn3.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6020,13 +6020,24 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn3.setFixedSize(250, 100);
+  btn3.setFixedSize(200, 100);
+  btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn4.setFixedSize(200, 100);
   hlayout->addWidget(&btn1);
   hlayout->addWidget(&btn2);
   hlayout->addWidget(&btn3);
+  hlayout->addWidget(&btn4);
   btn1.setText(tr("Comma"));
   btn2.setText(tr("OPKR"));
   btn3.setText(tr("User's"));
+  btn4.setText(tr("SATL"));
 
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
     params.put("OPKRMapboxStyleSelect", "0");
@@ -6039,6 +6050,10 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
   QObject::connect(&btn3, &QPushButton::clicked, [=]() {
     params.put("OPKRMapboxStyleSelect", "2");
     if (ConfirmationDialog::alert(tr("You've chosen own style. Please set your mapbox style to the param <MapboxStyleCustom>. File location: /data/params/d/MapboxStyleCustom"), this)) {}
+    refresh();
+  });
+  QObject::connect(&btn4, &QPushButton::clicked, [=]() {
+    params.put("OPKRMapboxStyleSelect", "3");
     refresh();
   });
   refresh();
@@ -6071,6 +6086,14 @@ void OPKRMapboxStyle::refresh() {
     color: #E4E4E4;
     background-color: #393939;
     )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
   } else if (option == "1") {
     btn1.setStyleSheet(R"(
     padding: 0;
@@ -6096,6 +6119,47 @@ void OPKRMapboxStyle::refresh() {
     color: #E4E4E4;
     background-color: #393939;
     )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+  } else if (option == "2") {
+    btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #00A12E;
+    )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
   } else {
     btn1.setStyleSheet(R"(
     padding: 0;
@@ -6114,6 +6178,14 @@ void OPKRMapboxStyle::refresh() {
     background-color: #393939;
     )");
     btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn4.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
     font-size: 35px;
