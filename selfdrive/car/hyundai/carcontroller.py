@@ -258,6 +258,8 @@ class CarController:
     self.counter_init = False
     self.radarDisableOverlapTimer = 0
 
+    # self.usf = 0
+
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
       self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.5f}/{:0.2f}'.format(CP.lateralTuning.pid.kpV[1], CP.lateralTuning.pid.kiV[1], CP.lateralTuning.pid.kf, CP.lateralTuning.pid.kd)
@@ -1236,6 +1238,7 @@ class CarController:
       # self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
       # self.gap_by_spd_on = self.c_params.get_bool("CruiseGapBySpdOn")
       self.experimental_mode = self.c_params.get_bool("ExperimentalMode")
+      # self.usf = int(Params().get("UserSpecificFeature", encoding="utf8"))
       if self.c_params.get_bool("OpkrLiveTunePanelEnable"):
         if self.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.c_params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
