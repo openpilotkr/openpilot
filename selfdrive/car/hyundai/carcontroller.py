@@ -320,7 +320,7 @@ class CarController:
       self.driver_steering_torque_above = False
 
     if self.driver_steering_torque_above == True:
-      self.driver_steering_torque_above_timer -= 1
+      self.driver_steering_torque_above_timer -= 30
       if self.driver_steering_torque_above_timer <= 0:
         self.driver_steering_torque_above_timer = 0
     elif self.driver_steering_torque_above == False:
