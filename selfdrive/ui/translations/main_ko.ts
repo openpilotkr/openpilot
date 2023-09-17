@@ -1400,22 +1400,6 @@ This may take up to a minute.</source>
         <translation>녹화된 영상 파일을 모두 삭제하시겠습니까?</translation>
     </message>
     <message>
-        <source>Enable Driving Log Record</source>
-        <translation>주행 로그 기록 사용</translation>
-    </message>
-    <message>
-        <source>Record the driving log locally for data analysis. Only loggers are activated and not uploaded to the server.</source>
-        <translation>데이터 분석을 위해 주행 기록(카바나)을 로컬에 저장하세요. 로거만 활성화되고 서버에 업로드되지 않습니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
-    </message>
-    <message>
-        <source>Enable Sending Log to Server</source>
-        <translation>주행 로그 업로드 활성화</translation>
-    </message>
-    <message>
-        <source>Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.</source>
-        <translation>업로드 프로세스를 활성화하여 시스템 로그 및 기타 주행 데이터를 서버로 전송합니다. 오프로드 상태에서만 업로드합니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
-    </message>
-    <message>
         <source>Delete All Driving Logs</source>
         <translation>주행로그 전부 삭제</translation>
     </message>
@@ -4133,6 +4117,28 @@ This may take up to a minute.</source>
     <message>
         <source>Put your MapboxToken starting with pk.</source>
         <translation>pk로 시작하는 맵박스 토큰을 입력합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>EnableLogger</name>
+    <message>
+        <source>Enable Driving Log Record</source>
+        <translation>주행 로그 기록 사용</translation>
+    </message>
+    <message>
+        <source>Record the driving log locally for data analysis. Only loggers are activated and not uploaded to the server.</source>
+        <translation>데이터 분석을 위해 주행 기록(카바나)을 로컬에 저장하세요. 로거만 활성화되고 서버에 업로드되지 않습니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>EnableUploader</name>
+    <message>
+        <source>Enable Sending Log to Server</source>
+        <translation>주행 로그 업로드 활성화</translation>
+    </message>
+    <message>
+        <source>Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.</source>
+        <translation>업로드 프로세스를 활성화하여 시스템 로그 및 기타 주행 데이터를 서버로 전송합니다. 오프로드 상태에서만 업로드합니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
     </message>
 </context>
 </TS>
