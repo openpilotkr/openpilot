@@ -494,8 +494,10 @@ class CarState(CarStateBase):
       ret.radarDistance = self.lead_distance
       self.scc11 = copy.copy(cp_scc.vl["SCC11"])
       self.scc12 = copy.copy(cp_scc.vl["SCC12"])
-      self.scc13 = copy.copy(cp_scc.vl["SCC13"])
-      self.scc14 = copy.copy(cp_scc.vl["SCC14"])
+      if self.CP.scc13Available:
+        self.scc13 = copy.copy(cp_scc.vl["SCC13"])
+      if self.CP.scc14Available:
+        self.scc14 = copy.copy(cp_scc.vl["SCC14"])
 
     self.mdps12 = copy.copy(cp_mdps.vl["MDPS12"])
 
