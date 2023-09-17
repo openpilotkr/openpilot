@@ -2332,7 +2332,7 @@ struct Event {
     magnetometer @95 :SensorEventData;
     lightSensor @96 :SensorEventData;
     temperatureSensor @97 :SensorEventData;
-    temperatureSensor2 @125 :SensorEventData;
+    temperatureSensor2 @123 :SensorEventData;
     pandaStates @81 :List(PandaState);
     peripheralState @80 :PeripheralState;
     radarState @13 :RadarState;
@@ -2410,8 +2410,8 @@ struct Event {
     livestreamDriverEncodeData @122 :EncodeData;
 
     # OPKR Navi
-    liveENaviData @123: LiveENaviData;
-    liveMapData @124: LiveMapData;
+    liveENaviData @124: LiveENaviData;
+    liveMapData @125: LiveMapData;
 
     # *********** Custom: reserved for forks ***********
     customReserved0 @107 :Custom.CustomReserved0;
