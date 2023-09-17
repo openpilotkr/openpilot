@@ -240,6 +240,8 @@ def manager_init() -> None:
     ("NavList", ""),
     ("MapboxToken", ""),
     ("RunCustomCommand", "0"),
+    ("CruiseSpammingSpd", "50,80,110"),
+    ("CruiseSpammingLevel", "15,10,5,0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

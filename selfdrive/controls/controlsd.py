@@ -280,7 +280,10 @@ class Controls:
       self.roadname_and_slc = ""
       pass
 
-    self.var_cruise_speed_factor = int(self.params.get("VarCruiseSpeedFactor", encoding="utf8"))
+    #self.var_cruise_speed_factor = int(self.params.get("VarCruiseSpeedFactor", encoding="utf8"))
+    self.var_cruise_speed_factor = 0
+    self.cruise_spamming_level = list(map(int, self.params.get("CruiseSpammingLevel", encoding="utf8").split(',')))
+    self.cruise_spamming_spd = list(map(int, self.params.get("CruiseSpammingSpd", encoding="utf8").split(',')))
     self.desired_angle_deg = 0
     self.navi_selection = int(self.params.get("OPKRNaviSelect", encoding="utf8"))
 
@@ -866,14 +869,23 @@ class Controls:
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
 
+    m_unit = CV.MS_TO_KPH if self.is_metric else CV.MS_TO_MPH
     if len(speeds):
+      if CS.vEgo*m_unit < self.cruise_spamming_spd[0]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[0]
+      elif self.cruise_spamming_spd[0] <= CS.vEgo*m_unit < self.cruise_spamming_spd[1]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[1]
+      elif self.cruise_spamming_spd[1] <= CS.vEgo*m_unit < self.cruise_spamming_spd[2]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[2]
+      else:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[3]        
       v_future = speeds[self.var_cruise_speed_factor]
       v_future_a = speeds[-1]
     else:
       v_future = 100.0
       v_future_a = 100.0
-    v_future_speed= float((v_future * CV.MS_TO_KPH) if self.is_metric else (v_future * CV.MS_TO_MPH))
-    v_future_speed_a= float((v_future_a * CV.MS_TO_KPH) if self.is_metric else (v_future_a * CV.MS_TO_MPH))
+    v_future_speed= float(v_future * m_unit)
+    v_future_speed_a= float(v_future_a * m_unit)
     hudControl.vFuture = v_future_speed
     hudControl.vFutureA = v_future_speed_a
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown

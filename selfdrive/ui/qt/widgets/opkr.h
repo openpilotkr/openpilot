@@ -2776,3 +2776,38 @@ private:
 
   void refresh();
 };
+
+class CruiseSpammingLevel : public AbstractControl {
+  Q_OBJECT
+
+public:
+  CruiseSpammingLevel();
+
+private:
+  QPushButton btnplus1;
+  QLabel label1;
+  QPushButton btnminus1;
+
+  QPushButton btnplus2;
+  QLabel label2;
+  QPushButton btnminus2;
+
+  QPushButton btnplus3;
+  QLabel label3;
+  QPushButton btnminus3;
+
+  QPushButton btn1;
+  QPushButton btn2;
+  QPushButton btn3;
+  QPushButton btn4;
+  Params params;
+  
+  void refresh1();
+  void refresh2();
+  void refresh3();
+  void refresh4();
+
+  void refresh5();
+  void refresh6();
+  void refresh7();
+};
