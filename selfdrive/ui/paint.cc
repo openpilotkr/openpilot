@@ -1225,18 +1225,18 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
         value_fontSize, label_fontSize, uom_fontSize, 0);
   }
 
-  //add steerratio from lateralplan
+  //add Steering Torque
   if (true) {
     char val_str[16];
     char uom_str[6];
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     if (scene.controls_state.getEnabled()) {
-      snprintf(val_str, sizeof(val_str), "%.2f",(scene.steerRatio));
+      snprintf(val_str, sizeof(val_str), "%.0f",(scene.steering_torque));
     } else {
        snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "SteerRatio",
+    bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "SteerTorq",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize, 0);

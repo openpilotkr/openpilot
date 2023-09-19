@@ -260,6 +260,7 @@ typedef struct UIScene {
   bool depart_chime_at_resume;
   int comma_stock_ui;
   bool OPKR_Debug;
+  float steering_torque;
 
   cereal::DeviceState::Reader deviceState;
   cereal::CarState::Reader car_state;
