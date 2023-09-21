@@ -337,6 +337,9 @@ class CarController:
     else:
       new_steer = int(round(actuators.steer * self.params.STEER_MAX))
 
+    if self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT:
+      new_steer = int(round(interp(abs(actuators.steer), [0.9, 1.0], [new_steer, min(new_steer, 255)])))
+
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
 
     if self.joystick_debug_mode:
