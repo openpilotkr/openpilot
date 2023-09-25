@@ -909,7 +909,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     // debug info(right panel)
     int width_r = 180;
     int sp_xr = rect().right() - UI_BORDER_SIZE - width_r / 2 - 10;
-    int sp_yr = UI_BORDER_SIZE + 245;
+    int sp_yr = UI_BORDER_SIZE + 235;
     int num_r = 0;
 
     //p.setRenderHint(QPainter::TextAntialiasing);
@@ -1013,11 +1013,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
       p.setPen(redColor(200));
     }
     if (s->scene.tpmsUnit != 0) {
-      debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 32);
-      font_size = (s->scene.tpmsUnit == 2) ? 45 : 37;
+      debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 30);
+      font_size = (s->scene.tpmsUnit == 2) ? 43 : 36;
     } else {
-      debugText(p, tpms_sp_xr, tpms_sp_yr+15, "TPMS(psi)", 150, 32);
-      font_size = 45;
+      debugText(p, tpms_sp_xr, tpms_sp_yr+15, "TPMS(psi)", 150, 30);
+      font_size = 42;
     }
     if ((s->scene.tpmsPressureFl < 32 && s->scene.tpmsUnit != 2) || (s->scene.tpmsPressureFl < 2.2 && s->scene.tpmsUnit == 2)) {
       p.setPen(yellowColor(200));
