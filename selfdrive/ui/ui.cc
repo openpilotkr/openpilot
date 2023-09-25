@@ -647,6 +647,7 @@ static void update_status(UIState *s) {
     s->scene.do_not_disturb_mode = std::stoi(params.get("DoNotDisturbMode"));
     s->scene.depart_chime_at_resume = params.getBool("DepartChimeAtResume");
     s->scene.OPKR_Debug = params.getBool("OPKRDebug");
+    s->scene.steer_max = std::stoi(params.get("SteerMaxAdj"));
 
     if (s->scene.autoScreenOff > 0) {
       s->scene.nTime = s->scene.autoScreenOff * 60 * UI_FREQ;
