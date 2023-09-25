@@ -216,6 +216,7 @@ int valid_steer_req_count = 0;     // counter for steer request bit matching non
 int invalid_steer_req_count = 0;   // counter to allow multiple frames of mismatching torque request bit
 struct sample_t torque_meas;       // last 6 motor torques produced by the eps
 struct sample_t torque_driver;     // last 6 driver torques measured
+uint32_t ts_last = 0;
 uint32_t ts_torque_check_last = 0;
 uint32_t ts_steer_req_mismatch_last = 0;  // last timestamp steer req was mismatched with torque
 
