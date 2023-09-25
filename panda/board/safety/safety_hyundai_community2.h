@@ -1,7 +1,7 @@
 #include "safety_hyundai_common.h"
 
-const int HYUNDAI_MAX_STEER = 384;             // like stock
-const int HYUNDAI_MAX_RT_DELTA = 112;          // max delta torque allowed for real time checks
+const int HYUNDAI_MAX_STEER = 400;             // like stock
+const int HYUNDAI_MAX_RT_DELTA = 300;          // max delta torque allowed for real time checks
 const uint32_t HYUNDAI_RT_INTERVAL = 250000;   // 250ms between real time checks
 const int HYUNDAI_MAX_RATE_UP = 3;
 const int HYUNDAI_MAX_RATE_DOWN = 7;
