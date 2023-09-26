@@ -834,9 +834,9 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.setPen(whiteColor(200));
     p.setFont(InterFont(27, QFont::DemiBold));
     if (s->scene.desired_angle_steers > -10 && s->scene.desired_angle_steers < 10) {
-      p.drawText(-20, 0, QString::number(s->scene.desired_angle_steers, 'f', 1));
+      p.drawText(-35, 0, QString::number(s->scene.desired_angle_steers, 'f', 1));
     } else {
-      p.drawText(-30, 0, QString::number(s->scene.desired_angle_steers, 'f', 0));
+      p.drawText(-45, 0, QString::number(s->scene.desired_angle_steers, 'f', 0));
     }
     p.resetMatrix();
     // steer ratio
