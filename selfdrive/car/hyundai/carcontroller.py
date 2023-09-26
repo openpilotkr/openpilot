@@ -208,7 +208,6 @@ class CarController:
     self.gap_by_spd_on_sw_cnt2 = 0
 
     self.prev_cruiseButton = 0
-    self.gapsettingdance = 4
     self.lead_visible = False
     self.lead_debounce = 0
     self.radarDisableOverlapTimer = 0
@@ -246,6 +245,8 @@ class CarController:
     self.experimental_long_enabled = self.c_params.get_bool("ExperimentalLongitudinalEnabled")
     self.experimental_mode = self.c_params.get_bool("ExperimentalMode")
     self.live_torque_params = self.c_params.get_bool("OpkrLiveTorque")
+    self.gapsettingdance = int(self.c_params.get("OpkrCruiseGapSet", encoding="utf8"))
+    self.prev_gapButton = 0
     
     self.opkr_long_alt = True if int(self.c_params.get("OPKRLongAlt", encoding="utf8")) in (1, 2) else False
 
@@ -984,13 +985,21 @@ class CarController:
       # if not self.CP.openpilotLongitudinalControl:
       #   can_sends.extend(self.create_button_messages(CC, CS, use_clu11=True))
 
+      if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
+        if self.prev_gapButton != CS.cruise_buttons[-1]:  # gap change.
+          if CS.cruise_buttons[-1] == 3:
+            self.gapsettingdance -= 1
+          if self.gapsettingdance < 1:
+            self.gapsettingdance = 4
+          self.prev_gapButton = CS.cruise_buttons[-1]
+
       if self.frame % 2 == 0 and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
         # TODO: unclear if this is needed
         jerk = 3.0 if actuators.longControlState == LongCtrlState.pid else 1.0
         use_fca = self.CP.flags & HyundaiFlags.USE_FCA.value
         can_sends.extend(hyundaican.create_acc_commands(self.packer, CC.enabled, accel, jerk, int(self.frame / 2),
                                                       hud_control.leadVisible, set_speed_in_units, stopping,
-                                                      CC.cruiseControl.override, use_fca))
+                                                      CC.cruiseControl.override, use_fca, self.gapsettingdance))
       # 20 Hz LFA MFA message
       if self.frame % 5 == 0 and self.CP.flags & HyundaiFlags.SEND_LFA.value:
         can_sends.append(hyundaican.create_lfahda_mfc(self.packer, CC.enabled))

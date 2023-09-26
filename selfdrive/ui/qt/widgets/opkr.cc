@@ -167,6 +167,7 @@ CLongControlGroup::CLongControlGroup() : CGroupWidget( tr("Long Control") )
   //pBoxLayout->addWidget(new RadarDisableToggle());
   pBoxLayout->addWidget(new UseRadarTrackToggle());
   pBoxLayout->addWidget(new LongAlternative());
+  pBoxLayout->addWidget(new OPKRCruiseGapSet());
 }
 
 
@@ -8957,4 +8958,72 @@ void CruiseSpammingLevel::refresh6() {
 void CruiseSpammingLevel::refresh7() {
   QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
   label3.setText(list[2]);
+}
+
+OPKRCruiseGapSet::OPKRCruiseGapSet() : AbstractControl(tr("Cruise Gap(Init)"), tr("Set initial Cruise Gap for OP Long"), "../assets/offroad/icon_shell.png") {
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  btnminus.setText("◀");
+  btnplus.setText("▶");
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OpkrCruiseGapSet"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= -1) {
+      value = 4;
+    }
+    QString values = QString::number(value);
+    params.put("OpkrCruiseGapSet", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
+    auto str = QString::fromStdString(params.get("OpkrCruiseGapSet"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 5) {
+      value = 1;
+    }
+    QString values = QString::number(value);
+    params.put("OpkrCruiseGapSet", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void OPKRCruiseGapSet::refresh() {
+  QString option = QString::fromStdString(params.get("OpkrCruiseGapSet"));
+  if (option == "1") {
+    label.setText(QString::fromStdString("■"));
+  } else if (option == "2") {
+    label.setText(QString::fromStdString("■■"));
+  } else if (option == "3") {
+    label.setText(QString::fromStdString("■■■"));
+  } else {
+    label.setText(QString::fromStdString("■■■■"));
+  }
 }
