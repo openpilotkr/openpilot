@@ -160,3 +160,5 @@ CruiseSetwithRoadLimitSpeedEnabled:0
 CruiseSetwithRoadLimitSpeedOffset:0
 OpkrLiveTorque:1
 SetSpeedFive:0
+CruiseSpammingSpd:50,80,110
+CruiseSpammingLevel:15,10,5,0

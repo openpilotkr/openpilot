@@ -239,6 +239,7 @@ class Controls:
     self.prof = Profiler(False)  # off by default
 
     self.hkg_stock_lkas = True
+    self.hkg_stock_lkas_timer = 0
 
     self.mpc_frame = 0
     self.mpc_frame_sr = 0
@@ -279,7 +280,10 @@ class Controls:
       self.roadname_and_slc = ""
       pass
 
-    self.var_cruise_speed_factor = int(self.params.get("VarCruiseSpeedFactor", encoding="utf8"))
+    #self.var_cruise_speed_factor = int(self.params.get("VarCruiseSpeedFactor", encoding="utf8"))
+    self.var_cruise_speed_factor = 0
+    self.cruise_spamming_level = list(map(int, self.params.get("CruiseSpammingLevel", encoding="utf8").split(',')))
+    self.cruise_spamming_spd = list(map(int, self.params.get("CruiseSpammingSpd", encoding="utf8").split(',')))
     self.desired_angle_deg = 0
     self.navi_selection = int(self.params.get("OPKRNaviSelect", encoding="utf8"))
 
@@ -509,17 +513,19 @@ class Controls:
     else:
       self.logged_comm_issue = None
 
-    if not self.sm['liveParameters'].valid and not TESTING_CLOSET and (not SIMULATION or REPLAY):
-      self.events.add(EventName.vehicleModelInvalid)
     if not self.sm['lateralPlan'].mpcSolutionValid:
       self.events.add(EventName.plannerError)
-    if not (self.sm['liveParameters'].sensorValid or self.sm['liveLocationKalman'].sensorsOK) and not NOSENSOR:
-      if self.sm.frame > 5 / DT_CTRL:  # Give locationd some time to receive all the inputs
-        self.events.add(EventName.sensorDataInvalid)
     if not self.sm['liveLocationKalman'].posenetOK:
       self.events.add(EventName.posenetInvalid)
     if not self.sm['liveLocationKalman'].deviceStable:
       self.events.add(EventName.deviceFalling)
+    if not (self.sm['liveParameters'].sensorValid or self.sm['liveLocationKalman'].sensorsOK):
+      if self.sm.frame > 5 / DT_CTRL:  # Give locationd some time to receive sensor inputs
+        self.events.add(EventName.sensorDataInvalid)
+    if not self.sm['liveLocationKalman'].inputsOK:
+      self.events.add(EventName.locationdTemporaryError)
+    if not self.sm['liveParameters'].valid and not TESTING_CLOSET and (not SIMULATION or REPLAY):
+      self.events.add(EventName.paramsdTemporaryError)
 
     if not REPLAY:
       # Check for mismatch between openpilot and car's PCM
@@ -555,8 +561,6 @@ class Controls:
 
       if self.sm['modelV2'].frameDropPerc > 20:
         self.events.add(EventName.modeldLagging)
-      if self.sm['liveLocationKalman'].excessiveResets:
-        self.events.add(EventName.localizerMalfunction)
 
     # atom
     if self.auto_enabled and not self.no_mdps_mods and self.ufc_mode:
@@ -865,14 +869,23 @@ class Controls:
     hudControl.rightLaneVisible = True
     hudControl.leftLaneVisible = True
 
+    m_unit = CV.MS_TO_KPH if self.is_metric else CV.MS_TO_MPH
     if len(speeds):
+      if CS.vEgo*m_unit < self.cruise_spamming_spd[0]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[0]
+      elif self.cruise_spamming_spd[0] <= CS.vEgo*m_unit < self.cruise_spamming_spd[1]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[1]
+      elif self.cruise_spamming_spd[1] <= CS.vEgo*m_unit < self.cruise_spamming_spd[2]:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[2]
+      else:
+        self.var_cruise_speed_factor = self.cruise_spamming_level[3]        
       v_future = speeds[self.var_cruise_speed_factor]
       v_future_a = speeds[-1]
     else:
       v_future = 100.0
       v_future_a = 100.0
-    v_future_speed= float((v_future * CV.MS_TO_KPH) if self.is_metric else (v_future * CV.MS_TO_MPH))
-    v_future_speed_a= float((v_future_a * CV.MS_TO_KPH) if self.is_metric else (v_future_a * CV.MS_TO_MPH))
+    v_future_speed= float(v_future * m_unit)
+    v_future_speed_a= float(v_future_a * m_unit)
     hudControl.vFuture = v_future_speed
     hudControl.vFutureA = v_future_speed_a
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown
@@ -916,8 +929,15 @@ class Controls:
     if self.stock_lkas_on_disengaged_status and self.CP.carName == "hyundai" and not self.exp_long_enabled:
       if self.enabled:
         self.hkg_stock_lkas = False
+        self.hkg_stock_lkas_timer = 0
       elif not self.enabled and not self.hkg_stock_lkas:
-        self.hkg_stock_lkas = True
+        self.hkg_stock_lkas_timer += 1
+        if self.hkg_stock_lkas_timer > 300:
+          self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
+        elif CS.gearShifter != GearShifter.drive and self.hkg_stock_lkas_timer > 150:
+          self.hkg_stock_lkas = True
+          self.hkg_stock_lkas_timer = 0
       if not self.hkg_stock_lkas:
         # send car controls over can
         now_nanos = self.can_log_mono_time if REPLAY else int(time.monotonic() * 1e9)

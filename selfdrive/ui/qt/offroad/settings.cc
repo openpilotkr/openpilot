@@ -474,7 +474,8 @@ DrivingPanel::DrivingPanel(QWidget *parent) : QFrame(parent) {
   layout->addWidget(new StandstillResumeAltToggle());
   layout->addWidget(new DepartChimeAtResume());
   layout->addWidget(new VariableCruiseToggle());
-  layout->addWidget(new VariableCruiseLevel());
+  //layout->addWidget(new VariableCruiseLevel());
+  layout->addWidget(new CruiseSpammingLevel());
   layout->addWidget(new CruiseSetwithRoadLimitSpeed());
   layout->addWidget(new CruiseSetwithRoadLimitSpeedOffset());
   layout->addWidget(new CruisemodeSelInit());

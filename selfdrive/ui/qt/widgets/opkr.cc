@@ -5993,7 +5993,7 @@ void OPKRServerAPI::refresh() {
   }
 }
 
-OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set the Mapbox sytle to Comma/OPKR/User's"), "../assets/offroad/icon_shell.png") {
+OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set the Mapbox sytle to Comma/OPKR/User/Satellite"), "../assets/offroad/icon_shell.png") {
   btn1.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6002,7 +6002,7 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn1.setFixedSize(250, 100);
+  btn1.setFixedSize(200, 100);
   btn2.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6011,7 +6011,7 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn2.setFixedSize(250, 100);
+  btn2.setFixedSize(200, 100);
   btn3.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
@@ -6020,13 +6020,24 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
     color: #E4E4E4;
     background-color: #393939;
   )");
-  btn3.setFixedSize(250, 100);
+  btn3.setFixedSize(200, 100);
+  btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btn4.setFixedSize(200, 100);
   hlayout->addWidget(&btn1);
   hlayout->addWidget(&btn2);
   hlayout->addWidget(&btn3);
+  hlayout->addWidget(&btn4);
   btn1.setText(tr("Comma"));
   btn2.setText(tr("OPKR"));
-  btn3.setText(tr("User's"));
+  btn3.setText(tr("User"));
+  btn4.setText(tr("SATL"));
 
   QObject::connect(&btn1, &QPushButton::clicked, [=]() {
     params.put("OPKRMapboxStyleSelect", "0");
@@ -6039,6 +6050,10 @@ OPKRMapboxStyle::OPKRMapboxStyle() : AbstractControl(tr("Mapbox Style"), tr("Set
   QObject::connect(&btn3, &QPushButton::clicked, [=]() {
     params.put("OPKRMapboxStyleSelect", "2");
     if (ConfirmationDialog::alert(tr("You've chosen own style. Please set your mapbox style to the param <MapboxStyleCustom>. File location: /data/params/d/MapboxStyleCustom"), this)) {}
+    refresh();
+  });
+  QObject::connect(&btn4, &QPushButton::clicked, [=]() {
+    params.put("OPKRMapboxStyleSelect", "3");
     refresh();
   });
   refresh();
@@ -6071,6 +6086,14 @@ void OPKRMapboxStyle::refresh() {
     color: #E4E4E4;
     background-color: #393939;
     )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
   } else if (option == "1") {
     btn1.setStyleSheet(R"(
     padding: 0;
@@ -6096,6 +6119,47 @@ void OPKRMapboxStyle::refresh() {
     color: #E4E4E4;
     background-color: #393939;
     )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+  } else if (option == "2") {
+    btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #00A12E;
+    )");
+    btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
   } else {
     btn1.setStyleSheet(R"(
     padding: 0;
@@ -6114,6 +6178,14 @@ void OPKRMapboxStyle::refresh() {
     background-color: #393939;
     )");
     btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+    )");
+    btn4.setStyleSheet(R"(
     padding: 0;
     border-radius: 50px;
     font-size: 35px;
@@ -8577,4 +8649,312 @@ void MapboxToken::refresh() {
   auto strs = QString::fromStdString(params.get("MapboxToken"));
   edit.setText(QString::fromStdString(strs.toStdString()));
   btn.setText(tr("SET"));
+}
+
+
+CruiseSpammingLevel::CruiseSpammingLevel() : AbstractControl("", "", "") {
+  label1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label1.setStyleSheet("color: #e0e879");
+  label2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label2.setStyleSheet("color: #e0e879");
+  label3.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  label3.setStyleSheet("color: #e0e879");
+  btn1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btn4.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 50px;
+    font-weight: 500;
+    color: #e0e879;
+    background-color: #808080;
+  )");
+  btnminus1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus1.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus2.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus3.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus1.setFixedSize(90, 100);
+  btnplus1.setFixedSize(90, 100);
+  btnminus2.setFixedSize(90, 100);
+  btnplus2.setFixedSize(90, 100);
+  btnminus3.setFixedSize(90, 100);
+  btnplus3.setFixedSize(90, 100);
+  btn1.setFixedSize(110, 100);
+  btn2.setFixedSize(110, 100);
+  btn3.setFixedSize(110, 100);
+  btn4.setFixedSize(110, 100);
+
+  hlayout->addWidget(&btn1);
+  hlayout->addWidget(&btnminus1);
+  hlayout->addWidget(&label1);
+  hlayout->addWidget(&btnplus1);
+  hlayout->addWidget(&btn2);
+  hlayout->addWidget(&btnminus2);
+  hlayout->addWidget(&label2);
+  hlayout->addWidget(&btnplus2);
+  hlayout->addWidget(&btn3);
+  hlayout->addWidget(&btnminus3);
+  hlayout->addWidget(&label3);
+  hlayout->addWidget(&btnplus3);
+  hlayout->addWidget(&btn4);
+
+  btnminus1.setText("－");
+  btnplus1.setText("＋");
+  btnminus2.setText("－");
+  btnplus2.setText("＋");
+  btnminus3.setText("－");
+  btnplus3.setText("＋");
+
+  QObject::connect(&btn1, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+    int value = list[0].toInt();
+    value = value + 1;
+    if (value >= 17) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingLevel", str.toStdString());
+    refresh1();
+  });
+
+  QObject::connect(&btn2, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+    int value = list[1].toInt();
+    value = value + 1;
+    if (value >= 17) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingLevel", str.toStdString());
+    refresh2();
+  });
+
+  QObject::connect(&btn3, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+    int value = list[2].toInt();
+    value = value + 1;
+    if (value >= 17) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[2] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingLevel", str.toStdString());
+    refresh3();
+  });
+
+  QObject::connect(&btn4, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+    int value = list[3].toInt();
+    value = value + 1;
+    if (value >= 17) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[3] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingLevel", str.toStdString());
+    refresh4();
+  });
+
+  QObject::connect(&btnminus1, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[0].toInt();
+    value = value - 5;
+    if (value <= 0) {
+      value = 0;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh5();
+  });
+
+  QObject::connect(&btnplus1, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[0].toInt();
+    int valuem = list[1].toInt();
+    value = value + 5;
+    if (value >= (valuem - 5)) {
+      value = valuem - 5;
+    }
+    QString values = QString::number(value);
+    list[0] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh5();
+  });
+
+  QObject::connect(&btnminus2, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[1].toInt();
+    int valuem = list[0].toInt();
+    value = value - 5;
+    if (value <= (valuem + 5)) {
+      value = valuem + 5;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh6();
+  });
+
+  QObject::connect(&btnplus2, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[1].toInt();
+    int valuem = list[2].toInt();
+    value = value + 5;
+    if (value >= (valuem - 5)) {
+      value = valuem - 5;
+    }
+    QString values = QString::number(value);
+    list[1] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh6();
+  });
+
+  QObject::connect(&btnminus3, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[2].toInt();
+    int valuem = list[1].toInt();
+    value = value - 5;
+    if (value <= (valuem + 5)) {
+      value = valuem + 5;
+    }
+    QString values = QString::number(value);
+    list[2] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh7();
+  });
+
+  QObject::connect(&btnplus3, &QPushButton::clicked, [=]() {
+    QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+    int value = list[2].toInt();
+    value = value + 5;
+    if (value >= 160) {
+      value = 160;
+    }
+    QString values = QString::number(value);
+    list[2] = values;
+    QString str = list.join(",");
+    params.put("CruiseSpammingSpd", str.toStdString());
+    refresh7();
+  });
+
+  refresh1();
+  refresh2();
+  refresh3();
+  refresh4();
+  refresh5();
+  refresh6();
+  refresh7();
+}
+
+void CruiseSpammingLevel::refresh1() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+  btn1.setText(list[0]);
+}
+
+void CruiseSpammingLevel::refresh2() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+  btn2.setText(list[1]);
+}
+
+void CruiseSpammingLevel::refresh3() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+  btn3.setText(list[2]);
+}
+
+void CruiseSpammingLevel::refresh4() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingLevel")).split(",");
+  btn4.setText(list[3]);
+}
+
+void CruiseSpammingLevel::refresh5() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+  label1.setText(list[0]);
+}
+
+void CruiseSpammingLevel::refresh6() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+  label2.setText(list[1]);
+}
+
+void CruiseSpammingLevel::refresh7() {
+  QStringList list = QString::fromStdString(params.get("CruiseSpammingSpd")).split(",");
+  label3.setText(list[2]);
 }

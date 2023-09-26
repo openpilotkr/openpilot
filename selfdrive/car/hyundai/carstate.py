@@ -9,7 +9,7 @@ from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
 from openpilot.selfdrive.car.hyundai.hyundaicanfd import CanBus
 from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, CAN_GEARS, CAMERA_SCC_CAR, \
-                                                   CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
+                                                   CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams, LEGACY_SAFETY_MODE_CAR_ALT
 from openpilot.selfdrive.car.interfaces import CarStateBase
 from openpilot.common.params import Params
 
@@ -95,8 +95,9 @@ class CarState(CarStateBase):
 
     self.long_alt = int(Params().get("OPKRLongAlt", encoding="utf8"))
     self.exp_engage_available = False
-    
-    self.exp_long = CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)
+
+    self.exp_long_alt = CP.sccBus <= 0 and CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT and self.CP.openpilotLongitudinalControl
+    self.exp_long = (CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)) or self.exp_long_alt
     self.lead_distance = 0
 
     self.sm = messaging.SubMaster(['controlsState'])
@@ -253,7 +254,7 @@ class CarState(CarStateBase):
     self.prev_lkas_button_on = self.lkas_button_on
 
     ret = car.CarState.new_message()
-    cp_cruise = cp_cam if self.CP.carFingerprint in CAMERA_SCC_CAR else cp
+    cp_cruise = cp_cam if self.CP.carFingerprint in CAMERA_SCC_CAR or self.CP.sccBus == 2 else cp
     self.is_metric = cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] == 0
     speed_conv = CV.KPH_TO_MS if self.is_metric else CV.MPH_TO_MS
 
@@ -336,7 +337,7 @@ class CarState(CarStateBase):
     ret.brakeLights = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed)
 
     # cruise state
-    if self.CP.openpilotLongitudinalControl and (self.CP.sccBus <= 0 and self.long_alt not in (1, 2)):
+    if (self.CP.openpilotLongitudinalControl and (self.CP.sccBus <= 0 and self.long_alt not in (1, 2))) or self.exp_long_alt:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       #ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0 or cp.vl["EMS16"]["CRUISE_LAMP_M"] != 0
       #ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1 or cp.vl["LVR12"]["CF_Lvr_CruiseSet"] != 0
@@ -493,8 +494,10 @@ class CarState(CarStateBase):
       ret.radarDistance = self.lead_distance
       self.scc11 = copy.copy(cp_scc.vl["SCC11"])
       self.scc12 = copy.copy(cp_scc.vl["SCC12"])
-      self.scc13 = copy.copy(cp_scc.vl["SCC13"])
-      self.scc14 = copy.copy(cp_scc.vl["SCC14"])
+      if self.CP.scc13Available:
+        self.scc13 = copy.copy(cp_scc.vl["SCC13"])
+      if self.CP.scc14Available:
+        self.scc14 = copy.copy(cp_scc.vl["SCC14"])
 
     self.mdps12 = copy.copy(cp_mdps.vl["MDPS12"])
 

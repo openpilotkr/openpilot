@@ -5,7 +5,6 @@
 
 #include <QDebug>
 
-#include "common/transformations/coordinates.hpp"
 #include "selfdrive/ui/qt/maps/map_helpers.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/ui.h"
@@ -275,6 +274,8 @@ void MapWindow::initializeGL() {
     m_map->setStyleUrl("mapbox://styles/multikyd/ckwbf0oig3swu14lc482wqvfz"); // opkr
   } else if (MAPBOX_STYLE == "2" && !Params().get("MapboxStyleCustom").empty()) {
     m_map->setStyleUrl(MAPBOX_CUSTOM); // yours
+  } else if (MAPBOX_STYLE == "3") {
+    m_map->setStyleUrl("mapbox://styles/mapbox/satellite-streets-v12"); // sat
   } else {
     m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj"); // comma
   }

@@ -1254,31 +1254,7 @@ This may take up to a minute.</source>
         <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
         <translation>주행 시각화는 저속으로 주행시 도로를 향한 광각 카메라로 전환되어 일부 회전을 더 잘 보여줍니다. 실험적 모드 로고도 우측 상단에 표시됩니다. 내비게이션 목적지가 설정되고 주행 모델에 입력되면 지도의 주행 경로가 녹색으로 바뀝니다.</translation>
     </message>
-    <message>
-        <source>Enable Driver Monitoring</source>
-        <translation>드라이버 모니터링 활성화</translation>
-    </message>
-    <message>
-        <source>Use the driver monitoring function.</source>
-        <translation>드라이버 모니터링을 활성화 합니다. 실시간으로 운전자를 감시합니다.</translation>
-    </message>
-    <message>
-        <source>Enable Driving Log Record</source>
-        <translation>주행 로그 기록 사용</translation>
-    </message>
-    <message>
-        <source>Record the driving log locally for data analysis. Only loggers are activated and not uploaded to the server.</source>
-        <translation>데이터 분석을 위해 주행 기록(카바나)을 로컬에 저장하세요. 로거만 활성화되고 서버에 업로드되지 않습니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
-    </message>
-    <message>
-        <source>Enable Sending Log to Server</source>
-        <translation>주행 로그 업로드 활성화</translation>
-    </message>
-    <message>
-        <source>Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.</source>
-        <translation>업로드 프로세스를 활성화하여 시스템 로그 및 기타 주행 데이터를 서버로 전송합니다. 오프로드 상태에서만 업로드합니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
-    </message>
-    </context>
+</context>
 <context>
     <name>Updater</name>
     <message>
@@ -2901,8 +2877,8 @@ This may take up to a minute.</source>
         <translation>맵박스 스타일</translation>
     </message>
     <message>
-        <source>Set the Mapbox sytle to Comma/OPKR/User&apos;s</source>
-        <translation>Mapbox 시스템을 Comma/OPKR/사용자로 설정</translation>
+        <source>Set the Mapbox sytle to Comma/OPKR/User/Satellite</source>
+        <translation>Mapbox 시스템을 Comma/OPKR/사용자/위성지도로 설정</translation>
     </message>
     <message>
         <source>Comma</source>
@@ -2913,8 +2889,12 @@ This may take up to a minute.</source>
         <translation>OPKR</translation>
     </message>
     <message>
-        <source>User&apos;s</source>
+        <source>User</source>
         <translation>사용자</translation>
+    </message>
+    <message>
+        <source>SATL</source>
+        <translation>위성지도</translation>
     </message>
     <message>
         <source>You&apos;ve chosen own style. Please set your mapbox style to the param (MapboxStyleCustom). File location: /data/params/d/MapboxStyleCustom</source>
@@ -4137,6 +4117,28 @@ This may take up to a minute.</source>
     <message>
         <source>Put your MapboxToken starting with pk.</source>
         <translation>pk로 시작하는 맵박스 토큰을 입력합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>EnableLogger</name>
+    <message>
+        <source>Enable Driving Log Record</source>
+        <translation>주행 로그 기록 사용</translation>
+    </message>
+    <message>
+        <source>Record the driving log locally for data analysis. Only loggers are activated and not uploaded to the server.</source>
+        <translation>데이터 분석을 위해 주행 기록(카바나)을 로컬에 저장하세요. 로거만 활성화되고 서버에 업로드되지 않습니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>EnableUploader</name>
+    <message>
+        <source>Enable Sending Log to Server</source>
+        <translation>주행 로그 업로드 활성화</translation>
+    </message>
+    <message>
+        <source>Activate the upload process to transmit system logs and other driving data to the server. Upload it only off-road.</source>
+        <translation>업로드 프로세스를 활성화하여 시스템 로그 및 기타 주행 데이터를 서버로 전송합니다. 오프로드 상태에서만 업로드합니다. 이 기능은 리소스를 많이 사용하므로 데이터 분석외 평시에는 해당기능을 끄는것을 권장합니다.</translation>
     </message>
 </context>
 </TS>

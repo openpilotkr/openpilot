@@ -262,7 +262,6 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
 ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(false), engageable(false), QPushButton(parent) {
   setFixedSize(btn_size, btn_size);
 
-  params = Params();
   engage_img = loadPixmap("../assets/img_chffr_wheel.png", {img_size, img_size});
   experimental_img = loadPixmap("../assets/img_experimental.svg", {img_size, img_size});
   QObject::connect(this, &QPushButton::clicked, this, &ExperimentalButton::changeMode);
@@ -370,54 +369,43 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
 
   const bool cs_alive = sm.alive("controlsState");
   const bool nav_alive = sm.alive("navInstruction") && sm["navInstruction"].getValid();
-
   const auto cs = sm["controlsState"].getControlsState();
   const auto car_state = sm["carState"].getCarState();
   const auto nav_instruction = sm["navInstruction"].getNavInstruction();
 
   // Handle older routes where vCruiseCluster is not set
   float v_cruise =  cs.getVCruiseCluster() == 0.0 ? cs.getVCruise() : cs.getVCruiseCluster();
-  float set_speed = cs_alive ? v_cruise : SET_SPEED_NA;
-  bool cruise_set = set_speed > 0 && (int)set_speed != SET_SPEED_NA;
-  // if (cruise_set && !s.scene.is_metric) {
-  //   set_speed *= KM_TO_MILE;
+  setSpeed = cs_alive ? v_cruise : SET_SPEED_NA;
+  is_cruise_set = setSpeed > 0 && (int)setSpeed != SET_SPEED_NA;
+  // if (is_cruise_set && !s.scene.is_metric) {
+  //   setSpeed *= KM_TO_MILE;
   // }
 
   // Handle older routes where vEgoCluster is not set
-  float v_ego;
-  if (car_state.getVEgoCluster() == 0.0 && !v_ego_cluster_seen) {
-    v_ego = car_state.getVEgo();
-  } else {
-    //v_ego = car_state.getVEgoCluster();
-    //v_ego_cluster_seen = true;
-    v_ego = car_state.getVEgo();
-  }
-  float cur_speed = cs_alive ? std::max<float>(0.0, v_ego) : 0.0;
-  cur_speed *= s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH;
+  // v_ego_cluster_seen = v_ego_cluster_seen || car_state.getVEgoCluster() != 0.0;
+  // float v_ego = v_ego_cluster_seen ? car_state.getVEgoCluster() : car_state.getVEgo();
+  float v_ego = car_state.getVEgo();
+  speed = cs_alive ? std::max<float>(0.0, v_ego) : 0.0;
+  speed *= s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH;
 
   auto speed_limit_sign = nav_instruction.getSpeedLimitSign();
-  float speed_limit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
-  speed_limit *= (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
+  speedLimit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
+  speedLimit *= (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
-  setProperty("speedLimit", speed_limit);
-  setProperty("has_us_speed_limit", nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::MUTCD);
-  setProperty("has_eu_speed_limit", nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::VIENNA);
-
-  setProperty("is_cruise_set", cruise_set);
-  setProperty("is_metric", s.scene.is_metric);
-  setProperty("speed", cur_speed);
-  setProperty("setSpeed", set_speed);
-  setProperty("speedUnit", s.scene.is_metric ? tr("KPH") : tr("MPH"));
-  setProperty("hideBottomIcons", (cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE));
-  setProperty("status", s.status);
+  has_us_speed_limit = (nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::MUTCD);
+  has_eu_speed_limit = (nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::VIENNA);
+  is_metric = s.scene.is_metric;
+  speedUnit =  s.scene.is_metric ? tr("KPH") : tr("MPH");
+  hideBottomIcons = (cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE);
+  status = s.status;
 
   // update engageability/experimental mode button
   experimental_btn->updateState(s);
 
   // update DM icon
   auto dm_state = sm["driverMonitoringState"].getDriverMonitoringState();
-  setProperty("dmActive", dm_state.getIsActiveMode());
-  setProperty("rightHandDM", dm_state.getIsRHD());
+  dmActive = dm_state.getIsActiveMode();
+  rightHandDM = dm_state.getIsRHD();
   // DM icon transition
   dm_fade_state = std::clamp(dm_fade_state+0.2*(0.5-dmActive), 0.0, 1.0);
 
@@ -434,20 +422,15 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   }
 
   // opkr
-  bool over_sl = false;
+  over_sl = false;
   if (s.scene.navi_select == 2) {
     over_sl = s.scene.limitSpeedCamera > 19 && ((s.scene.car_state.getVEgo() * (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH)) > s.scene.ctrl_speed+1.5);
   }
 
   auto lead_one = sm["radarState"].getRadarState().getLeadOne();
-  float drel = lead_one.getDRel();
-  float vrel = lead_one.getVRel();
-  bool leadstat = lead_one.getStatus();
-
-  setProperty("is_over_sl", over_sl);
-  setProperty("lead_stat", leadstat);
-  setProperty("dist_rel", drel);
-  setProperty("vel_rel", vrel);
+  dist_rel = lead_one.getDRel();
+  vel_rel = lead_one.getVRel();
+  lead_stat = lead_one.getStatus();
 }
 
 void AnnotatedCameraWidget::drawHud(QPainter &p) {
@@ -488,9 +471,9 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   } else {
     p.setPen(QPen(greenColor(220), 6));
   }
-  if (is_over_sl) {
+  if (over_sl) {
     p.setBrush(ochreColor(128));
-  } else if (!is_over_sl && s->scene.limitSpeedCamera > 19){
+  } else if (!over_sl && s->scene.limitSpeedCamera > 19){
     p.setBrush(greenColor(100));
   } else if (s->scene.cruiseAccStatus) {
     p.setBrush(blueColor(128));
@@ -850,7 +833,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.rotate(-90);
     p.setPen(whiteColor(200));
     p.setFont(InterFont(27, QFont::DemiBold));
-    p.drawText(-10, 0, "°");
+    if (s->scene.desired_angle_steers > -10 && s->scene.desired_angle_steers < 10) {
+      p.drawText(-35, 0, QString::number(s->scene.desired_angle_steers, 'f', 1));
+    } else {
+      p.drawText(-45, 0, QString::number(s->scene.desired_angle_steers, 'f', 0));
+    }
     p.resetMatrix();
     // steer ratio
     if (!s->scene.low_ui_profile) {
@@ -922,7 +909,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     // debug info(right panel)
     int width_r = 180;
     int sp_xr = rect().right() - UI_BORDER_SIZE - width_r / 2 - 10;
-    int sp_yr = UI_BORDER_SIZE + 245;
+    int sp_yr = UI_BORDER_SIZE + 235;
     int num_r = 0;
 
     //p.setRenderHint(QPainter::TextAntialiasing);
@@ -1026,11 +1013,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
       p.setPen(redColor(200));
     }
     if (s->scene.tpmsUnit != 0) {
-      debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 32);
-      font_size = (s->scene.tpmsUnit == 2) ? 45 : 37;
+      debugText(p, tpms_sp_xr, tpms_sp_yr+15, (s->scene.tpmsUnit == 2) ? "TPMS(bar)" : "TPMS(psi)", 150, 30);
+      font_size = (s->scene.tpmsUnit == 2) ? 43 : 36;
     } else {
-      debugText(p, tpms_sp_xr, tpms_sp_yr+15, "TPMS(psi)", 150, 32);
-      font_size = 45;
+      debugText(p, tpms_sp_xr, tpms_sp_yr+15, "TPMS(psi)", 150, 30);
+      font_size = 42;
     }
     if ((s->scene.tpmsPressureFl < 32 && s->scene.tpmsUnit != 2) || (s->scene.tpmsPressureFl < 2.2 && s->scene.tpmsUnit == 2)) {
       p.setPen(yellowColor(200));

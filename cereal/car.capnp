@@ -63,7 +63,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     driverUnresponsive @45;
     belowSteerSpeed @46;
     lowBattery @48;
-    vehicleModelInvalid @50;
     accFaulted @51;
     sensorDataInvalid @52;
     commIssue @53;
@@ -106,7 +105,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     roadCameraError @100;
     driverCameraError @101;
     wideRoadCameraError @102;
-    localizerMalfunction @103;
     highCpuUsage @105;
     cruiseMismatch @106;
     lkasDisabled @107;
@@ -115,6 +113,10 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     resumeBlocked @113;
     steerTimeLimit @115;
     vehicleSensorsInvalid @116;
+    locationdTemporaryError @103;
+    locationdPermanentError @118;
+    paramsdTemporaryError @50;
+    paramsdPermanentError @119;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -141,34 +143,34 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     noTargetDEPRECATED @25;
     brakeUnavailableDEPRECATED @2;
 
-    laneChangeManual @118;
-    emgButtonManual @119;
-    driverSteering @120;
-    modeChangeOpenpilot @121;
-    modeChangeDistcurv @122;
-    modeChangeDistance @123;
-    modeChangeCurv @124;
-    modeChangeOneway @125;
-    modeChangeMaponly @126;
-    needBrake @127;
-    standStill @128;
-    e2eLongAlert @129;
-    isgActive @130;
-    camSpeedDown @131;
-    gapAdjusting @132;
-    resCruise @133;
-    curvSpeedDown @134;
-    standstillResButton @135;
-    routineDriveOn @136;
-    lkasEnabled @137;
-    cutinDetection @138;
-    gearNotD @139;
-    unSleepMode @140;
-    speedBump @141;
-    sccDriverOverride @142;
-    doNotDisturb @143;
-    chimeAtResume @144;
-    autoHold @145;
+    laneChangeManual @120;
+    emgButtonManual @121;
+    driverSteering @122;
+    modeChangeOpenpilot @123;
+    modeChangeDistcurv @124;
+    modeChangeDistance @125;
+    modeChangeCurv @126;
+    modeChangeOneway @127;
+    modeChangeMaponly @128;
+    needBrake @129;
+    standStill @130;
+    e2eLongAlert @131;
+    isgActive @132;
+    camSpeedDown @133;
+    gapAdjusting @134;
+    resCruise @135;
+    curvSpeedDown @136;
+    standstillResButton @137;
+    routineDriveOn @138;
+    lkasEnabled @139;
+    cutinDetection @140;
+    gearNotD @141;
+    unSleepMode @142;
+    speedBump @143;
+    sccDriverOverride @144;
+    doNotDisturb @145;
+    chimeAtResume @146;
+    autoHold @147;
   }
 }
 
@@ -503,11 +505,12 @@ struct CarParams {
   enableBsm @56 :Bool;       # blind spot monitoring
   flags @64 :UInt32;         # flags for car specific quirks
   experimentalLongitudinalAvailable @71 :Bool;
-  experimentalLong @95 :Bool;
+  experimentalLong @96 :Bool;
+  experimentalLongAlt @97 :Bool;
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
-  smoothSteer @93 :SmoothSteerData;
+  smoothSteer @95 :SmoothSteerData;
   safetyConfigs @62 :List(SafetyConfig);
   alternativeExperience @65 :Int16;      # panda flag for features like no disengage on gas
 
@@ -524,7 +527,7 @@ struct CarParams {
 
   # things we can derive
   rotationalInertia @22 :Float32;    # [kg*m2] body rotational inertia
-  tireStiffnessFactor @96 :Float32;  # scaling factor used in calculating tireStiffness[Front,Rear]
+  tireStiffnessFactor @72 :Float32;  # scaling factor used in calculating tireStiffness[Front,Rear]
   tireStiffnessFront @23 :Float32;   # [N/rad] front tire coeff of stiff
   tireStiffnessRear @24 :Float32;    # [N/rad] rear tire coeff of stiff
 
@@ -574,27 +577,27 @@ struct CarParams {
   }
 
   # opkr
-  mdpsBus @72: Int8;
-  sasBus @73: Int8;
-  sccBus @74: Int8;
-  fcaBus @75: Int8;
-  bsmAvailable @76: Bool;
-  lfaAvailable @77: Bool;
-  lvrAvailable @78: Bool;
-  evgearAvailable @79: Bool;
-  emsAvailable @80: Bool;
-  standStill @81: Bool;
-  vCruisekph @82: Float32;
-  resSpeed @83: Float32;
-  vFuture @84: Float32;
-  aqValue @85: Float32;
-  aqValueRaw @86: Float32;
-  vFutureA @87: Float32;
-  autoHoldAvailable @88 :Bool;
-  scc13Available @89 :Bool;
-  scc14Available @90 :Bool;
-  lfaHdaAvailable @91 :Bool;
-  navAvailable @92 :Bool;
+  mdpsBus @73: Int8;
+  sasBus @74: Int8;
+  sccBus @75: Int8;
+  fcaBus @76: Int8;
+  bsmAvailable @77: Bool;
+  lfaAvailable @78: Bool;
+  lvrAvailable @79: Bool;
+  evgearAvailable @80: Bool;
+  emsAvailable @81: Bool;
+  standStill @82: Bool;
+  vCruisekph @83: Float32;
+  resSpeed @84: Float32;
+  vFuture @85: Float32;
+  aqValue @86: Float32;
+  aqValueRaw @87: Float32;
+  vFutureA @88: Float32;
+  autoHoldAvailable @89 :Bool;
+  scc13Available @90 :Bool;
+  scc14Available @91 :Bool;
+  lfaHdaAvailable @92 :Bool;
+  navAvailable @93 :Bool;
 
   struct SmoothSteerData
   {

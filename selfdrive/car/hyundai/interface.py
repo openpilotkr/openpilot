@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from cereal import car
 from panda import Panda
 from openpilot.common.conversions import Conversions as CV
@@ -81,6 +80,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = float(Decimal(params.get("SteerLimitTimerAdj", encoding="utf8")) * Decimal('0.01'))
 
     ret.experimentalLong = Params().get_bool("ExperimentalLongitudinalEnabled")
+    ret.experimentalLongAlt = candidate in LEGACY_SAFETY_MODE_CAR_ALT
     
     ret.tireStiffnessFactor = 1.
 
@@ -98,7 +98,11 @@ class CarInterface(CarInterfaceBase):
     elif lat_control_method == 4:
       set_lat_tune(ret.lateralTuning, LatTunes.ATOM)    # Hybrid tune
 
-    if candidate in (CAR.SANTA_FE, CAR.SANTA_FE_2022, CAR.SANTA_FE_HEV_2022, CAR.SANTA_FE_PHEV_2022):
+    if candidate == CAR.AZERA_6TH_GEN:
+      ret.mass = 1540.  # average
+      ret.wheelbase = 2.885
+      ret.steerRatio = 14.5
+    elif candidate in (CAR.SANTA_FE, CAR.SANTA_FE_2022, CAR.SANTA_FE_HEV_2022, CAR.SANTA_FE_PHEV_2022):
       ret.mass = 3982. * CV.LB_TO_KG
       ret.wheelbase = 2.766
       # Values from optimizer
@@ -237,6 +241,10 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 2087.
       ret.wheelbase = 3.09
       ret.steerRatio = 14.23
+    elif candidate == CAR.KIA_K8_HEV_1ST_GEN:
+      ret.mass = 1630.  # https://carprices.ae/brands/kia/2023/k8/1.6-turbo-hybrid
+      ret.wheelbase = 2.895
+      ret.steerRatio = 13.27  # guesstimate from K5 platform
 
     # Genesis
     elif candidate == CAR.GENESIS_GV60_EV_1ST_GEN:
@@ -367,7 +375,7 @@ class CarInterface(CarInterfaceBase):
       ret.navAvailable = False
     else:
       ret.enableBsm = 0x58b in fingerprint[0]
-      ret.mdpsBus = 1 if 593 in fingerprint[1] and 1296 not in fingerprint[1] else 0
+      ret.mdpsBus = 0
       ret.sasBus = 1 if 688 in fingerprint[1] and 1296 not in fingerprint[1] else 0
       ret.sccBus = 2 if int(Params().get("OPKRLongAlt", encoding="utf8")) in (1, 2) and not Params().get_bool("ExperimentalLongitudinalEnabled") else 0
       #ret.sccBus = 0 if 1056 in fingerprint[0] else 1 if 1056 in fingerprint[1] and 1296 not in fingerprint[1] else 2 if 1056 in fingerprint[2] else -1
@@ -447,14 +455,14 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def init(CP, logcan, sendcan):
-    if CP.openpilotLongitudinalControl and not (CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and CP.experimentalLong: #CP.experimentalLong is LongControl toggle
+    if CP.openpilotLongitudinalControl and not (CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and CP.experimentalLong and not CP.experimentalLongAlt:
       addr, bus = 0x7d0, 0
       if CP.flags & HyundaiFlags.CANFD_HDA2.value:
         addr, bus = 0x730, CanBus(CP).ECAN
       disable_ecu(logcan, sendcan, bus=bus, addr=addr, com_cont_req=b'\x28\x83\x01')
 
     # for blinkers
-    if CP.flags & HyundaiFlags.ENABLE_BLINKERS and CP.experimentalLong:
+    if CP.flags & HyundaiFlags.ENABLE_BLINKERS and CP.experimentalLong and not CP.experimentalLongAlt:
       disable_ecu(logcan, sendcan, bus=CanBus(CP).ECAN, addr=0x7B1, com_cont_req=b'\x28\x83\x01')
 
   def _update(self, c):

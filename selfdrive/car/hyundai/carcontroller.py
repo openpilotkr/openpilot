@@ -6,7 +6,7 @@ from opendbc.can.packer import CANPacker
 from openpilot.selfdrive.car import apply_driver_steer_torque_limits, common_fault_avoidance
 from openpilot.selfdrive.car.hyundai import hyundaicanfd, hyundaican
 from openpilot.selfdrive.car.hyundai.hyundaicanfd import CanBus
-from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, Buttons, CarControllerParams, CANFD_CAR, CAR
+from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, Buttons, CarControllerParams, CANFD_CAR, CAR, LEGACY_SAFETY_MODE_CAR_ALT
 
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.car.hyundai.carstate import GearShifter
@@ -258,6 +258,8 @@ class CarController:
     self.counter_init = False
     self.radarDisableOverlapTimer = 0
 
+    # self.usf = 0
+
     self.str_log2 = 'MultiLateral'
     if CP.lateralTuning.which() == 'pid':
       self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.5f}/{:0.2f}'.format(CP.lateralTuning.pid.kpV[1], CP.lateralTuning.pid.kiV[1], CP.lateralTuning.pid.kf, CP.lateralTuning.pid.kd)
@@ -335,6 +337,9 @@ class CarController:
     else:
       new_steer = int(round(actuators.steer * self.params.STEER_MAX))
 
+    # if self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT:
+    #   new_steer = int(round(interp(abs(actuators.steer), [0.9, 1.0], [new_steer, min(new_steer, 255)])))
+
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
 
     if self.joystick_debug_mode:
@@ -391,7 +396,8 @@ class CarController:
     # *** common hyundai stuff ***
 
     # tester present - w/ no response (keeps relevant ECU disabled)
-    if self.frame % 100 == 0 and not (self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and self.CP.openpilotLongitudinalControl and self.experimental_long_enabled:
+    if self.frame % 100 == 0 and not (self.CP.flags & HyundaiFlags.CANFD_CAMERA_SCC.value) and self.CP.openpilotLongitudinalControl and \
+     self.experimental_long_enabled and self.CP.carFingerprint not in LEGACY_SAFETY_MODE_CAR_ALT:
       # for longitudinal control, either radar or ADAS driving ECU
       addr, bus = 0x7d0, 0
       if self.CP.flags & HyundaiFlags.CANFD_HDA2.value:
@@ -402,16 +408,16 @@ class CarController:
       if self.CP.flags & HyundaiFlags.ENABLE_BLINKERS:
         can_sends.append([0x7b1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", self.CAN.ECAN])
 
-    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and False: # ToDo
+    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT and False: # ToDo
       addr, bus = 0x7d0, 0
       self.radarDisableOverlapTimer += 1
-      if self.radarDisableOverlapTimer >= 300:
-        if 600 > self.radarDisableOverlapTimer > 336:
-          if self.frame % 41 == 0 or self.radarDisableOverlapTimer == 337:
+      if self.radarDisableOverlapTimer >= 30:
+        if self.radarDisableOverlapTimer > 36:
+          if self.frame % 41 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append([addr, 0, b"\x02\x10\x03\x00\x00\x00\x00\x00", bus])
-          elif self.frame % 43 == 0 or self.radarDisableOverlapTimer == 337:
+          elif self.frame % 43 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append([addr, 0, b"\x03\x28\x03\x01\x00\x00\x00\x00", bus])
-          elif self.frame % 19 == 0 or self.radarDisableOverlapTimer == 337:
+          elif self.frame % 19 == 0 or self.radarDisableOverlapTimer == 37:
             self.counter_init = True
             can_sends.append([addr, 0, b"\x02\x10\x85\x00\x00\x00\x00\x00", bus])  # radar disable
       else:
@@ -419,7 +425,7 @@ class CarController:
         can_sends.append([addr, 0, b"\x02\x10\x90\x00\x00\x00\x00\x00", bus])
         can_sends.append([addr, 0, b"\x03\x29\x03\x01\x00\x00\x00\x00", bus])
 
-      if (self.frame % 50 == 0 or self.radarDisableOverlapTimer == 337) and self.radarDisableOverlapTimer >= 300:
+      if (self.frame % 50 == 0 or self.radarDisableOverlapTimer == 37) and self.radarDisableOverlapTimer >= 30:
         can_sends.append([addr, 0, b"\x02\x3E\x00\x00\x00\x00\x00\x00", bus])
 
     # CAN-FD platforms
@@ -1235,6 +1241,7 @@ class CarController:
       # self.stopsign_enabled = self.c_params.get_bool("StopAtStopSign")
       # self.gap_by_spd_on = self.c_params.get_bool("CruiseGapBySpdOn")
       self.experimental_mode = self.c_params.get_bool("ExperimentalMode")
+      # self.usf = int(Params().get("UserSpecificFeature", encoding="utf8"))
       if self.c_params.get_bool("OpkrLiveTunePanelEnable"):
         if self.CP.lateralTuning.which() == 'pid':
           self.str_log2 = 'T={:0.2f}/{:0.3f}/{:0.1f}/{:0.5f}'.format(float(Decimal(self.c_params.get("PidKp", encoding="utf8"))*Decimal('0.01')), \
