@@ -434,19 +434,19 @@ class CarState(CarStateBase):
 
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
     # as this seems to be standard over all cars, but is not the preferred method.
-    if self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
-      gear = cp.vl["CLU15"]["CF_Clu_Gear"]
-      ret.gearStep = 0
-    elif self.CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
-      gear = cp.vl["TCU12"]["CUR_GR"]
-      ret.gearStep = 0
-    elif self.CP.carFingerprint in CAN_GEARS["use_elect_gears"]:
+    if self.CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
       if self.CP.carFingerprint == CAR.NEXO_FE:
         gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter_NEXO"] # NEXO's gear info from neokii. If someone can send me a cabana, I will find more clear info.
       else:
         gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
       ret.gearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
+    elif self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
+      gear = cp.vl["CLU15"]["CF_Clu_Gear"]
+      ret.gearStep = 0
+    elif self.CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
+      gear = cp.vl["TCU12"]["CUR_GR"]
+      ret.gearStep = 0
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
       ret.gearStep = cp.vl["LVR11"]["CF_Lvr_GearInf"] # opkr
@@ -570,6 +570,13 @@ class CarState(CarStateBase):
       self.cruise_info = copy.copy(cp_cruise_info.vl["SCC_CONTROL"])
       self.cruiseState_standstill = ret.cruiseState.standstill
 
+    # Manual Speed Limit Assist is a feature that replaces non-adaptive cruise control on EV CAN FD platforms.
+    # It limits the vehicle speed, overridable by pressing the accelerator past a certain point.
+    # The car will brake, but does not respect positive acceleration commands in this mode
+    # TODO: find this message on ICE & HYBRID cars + cruise control signals (if exists)
+    if self.CP.carFingerprint in EV_CAR:
+      ret.cruiseState.nonAdaptive = cp.vl["MANUAL_SPEED_LIMIT_ASSIST"]["MSLA_ENABLED"] == 1
+
       self.acc_active = ret.cruiseState.enabled
       ret.cruiseState.accActive = self.acc_active
       if self.acc_active:
@@ -645,12 +652,12 @@ class CarState(CarStateBase):
         ("EMS_366", 100),
       ]
 
-    if CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
+    if CP.carFingerprint in (HYBRID_CAR | EV_CAR):
+      messages.append(("ELECT_GEAR", 20))
+    elif CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       pass
     elif CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       messages.append(("TCU12", 100))
-    elif CP.carFingerprint in CAN_GEARS["use_elect_gears"]:
-      messages.append(("ELECT_GEAR", 20))
     else:
       messages += [
         ("LVR11", 100),
@@ -718,6 +725,11 @@ class CarState(CarStateBase):
       ("BLINKERS", 4),
       ("DOORS_SEATBELTS", 4),
     ]
+
+    if CP.carFingerprint in EV_CAR:
+      messages += [
+        ("MANUAL_SPEED_LIMIT_ASSIST", 10),
+      ]
 
     if not (CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS):
       messages += [
