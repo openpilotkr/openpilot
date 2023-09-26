@@ -244,6 +244,7 @@ typedef struct UIScene {
   bool stock_lkas_on_disengagement;
   bool ufc_mode;
 
+  bool op_long_enabled = false;
   bool experimental_mode = false;
   bool exp_mode_temp = true;
   int btn_pressing;

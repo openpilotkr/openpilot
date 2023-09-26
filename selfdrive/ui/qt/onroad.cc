@@ -509,7 +509,11 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   p.drawLine(set_speed_rect.left()+35, set_speed_rect.y()+set_speed_size.height()/2-10, set_speed_rect.right()-35, set_speed_rect.y()+set_speed_size.height()/2-10);
   p.setFont(InterFont(90, QFont::Bold));
   p.setPen(set_speed_color);
-  p.drawText(set_speed_rect.adjusted(0, 90, 0, 0), Qt::AlignTop | Qt::AlignHCenter, s->scene.cruiseAccStatus?QString::number(s->scene.vSetDis, 'f', 0):"-");
+  if (!s->scene.op_long_enabled) {
+    p.drawText(set_speed_rect.adjusted(0, 90, 0, 0), Qt::AlignTop | Qt::AlignHCenter, s->scene.cruiseAccStatus?QString::number(s->scene.vSetDis, 'f', 0):"-");
+  } else {
+    p.drawText(set_speed_rect.adjusted(0, 90, 0, 0), Qt::AlignTop | Qt::AlignHCenter, s->scene.cruiseAccStatus?setSpeedStr:"-");
+  }
 
   if (s->scene.btn_pressing > 0) {
     p.setPen(QPen(Qt::white, 15));
