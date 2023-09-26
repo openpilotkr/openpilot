@@ -30,11 +30,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
   values["CF_Lkas_LdwsLHWarning"] = left_lane_depart
   values["CF_Lkas_LdwsRHWarning"] = right_lane_depart
   values["CR_Lkas_StrToqReq"] = apply_steer
-  if torque_fault and car_fingerprint in LEGACY_SAFETY_MODE_CAR_ALT:
-    tflt = True
-  else:
-    tflt = False
-  values["CF_Lkas_ActToi"] = steer_req and not tflt
+  values["CF_Lkas_ActToi"] = steer_req # and not (torque_fault and (1 if car_fingerprint in LEGACY_SAFETY_MODE_CAR_ALT else 0))
   values["CF_Lkas_ToiFlt"] = torque_fault  # seems to allow actuation on CR_Lkas_StrToqReq
   values["CF_Lkas_MsgCount"] = frame % 0x10
   values["CF_Lkas_Chksum"] = 0
@@ -79,7 +75,7 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
     values["CF_Lkas_LdwsActivemode"] = 0
     values["CF_Lkas_FcwOpt_USM"] = 0
 
-  elif car_fingerprint in (CAR.HYUNDAI_GENESIS, CAR.GENESIS_DH, CAR.K5_HEV_JF, CAR.KIA_OPTIMA_H):
+  elif car_fingerprint in (CAR.HYUNDAI_GENESIS, CAR.GENESIS_DH):
     # This field is actually LdwsActivemode
     # Genesis and Optima fault when forwarding while engaged
     values["CF_Lkas_LdwsActivemode"] = 2
