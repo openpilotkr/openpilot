@@ -216,7 +216,8 @@ static int hyundai_canfd_rx_hook(CANPacket_t *to_push) {
         cruise_button = (GET_BYTE(to_push, 4) >> 4) & 0x7U;
         main_button = GET_BIT(to_push, 34U);
       }
-      hyundai_common_cruise_buttons_check(cruise_button, main_button);
+      //hyundai_common_cruise_buttons_check(cruise_button, main_button);
+      hyundai_common_cruise_state_check_alt(main_button);
     }
 
     // gas press, different for EV, hybrid, and ICE models
