@@ -1,5 +1,13 @@
 #include "safety_hyundai_common.h"
 
+const int HYUNDAI_MAX_STEER = 384;             // like stock
+const int HYUNDAI_MAX_RT_DELTA = 224;          // max delta torque allowed for real time checks
+const uint32_t HYUNDAI_RT_INTERVAL = 250000;   // 250ms between real time checks
+const int HYUNDAI_MAX_RATE_UP = 3;
+const int HYUNDAI_MAX_RATE_DOWN = 7;
+const int HYUNDAI_DRIVER_TORQUE_ALLOWANCE = 50;
+const int HYUNDAI_DRIVER_TORQUE_FACTOR = 2;
+
 const CanMsg HYUNDAI_COMMUNITY1_TX_MSGS[] = {
   {0x340, 0, 8},  // LKAS11 Bus 0
   {0x4F1, 0, 4}, // CLU11 Bus 0
@@ -209,10 +217,49 @@ static int hyundai_community1_tx_hook(CANPacket_t *to_send) {
   // LKA STEER: safety check
   if (addr == 0x340) {
     int desired_torque = ((GET_BYTES(to_send, 0, 4) >> 16) & 0x7ffU) - 1024U;
-    bool steer_req = GET_BIT(to_send, 27U) != 0U;
+    uint32_t ts = microsecond_timer_get();
+    bool violation = 0;
 
-    const SteeringLimits limits = hyundai_alt_limits ? HYUNDAI_STEERING_LIMITS_ALT : HYUNDAI_STEERING_LIMITS;
-    if (steer_torque_cmd_checks(desired_torque, steer_req, limits)) {
+    if (controls_allowed) {
+
+      // *** global torque limit check ***
+      bool torque_check = 0;
+      violation |= torque_check = max_limit_check(desired_torque, HYUNDAI_MAX_STEER, -HYUNDAI_MAX_STEER);
+
+      // *** torque rate limit check ***
+      bool torque_rate_check = 0;
+      violation |= torque_rate_check = driver_limit_check(desired_torque, desired_torque_last, &torque_driver,
+        HYUNDAI_MAX_STEER, HYUNDAI_MAX_RATE_UP, HYUNDAI_MAX_RATE_DOWN,
+        HYUNDAI_DRIVER_TORQUE_ALLOWANCE, HYUNDAI_DRIVER_TORQUE_FACTOR);
+
+      // used next time
+      desired_torque_last = desired_torque;
+
+      // *** torque real time rate limit check ***
+      bool torque_rt_check = 0;
+      violation |= torque_rt_check = rt_rate_limit_check(desired_torque, rt_torque_last, HYUNDAI_MAX_RT_DELTA);
+
+      // every RT_INTERVAL set the new limits
+      uint32_t ts_elapsed = get_ts_elapsed(ts, ts_last);
+      if (ts_elapsed > HYUNDAI_RT_INTERVAL) {
+        rt_torque_last = desired_torque;
+        ts_last = ts;
+      }
+    }
+
+    // no torque if controls is not allowed
+    if (!controls_allowed && (desired_torque != 0)) {
+      violation = 1;
+    }
+
+    // reset to 0 if either controls is not allowed or there's a violation
+    if (!controls_allowed) { // a reset worsen the issue of Panda blocking some valid LKAS messages
+      desired_torque_last = 0;
+      rt_torque_last = 0;
+      ts_last = ts;
+    }
+
+    if (violation) {
       tx = 0;
     }
   }
