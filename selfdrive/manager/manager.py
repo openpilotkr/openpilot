@@ -88,7 +88,7 @@ def manager_init() -> None:
     ("TorqueAngDeadZone", "10"),
     ("CameraOffsetAdj", "40"),
     ("PathOffsetAdj", "0"),
-    ("SteerRatioAdj", "1550"),
+    ("SteerRatioAdj", "1375"),
     ("SteerRatioMaxAdj", "1750"),
     ("SteerActuatorDelayAdj", "36"),
     ("SteerLimitTimerAdj", "100"),
