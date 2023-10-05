@@ -151,6 +151,11 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.7
       ret.steerRatio = 13.73  # Spec
       ret.tireStiffnessFactor = 0.385
+    elif candidate in (CAR.IONIQ_5, CAR.IONIQ_6):
+      ret.mass = 1948
+      ret.wheelbase = 2.97
+      ret.steerRatio = 14.26
+      ret.tireStiffnessFactor = 0.65
     elif candidate == CAR.VELOSTER:
       ret.mass = 2917. * CV.LB_TO_KG
       ret.wheelbase = 2.80
@@ -222,11 +227,6 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 2055
       ret.wheelbase = 2.9
       ret.steerRatio = 16.
-      ret.tireStiffnessFactor = 0.65
-    elif candidate in (CAR.IONIQ_5, CAR.IONIQ_6):
-      ret.mass = 1948
-      ret.wheelbase = 2.97
-      ret.steerRatio = 14.26
       ret.tireStiffnessFactor = 0.65
     elif candidate == CAR.KIA_SPORTAGE_HYBRID_5TH_GEN:
       ret.mass = 1767.  # SX Prestige trim support only
