@@ -9,7 +9,7 @@
 #include <QAbstractItemView>
 #include <QProcess>
 
-#include "selfdrive/hardware/hw.h"
+#include "system/hardware/hw.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/qt/widgets/groupWidget.h"
 #include "selfdrive/ui/ui.h"
