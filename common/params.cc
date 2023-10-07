@@ -419,6 +419,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"RunCustomCommand", CLEAR_ON_MANAGER_START},
     {"CruiseSpammingSpd", PERSISTENT},
     {"CruiseSpammingLevel", PERSISTENT},
+    {"OpkrCruiseGapSet", PERSISTENT},
 };
 
 } // namespace

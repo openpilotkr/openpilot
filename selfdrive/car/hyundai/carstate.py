@@ -72,7 +72,7 @@ class CarState(CarStateBase):
     self.brake_check = False
     self.cancel_check = False
     
-    self.cruise_gap = 4
+    self.cruise_gap = int(Params().get("OpkrCruiseGapSet", encoding="utf8"))
     self.is_highway = False
     self.is_set_speed_in_mph = False
     self.cruise_active = False
@@ -319,6 +319,13 @@ class CarState(CarStateBase):
     self.cruise_buttons[-1] = cp.vl["CLU11"]["CF_Clu_CruiseSwState"]
     ret.cruiseButtons = self.cruise_buttons[-1]
 
+    if self.prev_gap_button != self.cruise_buttons[-1]:
+      if self.cruise_buttons == 3:
+        self.cruise_gap -= 1
+      if self.cruise_gap < 1:
+        self.cruise_gap = 4
+      self.prev_gap_button = self.cruise_buttons[-1]
+
     # TODO: Find brake pressure
     ret.brake = 0
     ret.brakePressed = cp.vl["TCS13"]["DriverBraking"] != 0
@@ -359,7 +366,7 @@ class CarState(CarStateBase):
       ret.cruiseState.available = self.exp_engage_available
       ret.cruiseState.enabled = ret.cruiseState.available
       ret.cruiseAccStatus = self.acc_active
-
+      ret.cruiseGapSet = self.cruise_gap
     else:
       ret.cruiseState.available = cp_scc.vl["SCC11"]["MainMode_ACC"] != 0
       ret.cruiseState.enabled = cp_scc.vl["SCC12"]["ACCMode"] != 0
@@ -394,13 +401,6 @@ class CarState(CarStateBase):
     ret.cruiseState.accActive = self.acc_active
     ret.cruiseState.cruiseSwState = self.cruise_buttons[-1]
     ret.cruiseState.modeSel = self.cruise_set_mode
-
-    if self.prev_gap_button != self.cruise_buttons[-1]:
-      if self.cruise_buttons[-1] == 3:
-        self.cruise_gap -= 1
-      if self.cruise_gap < 1:
-        self.cruise_gap = 4
-      self.prev_gap_button = self.cruise_buttons[-1]
 
     if self.CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       if self.CP.carFingerprint in HYBRID_CAR:

@@ -3951,6 +3951,17 @@ This may take up to a minute.</source>
     </message>
 </context>
 <context>
+    <name>OPKRCruiseGapSet</name>
+    <message>
+        <source>Cruise Gap(Init)</source>
+        <translation>크루즈 갭(시작값)</translation>
+    </message>
+    <message>
+        <source>Set initial Cruise Gap for OP Long</source>
+        <translation>오픈파일럿 롱 모드시 크루즈 갭 시작값을 설정합니다.</translation>
+    </message>
+</context>
+<context>
     <name>DepartChimeAtResume</name>
     <message>
         <source>Depart Chime at Resume</source>

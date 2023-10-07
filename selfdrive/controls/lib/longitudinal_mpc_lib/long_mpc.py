@@ -242,6 +242,8 @@ class LongitudinalMpc:
     self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
     self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
+    self.experimental_long_enabled = Params().get_bool("ExperimentalLongitudinalEnabled")
+
     self.ms_to_spd = CV.MS_TO_KPH if Params().get_bool("IsMetric") else CV.MS_TO_MPH
 
     self.lo_timer = 0 
@@ -364,7 +366,6 @@ class LongitudinalMpc:
     self.lo_timer += 1
     if self.lo_timer > 200:
       self.lo_timer = 0
-      self.e2e = Params().get_bool("E2ELong")
       self.dynamic_TR_mode = int(Params().get("DynamicTRGap", encoding="utf8"))
       self.custom_tr_enabled = Params().get_bool("CustomTREnabled")
 
@@ -386,6 +387,9 @@ class LongitudinalMpc:
         self.t_follow = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.cruise_gap3, t_follow_d])
       else:
         self.t_follow = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.cruise_gap3, self.cruise_gap4])
+    elif self.experimental_long_enabled:
+      cruise_gap = int(clip(carstate.cruiseGapSet, 1., 4.))
+      self.t_follow = interp(float(cruise_gap), [1., 2., 3., 4.], [self.cruise_gap1, self.cruise_gap2, self.cruise_gap3, self.cruise_gap4])
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
@@ -407,7 +411,7 @@ class LongitudinalMpc:
       v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
                                  v_lower,
                                  v_upper)
-      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, t_follow if not self.custom_tr_enabled else self.t_follow)
+      cruise_obstacle = np.cumsum(T_DIFFS * v_cruise_clipped) + get_safe_obstacle_distance(v_cruise_clipped, t_follow if not (self.custom_tr_enabled or self.experimental_long_enabled) else self.t_follow)
       x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle, cruise_obstacle])
       self.source = SOURCES[np.argmin(x_obstacles[0])]
 
