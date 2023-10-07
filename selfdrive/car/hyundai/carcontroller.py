@@ -190,7 +190,7 @@ class CarController:
     self.enable_steer_more = self.c_params.get_bool("AvoidLKASFaultBeyond")
     self.no_mdps_mods = self.c_params.get_bool("NoSmartMDPS")
 
-    #self.user_specific_feature = int(self.c_params.get("UserSpecificFeature", encoding="utf8"))
+    self.user_specific_feature = int(self.c_params.get("UserSpecificFeature", encoding="utf8"))
 
     self.gap_by_spd_on = self.c_params.get_bool("CruiseGapBySpdOn")
     self.gap_by_spd_spd = list(map(int, Params().get("CruiseGapBySpdSpd", encoding="utf8").split(',')))
@@ -333,7 +333,7 @@ class CarController:
     if self.CP.smoothSteer.method == 1:
       new_steer = int(round(actuators.steer * self.params.STEER_MAX))
       new_steer = self.smooth_steer( new_steer, CS )
-    elif 0 <= self.driver_steering_torque_above_timer < 150:
+    elif 0 <= self.driver_steering_torque_above_timer < 150 and not self.user_specific_feature == 60:
       new_steer = int(round(actuators.steer * self.params.STEER_MAX * (self.driver_steering_torque_above_timer / 150)))
     else:
       new_steer = int(round(actuators.steer * self.params.STEER_MAX))

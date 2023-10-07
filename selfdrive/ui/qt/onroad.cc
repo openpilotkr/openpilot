@@ -838,9 +838,9 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.setPen(whiteColor(200));
     p.setFont(InterFont(27, QFont::DemiBold));
     if (s->scene.desired_angle_steers > -10 && s->scene.desired_angle_steers < 10) {
-      p.drawText(-35, 0, QString::number(s->scene.desired_angle_steers, 'f', 1));
+      p.drawText(-40, 0, QString::number(s->scene.desired_angle_steers, 'f', 1));
     } else {
-      p.drawText(-45, 0, QString::number(s->scene.desired_angle_steers, 'f', 0));
+      p.drawText(-50, 0, QString::number(s->scene.desired_angle_steers, 'f', 0));
     }
     p.resetMatrix();
     // steer ratio
@@ -1733,7 +1733,13 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
   // lanelines
   if (!scene.lateralPlan.lanelessModeStatus) {
     for (int i = 0; i < std::size(scene.lane_line_vertices); ++i) {
-      painter.setBrush(QColor::fromRgbF(1.0, 1.0, 1.0, std::clamp<float>(scene.lane_line_probs[i], 0.0, 0.7)));
+      painter.setBrush(QColor::fromRgbF(0.09, 0.68, 0.00, std::clamp<float>(scene.lane_line_probs[i], 0.0, 0.7)));
+      if (scene.leftblindspot && i == 1) {
+        painter.setBrush(QColor::fromRgbF(1.0, 0.5, 0.0, std::clamp<float>(scene.lane_line_probs[i], 0.0, 0.7)));
+      }
+      if (scene.rightblindspot && i == 2) {
+        painter.setBrush(QColor::fromRgbF(1.0, 0.5, 0.0, std::clamp<float>(scene.lane_line_probs[i], 0.0, 0.7)));
+      }
       painter.drawPolygon(scene.lane_line_vertices[i]);
     }
 
@@ -1774,7 +1780,11 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
     }
 
   } else {
-    if (scene.lateralPlan.lanelessModeStatus) {
+    if (!scene.enabled) {
+      bg.setColorAt(0.0, QColor::fromHslF(148 / 360., 0.0, 1.0, 0.4));
+      bg.setColorAt(0.5, QColor::fromHslF(112 / 360., 0.0, 1.0, 0.35));
+      bg.setColorAt(1.0, QColor::fromHslF(112 / 360., 0.0, 1.0, 0.0));
+    } else if (scene.lateralPlan.lanelessModeStatus) {
       bg.setColorAt(0.0, QColor::fromHslF(198 / 360., 0.94, 0.51, 0.4));
       bg.setColorAt(0.5, QColor::fromHslF(162 / 360., 1.0, 0.68, 0.35));
       bg.setColorAt(1.0, QColor::fromHslF(162 / 360., 1.0, 0.68, 0.0));

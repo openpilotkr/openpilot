@@ -1,5 +1,5 @@
 import crcmod
-from openpilot.selfdrive.car.hyundai.values import CAR, CHECKSUM, CAMERA_SCC_CAR, HyundaiFlags, LEGACY_SAFETY_MODE_CAR_ALT
+from openpilot.selfdrive.car.hyundai.values import CAR, CHECKSUM, CAMERA_SCC_CAR, HyundaiFlags, LEGACY_SAFETY_MODE_CAR_ALT, LEGACY_SAFETY_MODE_CAR_ALT2
 
 hyundai_checksum = crcmod.mkCrcFun(0x11D, initCrc=0xFD, rev=False, xorOut=0xdf)
 
@@ -7,33 +7,31 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
                   torque_fault, lkas11, sys_warning, sys_state, enabled,
                   left_lane, right_lane,
                   left_lane_depart, right_lane_depart, bus, ldws, CP):
-  # values = {s: lkas11[s] for s in [
-  #   "CF_Lkas_LdwsActivemode",
-  #   "CF_Lkas_LdwsSysState",
-  #   "CF_Lkas_SysWarning",
-  #   "CF_Lkas_LdwsLHWarning",
-  #   "CF_Lkas_LdwsRHWarning",
-  #   "CF_Lkas_HbaLamp",
-  #   "CF_Lkas_FcwBasReq",
-  #   "CF_Lkas_HbaSysState",
-  #   "CF_Lkas_FcwOpt",
-  #   "CF_Lkas_HbaOpt",
-  #   "CF_Lkas_FcwSysState",
-  #   "CF_Lkas_FcwCollisionWarning",
-  #   "CF_Lkas_FusionState",
-  #   "CF_Lkas_FcwOpt_USM",
-  #   "CF_Lkas_LdwsOpt_USM",
-  # ]}
-  values = lkas11
+  values = {s: lkas11[s] for s in [
+    "CF_Lkas_LdwsActivemode",
+    "CF_Lkas_LdwsSysState",
+    "CF_Lkas_SysWarning",
+    "CF_Lkas_LdwsLHWarning",
+    "CF_Lkas_LdwsRHWarning",
+    "CF_Lkas_HbaLamp",
+    "CF_Lkas_FcwBasReq",
+    "CF_Lkas_HbaSysState",
+    "CF_Lkas_FcwOpt",
+    "CF_Lkas_HbaOpt",
+    "CF_Lkas_FcwSysState",
+    "CF_Lkas_FcwCollisionWarning",
+    "CF_Lkas_FusionState",
+    "CF_Lkas_FcwOpt_USM",
+    "CF_Lkas_LdwsOpt_USM",
+  ]}
   values["CF_Lkas_LdwsSysState"] = sys_state
-  values["CF_Lkas_SysWarning"] = 3 if sys_warning else 0 # if (sys_warning and car_fingerprint not in LEGACY_SAFETY_MODE_CAR_ALT) else 0
+  values["CF_Lkas_SysWarning"] = 3 if sys_warning else 0
   values["CF_Lkas_LdwsLHWarning"] = left_lane_depart
   values["CF_Lkas_LdwsRHWarning"] = right_lane_depart
   values["CR_Lkas_StrToqReq"] = apply_steer
-  values["CF_Lkas_ActToi"] = steer_req # and not (torque_fault and (1 if car_fingerprint in LEGACY_SAFETY_MODE_CAR_ALT else 0))
+  values["CF_Lkas_ActToi"] = steer_req and not (torque_fault and (True if car_fingerprint in LEGACY_SAFETY_MODE_CAR_ALT2 else False))
   values["CF_Lkas_ToiFlt"] = torque_fault  # seems to allow actuation on CR_Lkas_StrToqReq
   values["CF_Lkas_MsgCount"] = frame % 0x10
-  values["CF_Lkas_Chksum"] = 0
 
   if car_fingerprint == CAR.GRANDEUR_HEV_IG:
     nSysWarnVal = 9
@@ -41,7 +39,12 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
       nSysWarnVal = 4
     values["CF_Lkas_SysWarning"] = nSysWarnVal if sys_warning else 0
 
-  if CP.flags & HyundaiFlags.SEND_LFA.value:
+  if car_fingerprint in (CAR.SONATA, CAR.PALISADE, CAR.KIA_NIRO_EV, CAR.KIA_NIRO_HEV_2021, CAR.SANTA_FE,
+                         CAR.IONIQ_EV_2020, CAR.IONIQ_PHEV, CAR.KIA_SELTOS, CAR.ELANTRA_2021, CAR.GENESIS_G70_2020,
+                         CAR.ELANTRA_HEV_2021, CAR.SONATA_HYBRID, CAR.KONA_EV, CAR.KONA_HEV, CAR.KONA_EV_2022,
+                         CAR.SANTA_FE_2022, CAR.KIA_K5_2021, CAR.IONIQ_HEV_2022, CAR.SANTA_FE_HEV_2022,
+                         CAR.SANTA_FE_PHEV_2022, CAR.KIA_STINGER_2022, CAR.KIA_K5_HEV_2020, CAR.KIA_CEED,
+                         CAR.AZERA_6TH_GEN, CAR.AZERA_HEV_6TH_GEN, CAR.CUSTIN_1ST_GEN) or CP.flags & HyundaiFlags.SEND_LFA.value:
     values["CF_Lkas_LdwsActivemode"] = int(left_lane) + (int(right_lane) << 1)
     values["CF_Lkas_LdwsOpt_USM"] = 2
 
@@ -102,25 +105,26 @@ def create_lkas11(packer, frame, car_fingerprint, apply_steer, steer_req,
 
 
 def create_clu11(packer, frame, clu11, button, speed = None, bus = 0):
-  values = clu11
-  # values = {s: clu11[s] for s in [
-  #   "CF_Clu_CruiseSwState",
-  #   "CF_Clu_CruiseSwMain",
-  #   "CF_Clu_SldMainSW",
-  #   "CF_Clu_ParityBit1",
-  #   "CF_Clu_VanzDecimal",
-  #   "CF_Clu_Vanz",
-  #   "CF_Clu_SPEED_UNIT",
-  #   "CF_Clu_DetentOut",
-  #   "CF_Clu_RheostatLevel",
-  #   "CF_Clu_CluInfo",
-  #   "CF_Clu_AmpInfo",
-  #   "CF_Clu_AliveCnt1",
-  # ]}
+  values = {s: clu11[s] for s in [
+    "CF_Clu_CruiseSwState",
+    "CF_Clu_CruiseSwMain",
+    "CF_Clu_SldMainSW",
+    "CF_Clu_ParityBit1",
+    "CF_Clu_VanzDecimal",
+    "CF_Clu_Vanz",
+    "CF_Clu_SPEED_UNIT",
+    "CF_Clu_DetentOut",
+    "CF_Clu_RheostatLevel",
+    "CF_Clu_CluInfo",
+    "CF_Clu_AmpInfo",
+    "CF_Clu_AliveCnt1",
+  ]}
+
   if speed != None:
     values["CF_Clu_Vanz"] = speed
   values["CF_Clu_CruiseSwState"] = button
-  values["CF_Clu_AliveCnt1"] = frame % 0x10
+  #values["CF_Clu_AliveCnt1"] = frame % 0x10
+  values["CF_Clu_AliveCnt1"] = (values["CF_Clu_AliveCnt1"] + 1) % 0x10
   # send buttons to camera on camera-scc based cars
   #bus = 2 if car_fingerprint in CAMERA_SCC_CAR else 0
   return packer.make_can_msg("CLU11", bus, values)
