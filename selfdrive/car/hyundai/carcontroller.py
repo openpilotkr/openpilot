@@ -409,11 +409,11 @@ class CarController:
       if self.CP.flags & HyundaiFlags.ENABLE_BLINKERS:
         can_sends.append([0x7b1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", self.CAN.ECAN])
 
-    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT and False: # ToDo
+    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT: # ToDo
       addr, bus = 0x7d0, 0
       self.radarDisableOverlapTimer += 1
       if self.radarDisableOverlapTimer >= 30:
-        if self.radarDisableOverlapTimer > 36:
+        if 200 > self.radarDisableOverlapTimer > 36:
           if self.frame % 41 == 0 or self.radarDisableOverlapTimer == 37:
             can_sends.append([addr, 0, b"\x02\x10\x03\x00\x00\x00\x00\x00", bus])
           elif self.frame % 43 == 0 or self.radarDisableOverlapTimer == 37:
@@ -423,7 +423,7 @@ class CarController:
             can_sends.append([addr, 0, b"\x02\x10\x85\x00\x00\x00\x00\x00", bus])  # radar disable
       else:
         self.counter_init = False
-        can_sends.append([addr, 0, b"\x02\x10\x90\x00\x00\x00\x00\x00", bus])
+        can_sends.append([addr, 0, b"\x02\x10\x90\x00\x00\x00\x00\x00", bus])  # radar enable
         can_sends.append([addr, 0, b"\x03\x29\x03\x01\x00\x00\x00\x00", bus])
 
       if (self.frame % 50 == 0 or self.radarDisableOverlapTimer == 37) and self.radarDisableOverlapTimer >= 30:
