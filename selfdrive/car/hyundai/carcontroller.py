@@ -881,7 +881,7 @@ class CarController:
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
               self.e2e_standstill_timer_buf = 0
-            elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 30 and CS.clu_Vanz == 0:
+            elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz == 0:
               self.e2e_standstill = True
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
