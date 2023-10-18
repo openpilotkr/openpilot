@@ -380,7 +380,7 @@ class NaviControl():
       elif self.onSpeedBumpControl:
         var_speed = min(navi_speed, 20 if CS.is_set_speed_in_mph else 30)
         self.t_interval = randint(10, 12) if CS.is_set_speed_in_mph else randint(7, 9)
-      elif self.faststart and CS.CP.vFuture <= 40:
+      elif self.faststart and CS.CP.vFuture <= (25 if CS.is_set_speed_in_mph else 40):
         var_speed = min(navi_speed, 30 if CS.is_set_speed_in_mph else 50)
       elif (self.lead_0.status or self.lead_1.status) and CS.CP.vFuture >= (min_control_speed-(4 if CS.is_set_speed_in_mph else 7)):
         self.faststart = False
