@@ -1282,6 +1282,7 @@ class CarController:
 
 
     self.frame += 1
+    print(self.frame)
     return new_actuators, can_sends, safetycam_speed, self.lkas_temp_disabled, (self.gap_by_spd_on_sw_trg and self.gap_by_spd_on), self.experimental_mode_temp, self.btnsignal if self.btnsignal is not None else 0
 
   def create_button_messages(self, CC: car.CarControl, CS: car.CarState, use_clu11: bool):
