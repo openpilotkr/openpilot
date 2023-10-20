@@ -116,7 +116,7 @@ static int hyundai_community_nonscc_tx_hook(CANPacket_t *to_send) {
         }
     }
     if (controls_allowed) {
-      bool vio = (unsafe_mode & ALT_EXP_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX)?
+      bool vio = (alternative_experience & ALT_EXP_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX)?
           max_limit_check(desired_accel, HYUNDAI_COMMUNITY_ISO_MAX_ACCEL, HYUNDAI_COMMUNITY_ISO_MIN_ACCEL) :
           max_limit_check(desired_accel, HYUNDAI_COMMUNITY_MAX_ACCEL, HYUNDAI_COMMUNITY_MIN_ACCEL);
       if (vio) {
