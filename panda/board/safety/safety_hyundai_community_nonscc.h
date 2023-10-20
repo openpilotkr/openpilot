@@ -27,12 +27,12 @@ const CanMsg HYUNDAI_COMMUNITY_NONSCC_TX_MSGS[] = {
 };
 
 // for non SCC hyundai vehicles
-AddrCheckStruct hyundai_community_nonscc_rx_checks[] = {
+AddrCheckStruct hyundai_community_nonscc_addr_checks[] = {
   {.msg = {{0x386, 0, 8, .expected_timestep = 10000U}, { 0 }, { 0 }}},
   {.msg = {{0x394, 0, 8, .expected_timestep = 10000U}, { 0 }, { 0 }}},
 };
 
-#define HYUNDAI_COMMUNITY_NONSCC_ADDR_CHECK_LEN (sizeof(hyundai_community_nonscc_rx_checks) / sizeof(hyundai_community_nonscc_rx_checks[0]))
+#define HYUNDAI_COMMUNITY_NONSCC_ADDR_CHECK_LEN (sizeof(hyundai_community_nonscc_addr_checks) / sizeof(hyundai_community_nonscc_addr_checks[0]))
 addr_checks hyundai_community_nonscc_rx_checks = {hyundai_community_nonscc_addr_checks, HYUNDAI_COMMUNITY_NONSCC_ADDR_CHECK_LEN};
 
 static int hyundai_community_nonscc_rx_hook(CANPacket_t *to_push) {
