@@ -410,7 +410,6 @@ class CarController:
         can_sends.append([0x7b1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", self.CAN.ECAN])
 
     if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT: # ToDo
-      print("OP LONG Enabled")
       addr, bus = 0x7d0, 0
       self.radarDisableOverlapTimer += 1
       if self.radarDisableOverlapTimer >= 30:
