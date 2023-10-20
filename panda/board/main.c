@@ -382,7 +382,7 @@ int main(void) {
   microsecond_timer_init();
 
   // init to SILENT and can silent
-  set_safety_mode(SAFETY_SILENT, 0U);
+  set_safety_mode(SAFETY_ALLOUTPUT, 0U);
 
   // enable CAN TXs
   current_board->enable_can_transceivers(true);
