@@ -156,7 +156,6 @@ class CarController:
     self.steerDeltaUp_Max = int(self.c_params.get("SteerDeltaUpAdj", encoding="utf8"))
     self.steerDeltaDown_Max = int(self.c_params.get("SteerDeltaDownAdj", encoding="utf8"))
     self.model_speed = 255.0
-    self.model_speed_range = [30, 100, 255]
     self.steerMax_range = [self.steerMax_Max, self.steerMax_base, self.steerMax_base]
     self.steerDeltaUp_range = [self.steerDeltaUp_Max, self.steerDeltaUp_base, self.steerDeltaUp_base]
     self.steerDeltaDown_range = [self.steerDeltaDown_Max, self.steerDeltaDown_base, self.steerDeltaDown_base]
@@ -911,7 +910,7 @@ class CarController:
       t_speed = 20 if CS.is_set_speed_in_mph else 30
       if self.auto_res_timer > 0:
         self.auto_res_timer -= 1
-      elif self.model_speed > 95 and self.cancel_counter == 0 and not CS.cruise_active and not CS.out.brakeLights and round(CS.VSetDis) >= t_speed and \
+      elif self.model_speed > (60 if CS.is_set_speed_in_mph else 95) and self.cancel_counter == 0 and not CS.cruise_active and not CS.out.brakeLights and round(CS.VSetDis) >= t_speed and \
       (1 < CS.lead_distance < 149 or round(CS.clu_Vanz) > t_speed) and round(CS.clu_Vanz) >= 3 and self.cruise_init and \
       self.opkr_cruise_auto_res and opkr_cruise_auto_res_condition and (self.auto_res_limit_sec == 0 or self.auto_res_limit_timer < self.auto_res_limit_sec) and \
       (self.auto_res_delay == 0 or self.auto_res_delay_timer >= self.auto_res_delay):
@@ -1272,7 +1271,7 @@ class CarController:
         torque_params = self.sm['liveTorqueParameters']
         self.str_log2 = 'T={:0.2f}/{:0.2f}/{:0.3f}'.format(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
 
-      trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
+    trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
 
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.params.STEER_MAX

@@ -2375,7 +2375,7 @@ void AutoResLimitTime::refresh() {
   btnplus.setText("+");
 }
 
-AutoEnableSpeed::AutoEnableSpeed() : AbstractControl(tr("Auto Engage Spd(kph)"), tr("Set the automatic engage speed."), "../assets/offroad/icon_shell.png") {
+AutoEnableSpeed::AutoEnableSpeed() : AbstractControl(tr("Auto Engage Speed"), tr("Set the automatic engage speed."), "../assets/offroad/icon_shell.png") {
 
   label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
   label.setStyleSheet("color: #e0e879");
@@ -2405,9 +2405,9 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl(tr("Auto Engage Spd(kph)"),
   QObject::connect(&btnminus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("AutoEnableSpeed"));
     int value = str.toInt();
-    value = value - 3;
-    if (value <= -3) {
-      value = -3;
+    value = value - 1;
+    if (value <= -1) {
+      value = -1;
     }
     QString values = QString::number(value);
     params.put("AutoEnableSpeed", values.toStdString());
@@ -2417,7 +2417,7 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl(tr("Auto Engage Spd(kph)"),
   QObject::connect(&btnplus, &QPushButton::clicked, [=]() {
     auto str = QString::fromStdString(params.get("AutoEnableSpeed"));
     int value = str.toInt();
-    value = value + 3;
+    value = value + 1;
     if (value >= 30) {
       value = 30;
     }
@@ -2430,7 +2430,7 @@ AutoEnableSpeed::AutoEnableSpeed() : AbstractControl(tr("Auto Engage Spd(kph)"),
 
 void AutoEnableSpeed::refresh() {
   QString option = QString::fromStdString(params.get("AutoEnableSpeed"));
-  if (option == "-3") {
+  if (option == "-1") {
     label.setText(tr("atDGear"));
   } else if (option == "0") {
     label.setText(tr("atDepart"));
@@ -5575,36 +5575,69 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
   QObject::connect(&btn, &QPushButton::clicked, [=]() {
     int list_count1 = 0;
     int list_count2 = 0;
-    QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are kph or mph"), false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
-    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
-      QStringList list1 = targetvalue1.split(",");
-      list_count1 = list1.size();
-      params.put("VCurvSpeedC", targetvalue1.toStdString());
-      refresh();
+    bool is_metric = params.getBool("IsMetric");
+    if (is_metric) {
+      QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are kph"), false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
+      if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
+        QStringList list1 = targetvalue1.split(",");
+        list_count1 = list1.size();
+        params.put("VCurvSpeedC", targetvalue1.toStdString());
+        refresh();
+      } else {
+        QStringList list1 = QString::fromStdString(params.get("VCurvSpeedC")).split(",");
+        list_count1 = list1.size();
+      }
+      QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedC")), false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
+      if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
+        QStringList list2 = targetvalue2.split(",");
+        list_count2 = list2.size();
+        params.put("VCurvSpeedT", targetvalue2.toStdString());
+        refresh();
+      } else {
+        QStringList list2 = QString::fromStdString(params.get("VCurvSpeedT")).split(",");
+        list_count2 = list2.size();
+      }
+      if (list_count1 != list_count2) {
+        ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
+      }
     } else {
-      QStringList list1 = QString::fromStdString(params.get("VCurvSpeedC")).split(",");
-      list_count1 = list1.size();
-    }
-    QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedC")), false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
-    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
-      QStringList list2 = targetvalue2.split(",");
-      list_count2 = list2.size();
-      params.put("VCurvSpeedT", targetvalue2.toStdString());
-      refresh();
-    } else {
-      QStringList list2 = QString::fromStdString(params.get("VCurvSpeedT")).split(",");
-      list_count2 = list2.size();
-    }
-    if (list_count1 != list_count2) {
-      ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
+      QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are mph"), false, 1, QString::fromStdString(params.get("VCurvSpeedCMPH")));
+      if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedCMPH"))) {
+        QStringList list1 = targetvalue1.split(",");
+        list_count1 = list1.size();
+        params.put("VCurvSpeedCMPH", targetvalue1.toStdString());
+        refresh();
+      } else {
+        QStringList list1 = QString::fromStdString(params.get("VCurvSpeedCMPH")).split(",");
+        list_count1 = list1.size();
+      }
+      QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedCMPH")), false, 1, QString::fromStdString(params.get("VCurvSpeedTMPH")));
+      if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedTMPH"))) {
+        QStringList list2 = targetvalue2.split(",");
+        list_count2 = list2.size();
+        params.put("VCurvSpeedTMPH", targetvalue2.toStdString());
+        refresh();
+      } else {
+        QStringList list2 = QString::fromStdString(params.get("VCurvSpeedTMPH")).split(",");
+        list_count2 = list2.size();
+      }
+      if (list_count1 != list_count2) {
+        ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
+      }
     }
   });
   refresh();
 }
 
 void VCurvSpeed::refresh() {
-  auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
-  auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
+  bool is_metric = params.getBool("IsMetric");
+  if (is_metric) {
+    auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
+    auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
+  } else {
+    auto strs1 = QString::fromStdString(params.get("VCurvSpeedCMPH"));
+    auto strs2 = QString::fromStdString(params.get("VCurvSpeedTMPH"));
+  }
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
   btn.setText(tr("EDIT"));

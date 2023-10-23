@@ -42,6 +42,8 @@ class NaviControl():
     self.ctrl_speed = 0
     self.vision_curv_speed_c = list(map(int, Params().get("VCurvSpeedC", encoding="utf8").split(',')))
     self.vision_curv_speed_t = list(map(int, Params().get("VCurvSpeedT", encoding="utf8").split(',')))
+    self.vision_curv_speed_cmph = list(map(int, Params().get("VCurvSpeedCMPH", encoding="utf8").split(',')))
+    self.vision_curv_speed_tmph = list(map(int, Params().get("VCurvSpeedTMPH", encoding="utf8").split(',')))
 
     self.osm_curv_speed_c = list(map(int, Params().get("OCurvSpeedC", encoding="utf8").split(',')))
     self.osm_curv_speed_t = list(map(int, Params().get("OCurvSpeedT", encoding="utf8").split(',')))
@@ -426,10 +428,10 @@ class NaviControl():
       self.cutInControl = False
 
     if CS.cruise_set_mode in (1,3,4) and self.curv_decel_option in (1,2):
-      if CS.out.vEgo * CV.MS_TO_KPH > 40 and modelSpeed < self.vision_curv_speed_c[-1] and self.sm['lateralPlan'].laneChangeState == LaneChangeState.off and \
+      if CS.out.vEgo * CV.MS_TO_KPH > 40 and modelSpeed < (self.vision_curv_speed_cmph[-1] if CS.is_set_speed_in_mph else self.vision_curv_speed_c[-1]) and self.sm['lateralPlan'].laneChangeState == LaneChangeState.off and \
        not (CS.out.leftBlinker or CS.out.rightBlinker):
         if CS.is_set_speed_in_mph:
-          v_curv_speed = int(interp(modelSpeed, self.vision_curv_speed_c, self.vision_curv_speed_t)/2)*2
+          v_curv_speed = int(interp(modelSpeed, self.vision_curv_speed_cmph, self.vision_curv_speed_tmph)/2)*2
         else:
           v_curv_speed = int(interp(modelSpeed, self.vision_curv_speed_c, self.vision_curv_speed_t)/3)*3
         v_curv_speed = min(var_speed, v_curv_speed) # curve speed ratio
@@ -441,7 +443,7 @@ class NaviControl():
     if CS.cruise_set_mode in (1,3,4) and self.curv_decel_option in (1,3):
       if self.sm['liveMapData'].turnSpeedLimitEndDistance > 30:
         o_curv_speed = int(interp(self.sm['liveMapData'].turnSpeedLimit, self.osm_curv_speed_c, self.osm_curv_speed_t))
-        self.osm_wait_timer += 1 if modelSpeed > self.vision_curv_speed_c[-1] else 0
+        self.osm_wait_timer += 1 if modelSpeed > (self.vision_curv_speed_cmph[-1] if CS.is_set_speed_in_mph else self.vision_curv_speed_c[-1]) else 0
         if self.osm_wait_timer > 100:
           o_curv_speed = 255
       else:
@@ -453,8 +455,8 @@ class NaviControl():
 
     # self.gasPressed_old = CS.gasPressed
     if var_speed > round(min(v_curv_speed, o_curv_speed)):
-      v_ego_kph = CS.out.vEgo * CV.MS_TO_KPH
-      if round(min(v_curv_speed, o_curv_speed))+1 < v_ego_kph and not CS.out.gasPressed:
+      v_ego_kph_or_mph = CS.out.vEgo * CV.MS_TO_MPH if CS.is_set_speed_in_mph else CS.out.vEgo * CV.MS_TO_KPH
+      if round(min(v_curv_speed, o_curv_speed))+1 < v_ego_kph_or_mph and not CS.out.gasPressed:
         self.curvSpeedControl = True
       else:
         self.curvSpeedControl = False

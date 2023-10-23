@@ -98,7 +98,7 @@ LCTimingFactor80:80
 LCTimingFactor110:100
 LCTimingFactorEnable:0
 OpkrUIBrightnessOff:10
-AutoEnableSpeed:9
+AutoEnableSpeed:5
 SafetyCamDecelDistGain:0
 OpkrLiveTunePanelEnable:0
 RadarLongHelper:2
@@ -108,6 +108,8 @@ ShowError:1
 AutoResLimitTime:10
 VCurvSpeedC:30,50,70,90
 VCurvSpeedT:43,58,73,87
+VCurvSpeedCMPH:20,30,45,60
+VCurvSpeedTMPH:27,36,46,57
 OCurvSpeedC:30,40,50,60,70
 OCurvSpeedT:35,45,60,70,80
 OSMCustomSpeedLimitC:30,40,50,60,70,90

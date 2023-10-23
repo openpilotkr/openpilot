@@ -258,7 +258,7 @@ class Controls:
     self.second2 = 0.0
     self.map_enabled = False
     self.lane_change_delay = int(self.params.get("OpkrAutoLaneChangeDelay", encoding="utf8"))
-    self.auto_enable_speed = max(1, int(self.params.get("AutoEnableSpeed", encoding="utf8"))) if int(self.params.get("AutoEnableSpeed", encoding="utf8")) > -1 else int(self.params.get("AutoEnableSpeed", encoding="utf8"))
+    self.auto_enable_speed = int(self.params.get("AutoEnableSpeed", encoding="utf8"))
     self.e2e_long_alert_prev = True
     self.unsleep_mode_alert_prev = True
     self.donotdisturb_mode_alert_prev = True
@@ -298,7 +298,7 @@ class Controls:
 
   def auto_enable(self, CS):
     if self.state != State.enabled:
-      if CS.cruiseState.available and CS.vEgo >= self.auto_enable_speed * CV.KPH_TO_MS and CS.gearShifter == GearShifter.drive and \
+      if CS.cruiseState.available and CS.vEgo > self.auto_enable_speed * (CV.KPH_TO_MS if self.is_metric else CV.MPH_TO_MS) and CS.gearShifter == GearShifter.drive and \
        self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.uncalibrated and self.initialized and self.ready_timer > 300:
         self.events.add( EventName.pcmEnable )
 
