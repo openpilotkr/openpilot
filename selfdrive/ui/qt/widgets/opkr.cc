@@ -5631,12 +5631,11 @@ VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
 
 void VCurvSpeed::refresh() {
   bool is_metric = params.getBool("IsMetric");
-  if (is_metric) {
-    auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
-    auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
-  } else {
-    auto strs1 = QString::fromStdString(params.get("VCurvSpeedCMPH"));
-    auto strs2 = QString::fromStdString(params.get("VCurvSpeedTMPH"));
+  auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
+  auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
+  if (!is_metric) {
+    strs1 = QString::fromStdString(params.get("VCurvSpeedCMPH"));
+    strs2 = QString::fromStdString(params.get("VCurvSpeedTMPH"));
   }
   edit1.setText(QString::fromStdString(strs1.toStdString()));
   edit2.setText(QString::fromStdString(strs2.toStdString()));
