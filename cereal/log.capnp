@@ -601,6 +601,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   safetySpeed @73 :Float32;
   steeringAngleDesiredDeg @74 :Float32;
   gapBySpeedOn @77 :Bool;
+  steer @78 :Float32;
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;

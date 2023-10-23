@@ -250,6 +250,7 @@ typedef struct UIScene {
   bool cal_view = false;
   float ctrl_speed;
   float accel;
+  float steer;
   bool animated_rpm;
   int max_animated_rpm;
   bool stop_line;

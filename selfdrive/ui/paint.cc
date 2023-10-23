@@ -1231,9 +1231,9 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     char uom_str[6];
     NVGcolor val_color = COLOR_WHITE_ALPHA(200);
     if (scene.controls_state.getEnabled()) {
-      snprintf(val_str, sizeof(val_str), "%.0f",((float)scene.steer_max*(float)scene.output_scale));
+      snprintf(val_str, sizeof(val_str), "%.0f", scene.steer);
     } else {
-       snprintf(val_str, sizeof(val_str), "-");
+      snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "");
     bb_ry +=bb_ui_draw_measure(s, val_str, uom_str, "SteerTorq",

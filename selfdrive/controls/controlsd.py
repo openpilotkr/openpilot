@@ -226,6 +226,8 @@ class Controls:
     self.live_sr = params.get_bool("OpkrLiveSteerRatio")
     self.live_sr_percent = int(Params().get("LiveSteerRatioPercent", encoding="utf8"))
 
+    self.steer_max = int(Params().get("SteerMaxAdj", encoding="utf8"))
+
     self.second = 0.0
     self.second2 = 0.0
     self.map_enabled = False
@@ -1082,6 +1084,7 @@ class Controls:
     controlsState.dynamicTRMode = int(self.sm['longitudinalPlan'].dynamicTRMode)
     controlsState.dynamicTRValue = float(self.sm['longitudinalPlan'].dynamicTRValue)
     controlsState.accel = float(self.last_actuators.accel)
+    controlsState.steer = float(self.last_actuators.steer * self.steer_max)
     controlsState.safetySpeed = float(self.safety_speed)
     controlsState.gapBySpeedOn = bool(self.gap_by_spd_on_temp)
 
