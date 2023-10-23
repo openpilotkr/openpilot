@@ -100,13 +100,13 @@ class CarState(CarStateBase):
     self.exp_long = (CP.sccBus <= 0 and self.CP.openpilotLongitudinalControl and self.long_alt not in (1, 2)) or self.exp_long_alt
     self.lead_distance = 0
 
-    self.sm = messaging.SubMaster(['controlsState', 'liveENaviData'])
+    self.sm = messaging.SubMaster(['controlsState'])
 
   #@staticmethod
   def cruise_speed_button(self):
     self.sm.update(0)
     set_speed_kph = self.cruise_set_speed_kph
-    if 0 < round(self.sm['controlsState'].vCruise) < 255:
+    if 1 < round(self.sm['controlsState'].vCruise) < 255:
       set_speed_kph = round(self.sm['controlsState'].vCruise)
 
     if self.cruise_buttons[-1]:
@@ -131,10 +131,10 @@ class CarState(CarStateBase):
           return None
         elif not self.prev_acc_set_btn: # first scc active
           self.prev_acc_set_btn = self.acc_active
-          self.cruise_set_speed_kph = self.VSetDis
+          self.cruise_set_speed_kph = int(round(self.clu_Vanz))
           return self.cruise_set_speed_kph
 
-      if self.cruise_buttons[-1] == Buttons.RES_ACCEL and not self.cruiseState_standstill:   # up 
+      elif self.cruise_buttons[-1] == Buttons.RES_ACCEL and not self.cruiseState_standstill:   # up 
         if self.set_spd_five:
           set_speed_kph += 5
           if set_speed_kph % 5 != 0:
@@ -380,7 +380,6 @@ class CarState(CarStateBase):
         self.prev_acc_set_btn = False
       self.cruiseState_standstill = ret.cruiseState.standstill
 
-      self.VSetDis = cp_scc.vl["SCC11"]["VSetDis"]
       set_speed = self.cruise_speed_button()
       if ret.cruiseState.enabled and (self.brake_check == False or self.cancel_check == False):
         speed_conv = CV.MPH_TO_MS if self.is_set_speed_in_mph else CV.KPH_TO_MS
