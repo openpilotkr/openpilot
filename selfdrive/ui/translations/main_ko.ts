@@ -2193,8 +2193,8 @@ This may take up to a minute.</source>
 <context>
     <name>AutoEnableSpeed</name>
     <message>
-        <source>Auto Engage Spd(kph)</source>
-        <translation>자동 인게이지 속도(kph)</translation>
+        <source>Auto Engage Speed</source>
+        <translation>자동 인게이지 속도</translation>
     </message>
     <message>
         <source>Set the automatic engage speed.</source>
@@ -2677,7 +2677,11 @@ This may take up to a minute.</source>
         <translation>CV 값 설정</translation>
     </message>
     <message>
-        <source>Values are kph or mph</source>
+        <source>Values are kph</source>
+        <translation>곡률(CV)값 입니다</translation>
+    </message>
+    <message>
+        <source>Values are mph</source>
         <translation>곡률(CV)값 입니다</translation>
     </message>
     <message>

@@ -336,6 +336,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"AutoResLimitTime", PERSISTENT},
     {"VCurvSpeedC", PERSISTENT},
     {"VCurvSpeedT", PERSISTENT},
+    {"VCurvSpeedCMPH", PERSISTENT},
+    {"VCurvSpeedTMPH", PERSISTENT},
     {"OCurvSpeedC", PERSISTENT},
     {"OCurvSpeedT", PERSISTENT},
     {"OSMCustomSpeedLimitC", PERSISTENT},

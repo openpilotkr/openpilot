@@ -107,6 +107,7 @@ class LateralPlanner:
     self.timer3 = 0
     self.sm = messaging.SubMaster(['liveMapData'])
     self.total_camera_offset = self.camera_offset
+    self.is_mph = not self.params.get_bool("IsMetric")
 
 
   def parse_model(self, md, sm, v_ego):
@@ -303,10 +304,10 @@ class LateralPlanner:
       model_speed = np.mean(v_curvature) * 0.9
       curve_speed = float(max(model_speed, 30 * CV.KPH_TO_MS))
       if np.isnan(curve_speed):
-          curve_speed = 255
+        curve_speed = 255
     else:
       curve_speed = 255
-    return min(255, curve_speed * CV.MS_TO_KPH)
+    return min(255, curve_speed * (CV.MS_TO_MPH if self.is_mph else CV.MS_TO_KPH))
 
 
   def reset_mpc(self, x0=np.zeros(4)):

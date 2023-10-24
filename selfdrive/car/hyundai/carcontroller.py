@@ -156,7 +156,6 @@ class CarController:
     self.steerDeltaUp_Max = int(self.c_params.get("SteerDeltaUpAdj", encoding="utf8"))
     self.steerDeltaDown_Max = int(self.c_params.get("SteerDeltaDownAdj", encoding="utf8"))
     self.model_speed = 255.0
-    self.model_speed_range = [30, 100, 255]
     self.steerMax_range = [self.steerMax_Max, self.steerMax_base, self.steerMax_base]
     self.steerDeltaUp_range = [self.steerDeltaUp_Max, self.steerDeltaUp_base, self.steerDeltaUp_base]
     self.steerDeltaDown_range = [self.steerDeltaDown_Max, self.steerDeltaDown_base, self.steerDeltaDown_base]
@@ -247,7 +246,7 @@ class CarController:
     self.live_torque_params = self.c_params.get_bool("OpkrLiveTorque")
     self.gapsettingdance = int(self.c_params.get("OpkrCruiseGapSet", encoding="utf8"))
     self.prev_gapButton = 0
-    
+
     self.opkr_long_alt = True if int(self.c_params.get("OPKRLongAlt", encoding="utf8")) in (1, 2) else False
 
     self.btnsignal = 0
@@ -347,12 +346,12 @@ class CarController:
       lat_active = CC.latActive
     # disable when temp fault is active, or below LKA minimum speed
     elif self.opkr_maxanglelimit == 90:
-      lat_active = CC.latActive and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and CS.out.gearShifter == GearShifter.drive
+      lat_active = CC.latActive and abs(CS.out.steeringAngleDeg) < self.opkr_maxanglelimit and (CS.out.gearShifter == GearShifter.drive or self.user_specific_feature == 11)
     elif self.opkr_maxanglelimit > 90:
       str_angle_limit = interp(CS.out.vEgo * CV.MS_TO_KPH, [0, 20], [self.opkr_maxanglelimit+60, self.opkr_maxanglelimit])
-      lat_active = CC.latActive and abs(CS.out.steeringAngleDeg) < str_angle_limit and CS.out.gearShifter == GearShifter.drive
+      lat_active = CC.latActive and abs(CS.out.steeringAngleDeg) < str_angle_limit and (CS.out.gearShifter == GearShifter.drive or self.user_specific_feature == 11)
     else:
-      lat_active = CC.latActive and CS.out.gearShifter == GearShifter.drive
+      lat_active = CC.latActive and (CS.out.gearShifter == GearShifter.drive or self.user_specific_feature == 11)
 
     if (( CS.out.leftBlinker and not CS.out.rightBlinker) or ( CS.out.rightBlinker and not CS.out.leftBlinker)) and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.opkr_turnsteeringdisable:
       self.lanechange_manual_timer = 50
@@ -477,7 +476,7 @@ class CarController:
 
       clu11_speed = CS.clu11["CF_Clu_Vanz"]
       enabled_speed = 38 if CS.is_set_speed_in_mph else 60
-      if clu11_speed > enabled_speed or not lat_active or CS.out.gearShifter != GearShifter.drive:
+      if clu11_speed > enabled_speed or not lat_active:
         enabled_speed = clu11_speed
 
       if CS.cruise_active: # to toggle lkas, hold gap button for 1 sec
@@ -881,7 +880,7 @@ class CarController:
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
               self.e2e_standstill_timer_buf = 0
-            elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 30 and CS.clu_Vanz == 0:
+            elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz == 0:
               self.e2e_standstill = True
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
@@ -911,7 +910,7 @@ class CarController:
       t_speed = 20 if CS.is_set_speed_in_mph else 30
       if self.auto_res_timer > 0:
         self.auto_res_timer -= 1
-      elif self.model_speed > 95 and self.cancel_counter == 0 and not CS.cruise_active and not CS.out.brakeLights and round(CS.VSetDis) >= t_speed and \
+      elif self.model_speed > (60 if CS.is_set_speed_in_mph else 95) and self.cancel_counter == 0 and not CS.cruise_active and not CS.out.brakeLights and round(CS.VSetDis) >= t_speed and \
       (1 < CS.lead_distance < 149 or round(CS.clu_Vanz) > t_speed) and round(CS.clu_Vanz) >= 3 and self.cruise_init and \
       self.opkr_cruise_auto_res and opkr_cruise_auto_res_condition and (self.auto_res_limit_sec == 0 or self.auto_res_limit_timer < self.auto_res_limit_sec) and \
       (self.auto_res_delay == 0 or self.auto_res_delay_timer >= self.auto_res_delay):
@@ -1272,7 +1271,7 @@ class CarController:
         torque_params = self.sm['liveTorqueParameters']
         self.str_log2 = 'T={:0.2f}/{:0.2f}/{:0.3f}'.format(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
 
-      trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
+    trace1.printf1('{}  {}'.format(str_log1, self.str_log2))
 
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.params.STEER_MAX
