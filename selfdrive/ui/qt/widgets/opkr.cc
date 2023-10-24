@@ -5660,75 +5660,75 @@ void LiveSRPercent::refresh() {
   btnplus.setText("+");
 }
 
-VCurvSpeedUD::VCurvSpeedUD() : AbstractControl(tr("VisionCurvDecel([CV] [TargetSpeed])"), tr("Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)"), "../assets/offroad/icon_shell.png") {
-}
 
-VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
-  btn.setStyleSheet(R"(
-    padding: -10;
-    border-radius: 35px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-  edit1.setStyleSheet(R"(
-    background-color: grey;
-    font-size: 55px;
-    font-weight: 500;
-    height: 120px;
-  )");
-  edit2.setStyleSheet(R"(
-    background-color: grey;
-    font-size: 55px;
-    font-weight: 500;
-    height: 120px;
-  )");
-  btn.setFixedSize(150, 100);
-  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
-  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
 
-  hlayout->addWidget(&edit1);
-  hlayout->addWidget(&edit2);
-  hlayout->addWidget(&btn);
 
-  QObject::connect(&btn, &QPushButton::clicked, [=]() {
-    int list_count1 = 0;
-    int list_count2 = 0;
-    QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are kph or mph"), false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
-    if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
-      QStringList list1 = targetvalue1.split(",");
-      list_count1 = list1.size();
-      params.put("VCurvSpeedC", targetvalue1.toStdString());
-      refresh();
-    } else {
-      QStringList list1 = QString::fromStdString(params.get("VCurvSpeedC")).split(",");
-      list_count1 = list1.size();
-    }
-    QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedC")), false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
-    if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
-      QStringList list2 = targetvalue2.split(",");
-      list_count2 = list2.size();
-      params.put("VCurvSpeedT", targetvalue2.toStdString());
-      refresh();
-    } else {
-      QStringList list2 = QString::fromStdString(params.get("VCurvSpeedT")).split(",");
-      list_count2 = list2.size();
-    }
-    if (list_count1 != list_count2) {
-      ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
-    }
-  });
-  refresh();
-}
 
-void VCurvSpeed::refresh() {
-  auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
-  auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
-  edit1.setText(QString::fromStdString(strs1.toStdString()));
-  edit2.setText(QString::fromStdString(strs2.toStdString()));
-  btn.setText(tr("EDIT"));
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 OCurvSpeedUD::OCurvSpeedUD() : AbstractControl(tr("OSMCurvDecel([TSL] [TargetSpeed])"), tr("Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)"), "../assets/offroad/icon_shell.png") {
 }
@@ -8602,4 +8602,105 @@ CruiseSetwithRoadLimitSpeedOffset::CruiseSetwithRoadLimitSpeedOffset() : Abstrac
 
 void CruiseSetwithRoadLimitSpeedOffset::refresh() {
   label.setText(QString::fromStdString(params.get("CruiseSetwithRoadLimitSpeedOffset")));
+}
+
+VCurvSpeedUD::VCurvSpeedUD() : AbstractControl(tr("VisionCurvDecel([CV] [TargetSpeed])"), tr("Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)"), "../assets/offroad/icon_shell.png") {
+}
+
+
+VCurvSpeed::VCurvSpeed() : AbstractControl("", "", "") {
+  btn.setStyleSheet(R"(
+    padding: -10;
+    border-radius: 35px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  edit1.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  edit2.setStyleSheet(R"(
+    background-color: grey;
+    font-size: 55px;
+    font-weight: 500;
+    height: 120px;
+  )");
+  btn.setFixedSize(150, 100);
+  edit1.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  edit2.setAlignment(Qt::AlignVCenter|Qt::AlignLeft);
+  hlayout->addWidget(&edit1);
+  hlayout->addWidget(&edit2);
+  hlayout->addWidget(&btn);
+  QObject::connect(&btn, &QPushButton::clicked, [=]() {
+    int list_count1 = 0;
+    int list_count2 = 0;
+    bool is_metric = params.getBool("IsMetric");
+    if (is_metric) {
+      QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are curve vector"), false, 1, QString::fromStdString(params.get("VCurvSpeedC")));
+      if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedC"))) {
+        QStringList list1 = targetvalue1.split(",");
+        list_count1 = list1.size();
+        params.put("VCurvSpeedC", targetvalue1.toStdString());
+        refresh();
+      } else {
+        QStringList list1 = QString::fromStdString(params.get("VCurvSpeedC")).split(",");
+        list_count1 = list1.size();
+      }
+      QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedC")), false, 1, QString::fromStdString(params.get("VCurvSpeedT")));
+      if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedT"))) {
+        QStringList list2 = targetvalue2.split(",");
+        list_count2 = list2.size();
+        params.put("VCurvSpeedT", targetvalue2.toStdString());
+        refresh();
+      } else {
+        QStringList list2 = QString::fromStdString(params.get("VCurvSpeedT")).split(",");
+        list_count2 = list2.size();
+      }
+      if (list_count1 != list_count2) {
+        ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
+      }
+    } else {
+      QString targetvalue1 = InputDialog::getText(tr("Set CV values with comma"), this, tr("Values are curve vector"), false, 1, QString::fromStdString(params.get("VCurvSpeedCMPH")));
+      if (targetvalue1.length() > 0 && targetvalue1 != QString::fromStdString(params.get("VCurvSpeedCMPH"))) {
+        QStringList list1 = targetvalue1.split(",");
+        list_count1 = list1.size();
+        params.put("VCurvSpeedCMPH", targetvalue1.toStdString());
+        refresh();
+      } else {
+        QStringList list1 = QString::fromStdString(params.get("VCurvSpeedCMPH")).split(",");
+        list_count1 = list1.size();
+      }
+      QString targetvalue2 = InputDialog::getText(tr("Set TS values with comma"), this, "CV: " + QString::fromStdString(params.get("VCurvSpeedCMPH")), false, 1, QString::fromStdString(params.get("VCurvSpeedTMPH")));
+      if (targetvalue2.length() > 0 && targetvalue2 != QString::fromStdString(params.get("VCurvSpeedTMPH"))) {
+        QStringList list2 = targetvalue2.split(",");
+        list_count2 = list2.size();
+        params.put("VCurvSpeedTMPH", targetvalue2.toStdString());
+        refresh();
+      } else {
+        QStringList list2 = QString::fromStdString(params.get("VCurvSpeedTMPH")).split(",");
+        list_count2 = list2.size();
+      }
+      if (list_count1 != list_count2) {
+        ConfirmationDialog::alert(tr("Index count does not match. Check your input again."), this);
+      }
+    }
+  });
+  refresh();
+}
+
+void VCurvSpeed::refresh() {
+  bool is_metric = params.getBool("IsMetric");
+  auto strs1 = QString::fromStdString(params.get("VCurvSpeedC"));
+  auto strs2 = QString::fromStdString(params.get("VCurvSpeedT"));
+  if (!is_metric) {
+    strs1 = QString::fromStdString(params.get("VCurvSpeedCMPH"));
+    strs2 = QString::fromStdString(params.get("VCurvSpeedTMPH"));
+  }
+  edit1.setText(QString::fromStdString(strs1.toStdString()));
+  edit2.setText(QString::fromStdString(strs2.toStdString()));
+  btn.setText(tr("EDIT"));
 }

@@ -50,6 +50,8 @@ class LateralPlanner:
     self.second = 0.0
     self.model_speed = 255.0
 
+    self.is_mph = not Params().get_bool("IsMetric")
+
   def curve_speed(self, sm, v_ego):
     md = sm['modelV2']
     curvature = sm['controlsState'].curvature
@@ -69,10 +71,10 @@ class LateralPlanner:
       model_speed = np.mean(v_curvature) * 0.9
       curve_speed = float(max(model_speed, 30 * CV.KPH_TO_MS))
       if np.isnan(curve_speed):
-          curve_speed = 255
+        curve_speed = 255
     else:
       curve_speed = 255
-    return min(255, curve_speed * CV.MS_TO_KPH)
+    return min(255, curve_speed * (CV.MS_TO_MPH if self.is_mph else CV.MS_TO_KPH))
 
   def reset_mpc(self, x0=np.zeros(4)):
     self.x0 = x0

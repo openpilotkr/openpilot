@@ -2480,12 +2480,12 @@
 <context>
     <name>VCurvSpeedUD</name>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5663"/>
+        <location filename="../qt/widgets/opkr.cc" line="8607"/>
         <source>VisionCurvDecel([CV] [TargetSpeed])</source>
         <translation>التباطؤ عن رؤية المنحنى  ([CV] [السرعة المستهدفة])</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5663"/>
+        <location filename="../qt/widgets/opkr.cc" line="8607"/>
         <source>Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)</source>
         <translation>اضبط سرعة تباطؤ المنحنى وفقًا لسرعة النموذج (الانحناء). (الاستيفاء وقائمة القيمة)</translation>
     </message>
@@ -2493,27 +2493,31 @@
 <context>
     <name>VCurvSpeed</name>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5698"/>
+        <location filename="../qt/widgets/opkr.cc" line="8643"/>
+        <location filename="../qt/widgets/opkr.cc" line="8667"/>
         <source>Set CV values with comma</source>
         <translation>قم بتعيين قيم السيرة الذاتية بكوما</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5698"/>
+        <location filename="../qt/widgets/opkr.cc" line="8643"/>
+        <location filename="../qt/widgets/opkr.cc" line="8667"/>
         <source>Values are kph or mph</source>
         <translation>القيم كم / س أو ميل / س</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5708"/>
+        <location filename="../qt/widgets/opkr.cc" line="8653"/>
+        <location filename="../qt/widgets/opkr.cc" line="8677"/>
         <source>Set TS values with comma</source>
         <translation>ضبط قيمة TS (السرعة المستهدفة)</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5719"/>
+        <location filename="../qt/widgets/opkr.cc" line="8664"/>
+        <location filename="../qt/widgets/opkr.cc" line="8688"/>
         <source>Index count does not match. Check your input again.</source>
         <translation>عدد الفهرس غير متطابق. تحقق من المدخلات الخاصة بك مرة أخرى.</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5730"/>
+        <location filename="../qt/widgets/opkr.cc" line="8705"/>
         <source>EDIT</source>
         <translation>تحرير</translation>
     </message>

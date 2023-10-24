@@ -2494,12 +2494,12 @@
 <context>
     <name>VCurvSpeedUD</name>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5663"/>
+        <location filename="../qt/widgets/opkr.cc" line="8607"/>
         <source>VisionCurvDecel([CV] [TargetSpeed])</source>
         <translation>비전커브감속([CV] [목표속도])</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5663"/>
+        <location filename="../qt/widgets/opkr.cc" line="8607"/>
         <source>Adjust the curve deceleration speed according to the model speed(curvature). (interpolation and list value)</source>
         <translation>모델 속도(곡률)에 따라 곡선 감속 속도를 조정합니다. (기준 및 목록 값)</translation>
     </message>
@@ -2507,27 +2507,31 @@
 <context>
     <name>VCurvSpeed</name>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5698"/>
+        <location filename="../qt/widgets/opkr.cc" line="8643"/>
+        <location filename="../qt/widgets/opkr.cc" line="8667"/>
         <source>Set CV values with comma</source>
         <translation>CV 값 설정</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5698"/>
-        <source>Values are kph or mph</source>
+        <location filename="../qt/widgets/opkr.cc" line="8643"/>
+        <location filename="../qt/widgets/opkr.cc" line="8667"/>
+        <source>Values are curve vector</source>
         <translation>곡률(CV)값 입니다</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5708"/>
+        <location filename="../qt/widgets/opkr.cc" line="8653"/>
+        <location filename="../qt/widgets/opkr.cc" line="8677"/>
         <source>Set TS values with comma</source>
         <translation>TS(목표속도) 값 설정</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5719"/>
+        <location filename="../qt/widgets/opkr.cc" line="8664"/>
+        <location filename="../qt/widgets/opkr.cc" line="8688"/>
         <source>Index count does not match. Check your input again.</source>
         <translation>인덱스 수가 일치하지 않습니다. 입력한 내용을 다시 확인하십시오.</translation>
     </message>
     <message>
-        <location filename="../qt/widgets/opkr.cc" line="5730"/>
+        <location filename="../qt/widgets/opkr.cc" line="8705"/>
         <source>EDIT</source>
         <translation>변경</translation>
     </message>

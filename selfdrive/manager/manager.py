@@ -169,6 +169,8 @@ def manager_init() -> None:
     ("AutoResLimitTime", "0"),
     ("VCurvSpeedC", "30,50,70,90"),
     ("VCurvSpeedT", "43,58,73,87"),
+    ("VCurvSpeedCMPH", "20,30,45,60"),
+    ("VCurvSpeedTMPH", "27,36,46,57"),
     ("OCurvSpeedC", "30,40,50,60,70"),
     ("OCurvSpeedT", "35,45,60,70,80"),
     ("OSMCustomSpeedLimitC", "30,40,50,60,70,90"),
