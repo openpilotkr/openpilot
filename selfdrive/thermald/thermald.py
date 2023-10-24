@@ -365,28 +365,6 @@ def thermald_thread(end_event, hw_queue) -> None:
        onroadrefresh = False
        onroad_conditions["onroad_refresh"] = True
 
-    # Custom commands
-    if (count % int(1. / DT_TRML)) == 0:
-      if params.get("RunCustomCommand") is not None and params.get("RunCustomCommand") != "0":
-        if len(params.get("RunCustomCommand")) > 2:
-          selection = params.get("RunCustomCommand").decode()
-          command1 = "git -C /data/openpilot clean -d -f -f; git -C /data/openpilot remote set-branches --add origin " + selection
-          os.system(command1)
-          os.system("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh")
-          os.system("git -C /data/openpilot fetch --progress origin")
-          command2 = "git -C /data/openpilot checkout --track origin/" + selection
-          command3 = "git -C /data/openpilot checkout " + selection
-          os.system(command2)
-          os.system(command3)
-          os.system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh")
-        elif int(params.get("RunCustomCommand")) == 1:
-          os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh")
-        elif int(params.get("RunCustomCommand")) == 2:
-          os.system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh")
-        elif int(params.get("RunCustomCommand")) == 3:
-          os.system("git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches")
-        params.put("RunCustomCommand", "0")
-
     # Handle offroad/onroad transition
     should_start = all(onroad_conditions.values())
     if started_ts is None:
@@ -507,6 +485,32 @@ def thermald_thread(end_event, hw_queue) -> None:
     count += 1
     should_start_prev = should_start
 
+def sw_update_thread(end_event, hw_queue) -> None:
+  scount = 0
+  params = Params()
+  while not end_event.is_set():
+    # Custom commands
+    if (scount % int(1. / DT_TRML)) == 0:
+      if params.get("RunCustomCommand") is not None and params.get("RunCustomCommand") != "0":
+        if len(params.get("RunCustomCommand")) > 2:
+          selection = params.get("RunCustomCommand").decode()
+          command1 = "git -C /data/openpilot clean -d -f -f; git -C /data/openpilot remote set-branches --add origin " + selection
+          os.system(command1)
+          os.system("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh")
+          os.system("git -C /data/openpilot fetch --progress origin")
+          command2 = "git -C /data/openpilot checkout --track origin/" + selection
+          command3 = "git -C /data/openpilot checkout " + selection
+          os.system(command2)
+          os.system(command3)
+          os.system("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh")
+        elif int(params.get("RunCustomCommand")) == 1:
+          os.system("/data/openpilot/selfdrive/assets/addon/script/gitcommit.sh")
+        elif int(params.get("RunCustomCommand")) == 2:
+          os.system("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh")
+        elif int(params.get("RunCustomCommand")) == 3:
+          os.system("git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches")
+        params.put("RunCustomCommand", "0")
+    scount += 1
 
 def main():
   hw_queue = queue.Queue(maxsize=1)
@@ -515,6 +519,7 @@ def main():
   threads = [
     threading.Thread(target=hw_state_thread, args=(end_event, hw_queue)),
     threading.Thread(target=thermald_thread, args=(end_event, hw_queue)),
+    threading.Thread(target=sw_update_thread, args=(end_event, hw_queue)),
   ]
 
   for t in threads:
