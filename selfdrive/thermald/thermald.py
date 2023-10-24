@@ -485,7 +485,7 @@ def thermald_thread(end_event, hw_queue) -> None:
     count += 1
     should_start_prev = should_start
 
-def sw_update_thread(end_event, hw_queue) -> None:
+def sw_update_thread(end_event, hw_queue):
   scount = 0
   params = Params()
   while not end_event.is_set():
