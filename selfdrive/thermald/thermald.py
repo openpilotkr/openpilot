@@ -511,6 +511,7 @@ def sw_update_thread(end_event, hw_queue) -> None:
           os.system("git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches")
         params.put("RunCustomCommand", "0")
     scount += 1
+    time.sleep(DT_TRML)
 
 def main():
   hw_queue = queue.Queue(maxsize=1)
