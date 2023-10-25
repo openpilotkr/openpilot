@@ -664,9 +664,8 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
   });
 
   QObject::connect(&btn2, &QPushButton::clicked, [=]() {
-    QProcess::execute("rm -f /data/branches");
     btn1.setText(tr("Push to check"));
-    params.put("RunCustomCommand", "3");
+    params.put("RunCustomCommand", "3", 1);
   });
 }
 
