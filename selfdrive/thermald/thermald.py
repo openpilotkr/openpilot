@@ -499,12 +499,13 @@ def sw_update_thread(end_event, hw_queue):
         if len(params.get("RunCustomCommand")) > 2:
           if p_order == 0:
             selection = params.get("RunCustomCommand").decode()
-            command1 = "git -C /data/openpilot clean -d -f -f; git -C /data/openpilot remote set-branches --add origin " + selection
-            command2 = "/data/openpilot/selfdrive/assets/addon/script/git_remove.sh"
-            command3 = "git -C /data/openpilot fetch --progress origin"
-            command4 = "git -C /data/openpilot checkout --track origin/" + selection
-            command5 = "git -C /data/openpilot checkout " + selection
-            command6 = "/data/openpilot/selfdrive/assets/addon/script/git_reset.sh"
+            command1 = "git -C /data/openpilot clean -d -f -f"
+            command2 = "git -C /data/openpilot remote set-branches --add origin " + selection
+            command3 = "/data/openpilot/selfdrive/assets/addon/script/git_remove.sh"
+            command4 = "git -C /data/openpilot fetch --progress origin"
+            command5 = "git -C /data/openpilot checkout --track origin/" + selection
+            command6 = "git -C /data/openpilot checkout " + selection
+            command7 = "/data/openpilot/selfdrive/assets/addon/script/git_reset.sh"
             p_order = 1
             lcount = 0
             result=subprocess.Popen(command1, shell=True)
@@ -571,6 +572,18 @@ def sw_update_thread(end_event, hw_queue):
           elif p_order == 6:
             rvalue=result.poll()
             if rvalue == 0:
+              p_order = 7
+              result=subprocess.Popen(command7, shell=True)
+            else:
+              lcount += 1
+              if lcount > 300: # killing in 300sec if proc is abnormal or not completed.
+                params.put("RunCustomCommand", "0")
+                p_order = 0
+                lcount = 0
+                result.kill()
+          elif p_order == 7:
+            rvalue=result.poll()
+            if rvalue == 0:
               p_order = 0
               params.put("RunCustomCommand", "0")
             else:
@@ -618,11 +631,50 @@ def sw_update_thread(end_event, hw_queue):
                 result.kill()
         elif int(params.get("RunCustomCommand")) == 3:
           if p_order == 0:
-            command1 = "git -C /data/openpilot remote prune origin; git -C /data/openpilot fetch origin; git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches"
+            command1 = "rm -f /data/branches"
+            command2 = "git -C /data/openpilot remote prune origin"
+            command3 = "git -C /data/openpilot fetch origin"
+            command4 = "git -C /data/openpilot ls-remote --refs | grep refs/heads | awk -F '/' '{print $3}' > /data/branches"
             p_order = 1
             lcount = 0
             result=subprocess.Popen(command1, shell=True)
           elif p_order == 1:
+            rvalue=result.poll()
+            if rvalue == 0:
+              p_order = 2
+              result=subprocess.Popen(command2, shell=True)
+            else:
+              lcount += 1
+              if lcount > 300: # killing in 300sec if proc is abnormal or not completed.
+                params.put("RunCustomCommand", "0")
+                p_order = 0
+                lcount = 0
+                result.kill()
+          elif p_order == 2:
+            rvalue=result.poll()
+            if rvalue == 0:
+              p_order = 3
+              result=subprocess.Popen(command3, shell=True)
+            else:
+              lcount += 1
+              if lcount > 300: # killing in 300sec if proc is abnormal or not completed.
+                params.put("RunCustomCommand", "0")
+                p_order = 0
+                lcount = 0
+                result.kill()
+          elif p_order == 3:
+            rvalue=result.poll()
+            if rvalue == 0:
+              p_order = 4
+              result=subprocess.Popen(command4, shell=True)
+            else:
+              lcount += 1
+              if lcount > 300: # killing in 300sec if proc is abnormal or not completed.
+                params.put("RunCustomCommand", "0")
+                p_order = 0
+                lcount = 0
+                result.kill()
+          elif p_order == 4:
             rvalue=result.poll()
             if rvalue == 0:
               p_order = 0
