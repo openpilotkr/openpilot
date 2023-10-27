@@ -131,7 +131,7 @@ class CarState(CarStateBase):
           return None
         elif not self.prev_acc_set_btn: # first scc active
           self.prev_acc_set_btn = self.acc_active
-          self.cruise_set_speed_kph = int(round(self.clu_Vanz))
+          self.cruise_set_speed_kph = max(int(round(self.clu_Vanz)), (30 if self.is_metric else 20))
           return self.cruise_set_speed_kph
 
       elif self.cruise_buttons[-1] == Buttons.RES_ACCEL and not self.cruiseState_standstill:   # up 
