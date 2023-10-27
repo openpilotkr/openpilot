@@ -388,7 +388,7 @@ class CarInterface(CarInterfaceBase):
       ret.lfaAvailable = True if 1157 in fingerprint[2] else False
       ret.lvrAvailable = True if 871 in fingerprint[0] else False
       ret.evgearAvailable = True if 882 in fingerprint[0] else False
-      ret.emsAvailable = True if 608 and 809 in fingerprint[0] else False
+      ret.emsAvailable = True if 870 in fingerprint[0] else False
       ret.autoHoldAvailable = 1151 in fingerprint[0]
       ret.lfaHdaAvailable = 1157 in fingerprint[0]
       ret.navAvailable = 1348 in fingerprint[0]

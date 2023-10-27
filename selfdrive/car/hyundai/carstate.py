@@ -415,7 +415,10 @@ class CarState(CarStateBase):
     else:
       ret.gas = cp.vl["EMS12"]["PV_AV_CAN"] / 100.
       ret.gasPressed = bool(cp.vl["EMS16"]["CF_Ems_AclAct"])
-      ret.engineRpm = cp.vl["EMS_366"]["N"]
+      if self.CP.emsAvailable:
+        ret.engineRpm = cp.vl["EMS_366"]["N"]
+      else:
+        ret.engineRpm = 0
       ret.chargeMeter = 0
 
     ret.espDisabled = (cp.vl["TCS15"]["ESC_Off_Step"] != 0)
@@ -649,8 +652,11 @@ class CarState(CarStateBase):
       messages += [
         ("EMS12", 100),
         ("EMS16", 100),
-        ("EMS_366", 100),
       ]
+      if CP.emsAvailable:
+        messages += [
+          ("EMS_366", 100),
+        ]
 
     if CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       messages.append(("ELECT_GEAR", 20))
