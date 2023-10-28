@@ -408,7 +408,8 @@ class CarController:
       if self.CP.flags & HyundaiFlags.ENABLE_BLINKERS:
         can_sends.append([0x7b1, 0, b"\x02\x3E\x80\x00\x00\x00\x00\x00", self.CAN.ECAN])
 
-    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT: # ToDo
+    if self.CP.openpilotLongitudinalControl and self.experimental_long_enabled and self.CP.carFingerprint in LEGACY_SAFETY_MODE_CAR_ALT and self.frame > 1000: # ToDo
+      print("OP Long Enabled")
       addr, bus = 0x7d0, 0
       self.radarDisableOverlapTimer += 1
       if self.radarDisableOverlapTimer >= 30:
