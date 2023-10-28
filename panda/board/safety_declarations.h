@@ -242,9 +242,9 @@ struct sample_t angle_meas;         // last 6 steer angles/curvatures
 //   and that alone this flag doesn't make braking compliant because there's also a time element.
 // Setting this flag is used for allowing the full -5.0 to +4.0 m/s^2 at lower speeds
 // See ISO 15622:2018 for more information.
-#define ALT_EXP_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX 7
+#define ALT_EXP_RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX 8
 
-int alternative_experience = 1;
+int alternative_experience = 0;
 
 // time since safety mode has been changed
 uint32_t safety_mode_cnt = 0U;
