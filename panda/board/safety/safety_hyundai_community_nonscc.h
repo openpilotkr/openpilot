@@ -176,12 +176,9 @@ static int hyundai_community_nonscc_tx_hook(CANPacket_t *to_send) {
     }
   }
 
-  // FORCE CANCEL: safety check only relevant when spamming the cancel button.
-  // ensuring that only the cancel button press is sent (VAL 4) when controls are off.
-  // This avoids unintended engagements while still allowing resume spam
-  //allow clu11 to be sent to MDPS if MDPS is not on bus0
-  if (addr == 0x4F1 && !controls_allowed) {
-    if ((GET_BYTES(to_send, 0, 4) & 0x7U) != 4U) {
+  // UDS: Only tester present ("\x02\x3E\x80\x00\x00\x00\x00\x00") allowed on diagnostics address
+  if (addr == 0x7D0) {
+    if ((GET_BYTES(to_send, 0, 4) != 0x00803E02U) || (GET_BYTES(to_send, 4, 4) != 0x0U)) {
       tx = 0;
     }
   }
@@ -195,16 +192,10 @@ static int hyundai_community_nonscc_fwd_hook(int bus_num, int addr) {
   int bus_fwd = -1;
 
   // forward cam to ccan and viceversa, except lkas cmd
-  if (!relay_malfunction) {
-    if (bus_num == 0) {
-      bus_fwd = 2;
-    }
-    if ((bus_num == 2) && (addr != 0x340) && (addr != 0x485)) {
-      if ((addr != 0x420) && (addr != 0x421) && (addr != 0x389) && (addr != 0x50A)) {
-        bus_fwd = 0;
-      }
-    }
+  if (bus_num == 0) {
+    bus_fwd = 2;
   }
+
   return bus_fwd;
 }
 
