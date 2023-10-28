@@ -41,8 +41,8 @@ static int hyundai_community_nonscc_rx_hook(CANPacket_t *to_push) {
   int bus = GET_BUS(to_push);
 
   bool valid = addr_safety_check(to_push, &hyundai_community_nonscc_rx_checks,
-                            hyundai_get_checksum, hyundai_compute_checksum,
-                            hyundai_get_counter, NULL);
+                            NULL, NULL,
+                            NULL, NULL);
 
   if (!valid){
     puth(addr);
@@ -194,6 +194,12 @@ static int hyundai_community_nonscc_fwd_hook(int bus_num, int addr) {
   // forward cam to ccan and viceversa, except lkas cmd
   if (bus_num == 0) {
     bus_fwd = 2;
+  }
+
+  if ((bus_num == 2) && (addr != 0x340) && (addr != 0x485)) {
+    if ((addr != 0x420) && (addr != 0x421) && (addr != 0x389) && (addr != 0x50A)) {
+      bus_fwd = 0;
+    }
   }
 
   return bus_fwd;
