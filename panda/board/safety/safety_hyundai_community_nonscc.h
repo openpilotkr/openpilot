@@ -210,9 +210,6 @@ static int hyundai_community_nonscc_fwd_hook(int bus_num, int addr) {
 
 static const addr_checks* hyundai_community_nonscc_init(uint16_t param) {
   hyundai_common_init(param);
-  controls_allowed = false;
-  relay_malfunction_reset();
-
 
   hyundai_community_nonscc_rx_checks = (addr_checks){hyundai_community_nonscc_addr_checks, HYUNDAI_COMMUNITY_NONSCC_ADDR_CHECK_LEN};
   return &hyundai_community_nonscc_rx_checks;
