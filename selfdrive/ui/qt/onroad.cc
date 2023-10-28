@@ -1507,47 +1507,45 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   if (s->scene.animated_rpm && !s->scene.low_ui_profile) {
     float max_rpm = (float)s->scene.max_animated_rpm;
     float rpm = (float)fmin((float)s->scene.engine_rpm, max_rpm);
-    // int rpm = 3600;
+    // float rpm = 1800.0f;
     // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0),  yp = interp(xp, [x0, x1], [y0, y1])
     int count = (int)round((18.0f/max_rpm) * rpm); // min:0, max:18
     int arpm_width = 370;
     int arpm_height = 370;
     QRectF rectangle(s->fb_w/2-arpm_width/2, UI_BORDER_SIZE+15, arpm_width, arpm_height);
-    int startAngle = 225 * 16;
-    int spanAngle = -0 * 16;
 
     if (rpm > 1) {
       p.setFont(InterFont(40, QFont::Normal));
       p.drawText(QRect(s->fb_w/2-arpm_width/2, UI_BORDER_SIZE+30, arpm_width, arpm_height/4), Qt::AlignCenter, QString::number(rpm, 'f', 0));
-      startAngle = 225 * 16;
-      spanAngle = int(fmax(-45, (-15*count))) * 16;
       p.setPen(QPen(QBrush(QColor(25, 127, 54, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 0) p.drawArc(rectangle, 225*16, -14*16);
+      if (count > 1) p.drawArc(rectangle, 210*16, -14*16);
+      if (count > 2) p.drawArc(rectangle, 195*16, -14*16);
 
-      startAngle = 180 * 16;
-      spanAngle = int(fmax(-45, -15*(fmax(0, count-3)))) * 16;
       p.setPen(QPen(QBrush(QColor(34, 177, 76, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 3) p.drawArc(rectangle, 180*16, -14*16);
+      if (count > 4) p.drawArc(rectangle, 165*16, -14*16);
+      if (count > 5) p.drawArc(rectangle, 150*16, -14*16);
 
-      startAngle = 135 * 16;
-      spanAngle = int(fmax(-45, -15*(fmax(0, count-6)))) * 16;
       p.setPen(QPen(QBrush(QColor(0, 255, 0, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 6) p.drawArc(rectangle, 135*16, -14*16);
+      if (count > 7) p.drawArc(rectangle, 120*16, -14*16);
+      if (count > 8) p.drawArc(rectangle, 105*16, -14*16);
 
-      startAngle = 90 * 16;
-      spanAngle = int(fmax(-45, -15*(fmax(0, count-9)))) * 16;
       p.setPen(QPen(QBrush(QColor(255, 201, 14, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 9) p.drawArc(rectangle, 90*16, -14*16);
+      if (count > 10) p.drawArc(rectangle, 75*16, -14*16);
+      if (count > 11) p.drawArc(rectangle, 60*16, -14*16);
 
-      startAngle = 45 * 16;
-      spanAngle = int(fmax(-45, -15*(fmax(0, count-12)))) * 16;
       p.setPen(QPen(QBrush(QColor(255, 127, 39, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 12) p.drawArc(rectangle, 45*16, -14*16);
+      if (count > 13) p.drawArc(rectangle, 30*16, -14*16);
+      if (count > 14) p.drawArc(rectangle, 15*16, -14*16);
 
-      startAngle = 0 * 16;
-      spanAngle = int(fmax(-45, -15*(fmax(0, count-15)))) * 16;
       p.setPen(QPen(QBrush(QColor(255, 0, 0, 200)),50,Qt::SolidLine,Qt::FlatCap));
-      p.drawArc(rectangle, startAngle, spanAngle);
+      if (count > 15) p.drawArc(rectangle, 0*16, -14*16);
+      if (count > 16) p.drawArc(rectangle, -15*16, -14*16);
+      if (count > 17) p.drawArc(rectangle, -30*16, -15*16);
     }
   }
 
