@@ -559,7 +559,7 @@ def sw_update_thread(end_event, hw_queue):
                 result.kill()
           elif p_order == 5:
             rvalue=result.poll()
-            if rvalue == 0:
+            if rvalue in (0,128):
               p_order = 6
               result=subprocess.Popen(command6, shell=True)
             else:
