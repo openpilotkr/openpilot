@@ -209,7 +209,7 @@ static int hyundai_community_nonscc_fwd_hook(int bus_num, int addr) {
 }
 
 static const addr_checks* hyundai_community_nonscc_init(uint16_t param) {
-  UNUSED(param);
+  hyundai_common_init(param);
   controls_allowed = false;
   relay_malfunction_reset();
 
