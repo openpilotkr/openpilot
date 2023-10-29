@@ -272,7 +272,7 @@ static void update_state(UIState *s) {
     scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
     scene.ambientTemp = scene.deviceState.getAmbientTempC();
     scene.fanSpeed = scene.deviceState.getFanSpeedPercentDesired();
-    scene.storageUsage = scene.deviceState.getStorageUsage();
+    scene.storageUsage = int(round(100. - scene.deviceState.getFreeSpacePercent()));
     scene.ipAddress = scene.deviceState.getIpAddress();
   }
   if (sm.updated("peripheralState")) {

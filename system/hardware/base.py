@@ -148,9 +148,5 @@ class HardwareBase(ABC):
     return -1, -1
 
   @abstractmethod
-  def get_storage_usage_percent(self):
-    pass
-
-  @abstractmethod
   def get_ip_address(self):
     pass
