@@ -258,6 +258,8 @@ class CarController:
     self.counter_init = False
     self.radarDisableOverlapTimer = 0
 
+    self.e2e_x = 0
+
     # self.usf = 0
 
     self.str_log2 = 'MultiLateral'
@@ -313,6 +315,9 @@ class CarController:
     self.dRel = self.sm['radarState'].leadOne.dRel #Vision Lead
     self.vRel = self.sm['radarState'].leadOne.vRel #Vision Lead
     self.yRel = self.sm['radarState'].leadOne.yRel #Vision Lead
+
+    if len(self.sm['longitudinalPlan'].e2eX) > 12:
+      self.e2e_x = self.sm['longitudinalPlan'].e2eX[12]
 
     if abs(CS.out.steeringTorque) > 170 and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and self.CP.carFingerprint not in CANFD_CAR:
       self.driver_steering_torque_above = True
@@ -638,7 +643,7 @@ class CarController:
         if not self.cruise_gap_adjusting:
           if not self.gap_by_spd_on or not self.gap_by_spd_on_sw_trg:
             if 0 < CS.lead_distance <= 149 and CS.lead_objspd < 0 and self.try_early_stop and CS.cruiseGapSet != 4.0 and CS.clu_Vanz > 30 and \
-            0 < self.sm['longitudinalPlan'].e2eX[12] < 120 and CS.lead_objspd < -4:
+            0 < self.e2e_x < 120 and CS.lead_objspd < -4:
               if not self.try_early_stop_retrieve:
                 self.try_early_stop_org_gap = CS.cruiseGapSet
               self.try_early_stop_retrieve = True
@@ -665,7 +670,7 @@ class CarController:
                   self.switch_timer = int(randint(20, 25) * 2)
             elif 0 < CS.lead_distance <= 149 and not self.cruise_gap_set_init and self.try_early_stop and self.try_early_stop_retrieve and \
             CS.cruiseGapSet != self.try_early_stop_org_gap and \
-            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz > 20)):
+            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.e2e_x > 50 and CS.clu_Vanz > 20)):
               if self.switch_timer > 0:
                 self.switch_timer -= 1
               else:
@@ -681,7 +686,7 @@ class CarController:
               self.resume_cnt = 0
           elif self.gap_by_spd_on and self.gap_by_spd_on_sw_trg:
             if 0 < CS.lead_distance <= 149 and CS.lead_objspd < 0 and self.try_early_stop and CS.cruiseGapSet != 4.0 and CS.clu_Vanz > 30 and \
-            0 < self.sm['longitudinalPlan'].e2eX[12] < 120 and CS.lead_objspd < -4:
+            0 < self.e2e_x < 120 and CS.lead_objspd < -4:
               if not self.try_early_stop_retrieve:
                 self.try_early_stop_org_gap = CS.cruiseGapSet
               self.try_early_stop_retrieve = True
@@ -767,7 +772,7 @@ class CarController:
               self.gap_by_spd_gap4 = False
             elif 0 < CS.lead_distance <= 149 and not self.cruise_gap_set_init and self.try_early_stop and self.try_early_stop_retrieve and \
             CS.cruiseGapSet != self.try_early_stop_org_gap and \
-            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz > 20)):
+            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.e2e_x > 50 and CS.clu_Vanz > 20)):
               if self.switch_timer > 0:
                 self.switch_timer -= 1
               else:
@@ -786,7 +791,7 @@ class CarController:
               self.gap_by_spd_gap4 = False
             elif 0 < CS.lead_distance <= 149 and not self.cruise_gap_set_init and self.try_early_stop and self.try_early_stop_retrieve and \
             CS.cruiseGapSet == self.try_early_stop_org_gap and \
-            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz > 20)):
+            (CS.clu_Vanz <= 20 or (CS.lead_objspd >= 0 and self.e2e_x > 50 and CS.clu_Vanz > 20)):
               self.try_early_stop_retrieve = False
               self.gap_by_spd_gap1 = False
               self.gap_by_spd_gap2 = False
@@ -868,12 +873,12 @@ class CarController:
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
               self.e2e_standstill_timer_buf = 0
-            elif self.e2e_standstill_stat and self.sm['longitudinalPlan'].e2eX[12] > 50 and CS.clu_Vanz == 0:
+            elif self.e2e_standstill_stat and self.e2e_x > 50 and CS.clu_Vanz == 0:
               self.e2e_standstill = True
               self.e2e_standstill_stat = False
               self.e2e_standstill_timer = 0
               self.e2e_standstill_timer_buf += 300
-            elif 0 < self.sm['longitudinalPlan'].e2eX[12] < 10 and CS.clu_Vanz == 0:
+            elif 0 < self.e2e_x < 10 and CS.clu_Vanz == 0:
               self.e2e_standstill_timer += 1
               if self.e2e_standstill_timer > (300 + self.e2e_standstill_timer_buf):
                 self.e2e_standstill_timer = 101
