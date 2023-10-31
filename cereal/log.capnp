@@ -46,6 +46,8 @@ struct InitData {
 
   commands @19 :Map(Text, Data);
 
+  wallTimeNanos @20 :UInt64;
+
   enum DeviceType {
     unknown @0;
     neo @1;
@@ -2408,9 +2410,13 @@ struct Event {
     livestreamWideRoadEncodeData @121 :EncodeData;
     livestreamDriverEncodeData @122 :EncodeData;
 
+    customReservedRawData0 @124 :Data;
+    customReservedRawData1 @125 :Data;
+    customReservedRawData2 @126 :Data;
+
     # OPKR Navi
-    liveENaviData @124: LiveENaviData;
-    liveMapData @125: LiveMapData;
+    liveENaviData @127: LiveENaviData;
+    liveMapData @128: LiveMapData;
 
     # *********** Custom: reserved for forks ***********
     customReserved0 @107 :Custom.CustomReserved0;

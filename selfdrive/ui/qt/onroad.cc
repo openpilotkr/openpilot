@@ -4,7 +4,8 @@
 #include <cmath>
 #include <map>
 #include <memory>
-#include <unistd.h>
+#include <sstream>
+#include <unistd.h> // opkr
 
 #include <QDebug>
 #include <QMouseEvent>
@@ -199,7 +200,7 @@ void OnroadWindow::paintEvent(QPaintEvent *event) {
     p.setPen(Qt::NoPen);
     if(s->scene.rec_blinker >= 255) {
       s->scene.rec_blinker_stat = true;
-    } else if (s->scene.rec_blinker <= 0) {
+    } else if (s->scene.rec_blinker <= 50) {
       s->scene.rec_blinker_stat = false;
     }
     if (!s->scene.rec_blinker_stat) {
@@ -319,7 +320,6 @@ void ExperimentalButton::updateState(const UIState &s) {
 
 void ExperimentalButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.setRenderHint(QPainter::Antialiasing);
 
   QPoint center(btn_size / 2, btn_size / 2);
   QPixmap img = experimental_mode ? experimental_img : engage_img;
@@ -345,7 +345,6 @@ MapSettingsButton::MapSettingsButton(QWidget *parent) : QPushButton(parent) {
 
 void MapSettingsButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.setRenderHint(QPainter::Antialiasing);
 
   QPoint center(btn_size / 2, btn_size / 2);
 

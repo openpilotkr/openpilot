@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import math
 
 from cereal import car
@@ -12,6 +11,8 @@ RADAR_START_ADDR = 0x500
 RADAR_MSG_COUNT = 32
 
 USE_RADAR_TRACK = Params().get_bool("UseRadarTrack") or (Params().get_bool("ExperimentalLongitudinalEnabled") and int(Params().get("OPKRLongAlt", encoding="utf8")) not in (1, 2))
+
+# POC for parsing corner radars: https://github.com/commaai/openpilot/pull/24221/
 
 def get_radar_can_parser(CP):
   if USE_RADAR_TRACK or CP.carFingerprint in CANFD_CAR:

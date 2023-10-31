@@ -309,8 +309,9 @@ class LateralPlanner:
       curve_speed = 255
     return min(255, curve_speed * (CV.MS_TO_MPH if self.is_mph else CV.MS_TO_KPH))
 
-
-  def reset_mpc(self, x0=np.zeros(4)):
+  def reset_mpc(self, x0=None):
+    if x0 is None:
+      x0 = np.zeros(4)
     self.x0 = x0
     self.lat_mpc.reset(x0=self.x0)
 
