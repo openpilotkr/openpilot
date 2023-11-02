@@ -39,7 +39,7 @@ PANDA_STATES_TIMEOUT = round(1000 / SERVICE_LIST['pandaStates'].frequency * 1.5)
 
 ThermalBand = namedtuple("ThermalBand", ['min_temp', 'max_temp'])
 HardwareState = namedtuple("HardwareState", ['network_type', 'network_info', 'network_strength', 'network_stats',
-                                             'network_metered', 'nvme_temps', 'modem_temps', 'storage_usage', 'ip_address'])
+                                             'network_metered', 'nvme_temps', 'modem_temps', 'ip_address'])
 
 # List of thermal bands. We will stay within this region as long as we are within the bounds.
 # When exiting the bounds, we'll jump to the lower or higher band. Bands are ordered in the dict.
@@ -111,7 +111,6 @@ def hw_state_thread(end_event, hw_queue):
   modem_restarted = False
   modem_missing_count = 0
 
-  storage_usage = 0
   ip_address = ""
 
   while not end_event.is_set():
@@ -143,7 +142,6 @@ def hw_state_thread(end_event, hw_queue):
 
         tx, rx = HARDWARE.get_modem_data_usage()
 
-        storage_usage = HARDWARE.get_storage_usage_percent()
         ip_address = HARDWARE.get_ip_address()
 
         hw_state = HardwareState(
@@ -154,7 +152,6 @@ def hw_state_thread(end_event, hw_queue):
           network_metered=HARDWARE.get_network_metered(network_type),
           nvme_temps=HARDWARE.get_nvme_temperatures(),
           modem_temps=modem_temps,
-          storage_usage=storage_usage,
           ip_address=ip_address,
         )
 
@@ -203,7 +200,6 @@ def thermald_thread(end_event, hw_queue) -> None:
     network_stats={'wwanTx': -1, 'wwanRx': -1},
     nvme_temps=[],
     modem_temps=[],
-    storage_usage = 0,
     ip_address = "",
   )
 
@@ -284,7 +280,6 @@ def thermald_thread(end_event, hw_queue) -> None:
 
     msg.deviceState.screenBrightnessPercent = HARDWARE.get_screen_brightness()
 
-    msg.deviceState.storageUsage = last_hw_state.storage_usage
     msg.deviceState.ipAddress = last_hw_state.ip_address
 
     # this subset is only used for offroad

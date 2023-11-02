@@ -4,7 +4,8 @@
 #include <cmath>
 #include <map>
 #include <memory>
-#include <unistd.h>
+#include <sstream>
+#include <unistd.h> // opkr
 
 #include <QDebug>
 #include <QMouseEvent>
@@ -199,7 +200,7 @@ void OnroadWindow::paintEvent(QPaintEvent *event) {
     p.setPen(Qt::NoPen);
     if(s->scene.rec_blinker >= 255) {
       s->scene.rec_blinker_stat = true;
-    } else if (s->scene.rec_blinker <= 0) {
+    } else if (s->scene.rec_blinker <= 50) {
       s->scene.rec_blinker_stat = false;
     }
     if (!s->scene.rec_blinker_stat) {
@@ -319,7 +320,6 @@ void ExperimentalButton::updateState(const UIState &s) {
 
 void ExperimentalButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.setRenderHint(QPainter::Antialiasing);
 
   QPoint center(btn_size / 2, btn_size / 2);
   QPixmap img = experimental_mode ? experimental_img : engage_img;
@@ -345,7 +345,6 @@ MapSettingsButton::MapSettingsButton(QWidget *parent) : QPushButton(parent) {
 
 void MapSettingsButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.setRenderHint(QPainter::Antialiasing);
 
   QPoint center(btn_size / 2, btn_size / 2);
 
@@ -985,41 +984,39 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
     p.resetMatrix();
 
     // Ublox GPS accuracy
-    if (s->scene.gpsAccuracyUblox != 0.00) {
-      num_r = num_r + 1;
-      sp_yr = sp_yr + j_num;
-      p.setPen(whiteColor(200));
-      debugText(p, sp_xr, sp_yr, QString("GPS PREC"), 150, 27);
-      if (s->scene.gpsAccuracyUblox > 1.3) {
-        p.setPen(redColor(200));
-      } else if (s->scene.gpsAccuracyUblox > 0.85) {
-        p.setPen(orangeColor(200));
-      }
-      if (s->scene.gpsAccuracyUblox > 99 || s->scene.gpsAccuracyUblox == 0) {
-        debugText(p, sp_xr, sp_yr+60, "None", 150, 57);
-      } else if (s->scene.gpsAccuracyUblox > 9.99) {
-        debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.gpsAccuracyUblox, 'f', 1), 150, 57);
-      } else {
-        debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.gpsAccuracyUblox, 'f', 2), 150, 57);
-      }
-      p.translate(sp_xr + 90, sp_yr + 20);
-      p.rotate(-90);
-      p.setFont(InterFont(27, QFont::DemiBold));
-      p.setPen(whiteColor(200));
-      p.drawText(-35, 0, QString::number(s->scene.satelliteCount, 'f', 0));
-      p.resetMatrix();
-      // altitude
-      num_r = num_r + 1;
-      sp_yr = sp_yr + j_num;
-      p.setPen(whiteColor(200));
-      debugText(p, sp_xr, sp_yr, QString("ST USAGE"), 150, 27);
-      debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.storageUsage, 'f', 0) + "%", 150, 57);
-      p.translate(sp_xr + 90, sp_yr + 20);
-      p.rotate(-90);
-      p.setFont(InterFont(27, QFont::DemiBold));
-      p.drawText(-45, 0, QString::number(s->scene.altitudeUblox, 'f', 0) + "m");
-      p.resetMatrix();
+    num_r = num_r + 1;
+    sp_yr = sp_yr + j_num;
+    p.setPen(whiteColor(200));
+    debugText(p, sp_xr, sp_yr, QString("GPS PREC"), 150, 27);
+    if (s->scene.gpsAccuracyUblox > 1.3) {
+      p.setPen(redColor(200));
+    } else if (s->scene.gpsAccuracyUblox > 0.85) {
+      p.setPen(orangeColor(200));
     }
+    if (s->scene.gpsAccuracyUblox > 99 || s->scene.gpsAccuracyUblox == 0) {
+      debugText(p, sp_xr, sp_yr+60, "None", 150, 52);
+    } else if (s->scene.gpsAccuracyUblox > 9.99) {
+      debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.gpsAccuracyUblox, 'f', 1), 150, 57);
+    } else {
+      debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.gpsAccuracyUblox, 'f', 2), 150, 57);
+    }
+    p.translate(sp_xr + 90, sp_yr + 20);
+    p.rotate(-90);
+    p.setFont(InterFont(27, QFont::DemiBold));
+    p.setPen(whiteColor(200));
+    p.drawText(-35, 0, QString::number(s->scene.satelliteCount, 'f', 0));
+    p.resetMatrix();
+    // altitude
+    num_r = num_r + 1;
+    sp_yr = sp_yr + j_num;
+    p.setPen(whiteColor(200));
+    debugText(p, sp_xr, sp_yr, QString("ST USAGE"), 150, 27);
+    debugText(p, sp_xr, sp_yr+60, QString::number(s->scene.storageUsage, 'f', 0) + "%", 150, 57);
+    p.translate(sp_xr + 90, sp_yr + 20);
+    p.rotate(-90);
+    p.setFont(InterFont(27, QFont::DemiBold));
+    p.drawText(-45, 0, QString::number(s->scene.altitudeUblox, 'f', 0) + "m");
+    p.resetMatrix();
 
     // opkr tpms
     num_r = num_r + 1;
