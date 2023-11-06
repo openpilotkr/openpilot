@@ -82,12 +82,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
     },
 #endif
 
-    {
-      "OpkrEnableDriverMonitoring",
-      tr("Enable Driver Monitoring"),
-      tr("Use the driver monitoring function."),
-      "../assets/offroad/icon_shell.png",
-    },
+    // {
+    //   "OpkrEnableDriverMonitoring",
+    //   tr("Enable Driver Monitoring"),
+    //   tr("Use the driver monitoring function."),
+    //   "../assets/offroad/icon_shell.png",
+    // },
     {
       "OpkrEnableLogger",
       tr("Enable Driving Log Record"),
