@@ -10,20 +10,33 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 function two_init {
 
+  # mount -o remount,rw /system
+  if [ ! -f /ONEPLUS ] && ! $(grep -q "letv" /proc/cmdline); then
+    mount -o remount,rw /system
+    sed -i -e 's#/dev/input/event1#/dev/input/event2#g' ~/.bash_profile
+    touch /ONEPLUS
+    mount -o remount,r /system
+  else
+    if [ ! -f /LEECO ]; then
+      mount -o remount,rw /system
+      touch /LEECO
+      mount -o remount,r /system 
+    fi
+  fi
+  # mount -o remount,r /system  
+  
+  neos=`cat /VERSION`
+  if [ -f /ONEPLUS ] && [ $neos != 20 ] ; then
+    mount -o remount,rw /system
+    echo -n 20 > /VERSION
+    mount -o remount,r /system
+  fi
+
   # set IO scheduler
   setprop sys.io.scheduler noop
   for f in /sys/block/*/queue/scheduler; do
     echo noop > $f
   done
-
-  # *** shield cores 2-3 ***
-
-  # TODO: should we enable this?
-  # offline cores 2-3 to force recurring timers onto the other cores
-  #echo 0 > /sys/devices/system/cpu/cpu2/online
-  #echo 0 > /sys/devices/system/cpu/cpu3/online
-  #echo 1 > /sys/devices/system/cpu/cpu2/online
-  #echo 1 > /sys/devices/system/cpu/cpu3/online
 
   # android gets two cores
   echo 0-1 > /dev/cpuset/background/cpus
@@ -42,19 +55,8 @@ function two_init {
   # *** set up governors ***
 
   # +50mW offroad, +500mW onroad for 30% more RAM bandwidth
-  echo "performance" > /sys/class/devfreq/soc:qcom,cpubw/governor
+#  echo "performance" > /sys/class/devfreq/soc:qcom,cpubw/governor
   echo 1056000 > /sys/class/devfreq/soc:qcom,m4m/max_freq
-  echo "performance" > /sys/class/devfreq/soc:qcom,m4m/governor
-
-  # unclear if these help, but they don't seem to hurt
-  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu0/governor
-  echo "performance" > /sys/class/devfreq/soc:qcom,memlat-cpu2/governor
-
-  # GPU
-  echo "performance" > /sys/class/devfreq/b00000.qcom,kgsl-3d0/governor
-
-  # /sys/class/devfreq/soc:qcom,mincpubw is the only one left at "powersave"
-  # it seems to gain nothing but a wasted 500mW
 
   # *** set up IRQ affinities ***
 
@@ -68,7 +70,8 @@ function two_init {
   [ -d "/proc/irq/733" ] && echo 3 > /proc/irq/733/smp_affinity_list
 
   # GPU and camera get cpu 2
-  CAM_IRQS="177 178 179 180 181 182 183 184 185 186 192"
+  #CAM_IRQS="177 178 179 180 181 182 183 184 185 186 192"
+  CAM_IRQS="177 178 179 180 181 182 183 192"
   for irq in $CAM_IRQS; do
     echo 2 > /proc/irq/$irq/smp_affinity_list
   done
@@ -80,7 +83,7 @@ function two_init {
   done
 
   # the flippening!
-  LD_LIBRARY_PATH="" content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:1
+  #LD_LIBRARY_PATH="" content insert --uri content://settings/system --bind name:s:user_rotation --bind value:i:1
 
   # disable bluetooth
   service call bluetooth_manager 8
@@ -88,75 +91,31 @@ function two_init {
   # wifi scan
   wpa_cli IFNAME=wlan0 SCAN
 
-  # Check for NEOS update
-  if [ $(< /VERSION) != "$REQUIRED_NEOS_VERSION" ]; then
-    echo "Installing NEOS update"
-    NEOS_PY="$DIR/selfdrive/hardware/eon/neos.py"
-    MANIFEST="$DIR/selfdrive/hardware/eon/neos.json"
-    $NEOS_PY --swap-if-ready $MANIFEST
-    $DIR/selfdrive/hardware/eon/updater $NEOS_PY $MANIFEST
+  # One-time fix for a subset of OP3T with gyro orientation offsets.
+  # Remove and regenerate qcom sensor registry. Only done on OP3T mainboards.
+  # Performed exactly once. The old registry is preserved just-in-case, and
+  # doubles as a flag denoting we've already done the reset.
+  if [ -f /ONEPLUS ] && [ ! -f "/persist/comma/op3t-sns-reg-backup" ]; then
+    echo "Performing OP3T sensor registry reset"
+    mv /persist/sensors/sns.reg /persist/comma/op3t-sns-reg-backup &&
+      rm -f /persist/sensors/sensors_settings /persist/sensors/error_log /persist/sensors/gyro_sensitity_cal &&
+      echo "restart" > /sys/kernel/debug/msm_subsys/slpi &&
+      sleep 5  # Give Android sensor subsystem a moment to recover
   fi
 
-  # ssh key restore, by opkr
-  if [ -f "/data/params/d/OpkrSSHLegacy" ]; then
-    SSH_KEY=$(cat /data/params/d/OpkrSSHLegacy)
-  else
-    setprop persist.neos.ssh 1
-    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    chmod 600 /data/params/d/GithubSshKeys
-  fi
-  if [ "$SSH_KEY" == "1" ]; then
-    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    chmod 600 /data/params/d/GithubSshKeys
-  fi
-
-  if [ ! -f "/data/params/d/GithubSshKeys" ]; then
-    setprop persist.neos.ssh 1
-    cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    chmod 600 /data/params/d/GithubSshKeys
-  fi
-}
-
-function tici_init {
-  # wait longer for weston to come up
-  if [ -f "$BASEDIR/prebuilt" ]; then
+  if [ ! -f "/system/comma/usr/lib/libgfortran.so.5.0.0" ]; then
     sleep 3
+    mount -o remount,rw /system
+    tar -zxvf /data/openpilot/selfdrive/mapd/assets/libgfortran.tar.gz -C /system/comma/usr/lib/
+    mount -o remount,r /system
+  fi
+  if [ ! -d "/system/comma/usr/lib/python3.8/site-packages/opspline" ]; then
+    sleep 3
+    mount -o remount,rw /system
+    tar -zxvf /data/openpilot/selfdrive/mapd/assets/opspline.tar.gz -C /system/comma/usr/lib/python3.8/site-packages/
+    mount -o remount,r /system
   fi
 
-  # TODO: move this to agnos
-  sudo rm -f /data/etc/NetworkManager/system-connections/*.nmmeta
-
-  # set success flag for current boot slot
-  sudo abctl --set_success
-
-  # Check if AGNOS update is required
-  if [ $(< /VERSION) != "$AGNOS_VERSION" ]; then
-    AGNOS_PY="$DIR/selfdrive/hardware/tici/agnos.py"
-    MANIFEST="$DIR/selfdrive/hardware/tici/agnos.json"
-    if $AGNOS_PY --verify $MANIFEST; then
-      sudo reboot
-    fi
-    $DIR/selfdrive/hardware/tici/updater $AGNOS_PY $MANIFEST
-  fi
-  
-  # ssh key restore, by opkr
-  if [ -f "/data/params/d/OpkrSSHLegacy" ]; then
-    SSH_KEY=$(cat /data/params/d/OpkrSSHLegacy)
-  else
-    sudo echo "1" > /data/params/d/SshEnabled
-    sudo cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    sudo chmod 600 /data/params/d/GithubSshKeys
-  fi
-  if [ "$SSH_KEY" == "1" ]; then
-    sudo cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    sudo chmod 600 /data/params/d/GithubSshKeys
-  fi
-
-  if [ ! -f "/data/params/d/GithubSshKeys" ]; then
-    sudo echo "1" > /data/params/d/SshEnabled
-    sudo cp -f /data/openpilot/selfdrive/assets/addon/key/GithubSshKeys_legacy /data/params/d/GithubSshKeys
-    sudo chmod 600 /data/params/d/GithubSshKeys
-  fi
 }
 
 function launch {
@@ -166,119 +125,30 @@ function launch {
   # Pull time from panda
   $DIR/selfdrive/boardd/set_time.py
 
-  # Check to see if there's a valid overlay-based update available. Conditions
-  # are as follows:
-  #
-  # 1. The BASEDIR init file has to exist, with a newer modtime than anything in
-  #    the BASEDIR Git repo. This checks for local development work or the user
-  #    switching branches/forks, which should not be overwritten.
-  # 2. The FINALIZED consistent file has to exist, indicating there's an update
-  #    that completed successfully and synced to disk.
-
-  if [ -f "${BASEDIR}/.overlay_init" ]; then
-    find ${BASEDIR}/.git -newer ${BASEDIR}/.overlay_init | grep -q '.' 2> /dev/null
-    if [ $? -eq 0 ]; then
-      echo "${BASEDIR} has been modified, skipping overlay update installation"
-    else
-      if [ -f "${STAGING_ROOT}/finalized/.overlay_consistent" ]; then
-        if [ ! -d /data/safe_staging/old_openpilot ]; then
-          echo "Valid overlay update found, installing"
-          LAUNCHER_LOCATION="${BASH_SOURCE[0]}"
-
-          mv $BASEDIR /data/safe_staging/old_openpilot
-          mv "${STAGING_ROOT}/finalized" $BASEDIR
-          cd $BASEDIR
-
-          echo "Restarting launch script ${LAUNCHER_LOCATION}"
-          unset REQUIRED_NEOS_VERSION
-          unset AGNOS_VERSION
-          exec "${LAUNCHER_LOCATION}"
-        else
-          echo "openpilot backup found, not updating"
-          # TODO: restore backup? This means the updater didn't start after swapping
-        fi
-      fi
-    fi
-  fi
-
   # handle pythonpath
   ln -sfn $(pwd) /data/pythonpath
   export PYTHONPATH="$PWD:$PWD/pyextra"
 
-  # hardware specific init
-  if [ -f /EON ]; then
-    two_init
-  elif [ -f /TICI ]; then
-    tici_init
-  fi
+  two_init
 
   # write tmux scrollback to a file
-  tmux capture-pane -pq -S-1000 > /tmp/launch_log
+  #tmux capture-pane -pq -S-1000 > /tmp/launch_log
 
-  # spinner, by opkr
   if [ -f "$BASEDIR/prebuilt" ]; then
     python /data/openpilot/common/spinner.py &
   fi
 
   cat /data/openpilot/selfdrive/car/hyundai/values.py | grep ' = "' | awk -F'"' '{print $2}' > /data/params/d/CarList
+  
+  dongleid=`cat /data/params/d/DongleId`
 
-  # start manager  
+  if [[ $dongleid == *"maintenance"* ]]; then
+    echo -en "000000" > /data/params/d/DongleId
+  fi
+
+  # start manager
   cd selfdrive/manager
-  if [ -f "/data/params/d/OSMEnable" ]; then
-    OSM_ENABLE=$(cat /data/params/d/OSMEnable)
-  fi
-  if [ -f "/data/params/d/OSMSpeedLimitEnable" ]; then
-    OSM_SL_ENABLE=$(cat /data/params/d/OSMSpeedLimitEnable)
-  fi
-  if [ -f "/data/params/d/CurvDecelOption" ]; then
-    OSM_CURV_ENABLE=$(cat /data/params/d/CurvDecelOption)
-  fi
-  if [ -f "/data/params/d/OSMOfflineUse" ]; then
-    OSM_OFFLINE_ENABLE=$(cat /data/params/d/OSMOfflineUse)
-  fi
-
-  if [ -f /EON ]; then
-    if [ "$OSM_ENABLE" == "1" ] || [ "$OSM_SL_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "3" ]; then
-      if [ ! -f "/system/comma/usr/lib/libgfortran.so.5.0.0" ]; then
-        sleep 3
-        mount -o remount,rw /system
-        tar -zxvf /data/openpilot/selfdrive/mapd/assets/libgfortran.tar.gz -C /system/comma/usr/lib/
-        mount -o remount,r /system
-      fi
-      if [ ! -d "/system/comma/usr/lib/python3.8/site-packages/opspline" ]; then
-        sleep 3
-        mount -o remount,rw /system
-        tar -zxvf /data/openpilot/selfdrive/mapd/assets/opspline.tar.gz -C /system/comma/usr/lib/python3.8/site-packages/
-        mount -o remount,r /system
-      fi
-      if [ ! -d "/data/osm" ] && [ "$OSM_OFFLINE_ENABLE" == "1" ]; then
-        sleep 5
-      fi
-      if [ "$OSM_OFFLINE_ENABLE" == "1" ]; then
-        ./build.py && ./custom_dep.py && ./local_osm_install.py && ./manager.py
-      else
-        ./build.py && ./manager.py
-      fi
-    else
-      ./build.py && ./manager.py
-    fi
-  else
-    if [ "$OSM_ENABLE" == "1" ] || [ "$OSM_SL_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "1" ] || [ "$OSM_CURV_ENABLE" == "3" ]; then
-      if [ ! -d "/data/osm" ] && [ "$OSM_OFFLINE_ENABLE" == "1" ]; then
-        sleep 5
-      fi
-      if [ "$OSM_OFFLINE_ENABLE" == "1" ]; then
-        ./build.py && ./custom_dep.py && ./local_osm_install.py && ./manager.py
-      else
-        ./build.py && ./manager.py
-      fi
-    else
-      ./build.py && ./manager.py
-    fi
-  fi
-
-  # if broken, keep on screen error
-  while true; do sleep 1; done
+  ./build.py && ./manager.py
 }
 
 launch
