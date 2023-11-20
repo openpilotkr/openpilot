@@ -9,8 +9,7 @@
 
 #define FRAME_BUF_COUNT 4
 
-class CameraState {
-public:
+typedef struct CameraState {
   MultiCameraState *multi_cam_state;
   CameraInfo ci;
 
@@ -32,21 +31,6 @@ public:
 
   int camera_num;
 
-  void config_isp(int io_mem_handle, int fence, int request_id, int buf0_mem_handle, int buf0_offset);
-  void enqueue_req_multi(int start, int n, bool dp);
-  void enqueue_buffer(int i, bool dp);
-  void handle_camera_event(void *evdat);
-  void set_camera_exposure(float grey_frac);
-
-  void sensors_start();
-  void sensors_poke(int request_id);
-  void sensors_i2c(struct i2c_random_wr_payload* dat, int len, int op_code, bool data_word);
-  int sensors_init();
-
-  void camera_open();
-  void camera_init(MultiCameraState *multi_cam_state, VisionIpcServer * v, int camera_id, int camera_num, unsigned int fps, cl_device_id device_id, cl_context ctx, VisionStreamType rgb_type, VisionStreamType yuv_type);
-  void camera_close();
-
   int32_t session_handle;
   int32_t sensor_dev_handle;
   int32_t isp_dev_handle;
@@ -62,10 +46,9 @@ public:
   int frame_id_last;
   int idx_offset;
   bool skipped;
-  int camera_id;
 
   CameraBuf buf;
-};
+} CameraState;
 
 typedef struct MultiCameraState {
   unique_fd video0_fd;
@@ -73,6 +56,7 @@ typedef struct MultiCameraState {
   unique_fd isp_fd;
   int device_iommu;
   int cdm_iommu;
+
 
   CameraState road_cam;
   CameraState wide_road_cam;
