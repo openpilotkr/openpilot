@@ -32,13 +32,17 @@ def set_long_tune(tune, name):
   # Improved longitudinal tune
   if name == LongTunes.OPKR:
     tune.kpBP = [0., 4., 9., 17., 23., 31.]
-    tune.kpV = [1.2, 1.1, 1.0, 0.9, 0.75, 0.65]
+    #tune.kpV = [1.2, 1.1, 1.0, 0.9, 0.75, 0.65]
+    tune.kpV = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
     tune.kiBP = [0., 4., 9., 17., 23., 31.]
-    tune.kiV = [0.27, 0.24, 0.23, 0.2, 0.17, 0.15]
+    #tune.kiV = [0.27, 0.24, 0.23, 0.2, 0.17, 0.15]
+    tune.kiV = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     tune.deadzoneBP = [0., 4.]
-    tune.deadzoneV = [0., 0.1]
+    #tune.deadzoneV = [0., 0.1]
+    tune.deadzoneV = [0.0, 0.0]
     tune.kdBP = [0., 4., 9., 17., 23., 31.]
-    tune.kdV = [0.9, 1.0, 0.85, 0.7, 0.5, 0.4]
+    #tune.kdV = [0.9, 1.0, 0.85, 0.7, 0.5, 0.4]
+    tune.kdV = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     tune.kfBP = [0., 4., 9., 17., 23., 31.]
     tune.kfV = [1., 1., 1., 1., 1., 1.]
   else:

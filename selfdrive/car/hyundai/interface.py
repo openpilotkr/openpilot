@@ -62,6 +62,8 @@ class CarInterface(CarInterfaceBase):
     #ret.maxSteeringAngleDeg = 90
     ret.minSteerSpeed = 16.67 # m/s
 
+    ret.radarTimeStep = 0.02  # 50Hz instead of standard 20Hz
+
     # Most Hyundai car ports are community features for now
     ret.pcmCruise = not ret.radarOffCan
 
