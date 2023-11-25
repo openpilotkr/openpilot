@@ -1,5 +1,18 @@
 #!/usr/bin/bash
 
+# prebuilt recreate
+if [ -f "/data/opkr_compiling" ]; then
+    rm -f /data/opkr_compiling
+    rm -f /data/openpilot/prebuilt
+else
+    if [ -f "/data/params/d/PutPrebuiltOn" ]; then
+        PREBUILT_CHECK=$(cat /data/params/d/PutPrebuiltOn)
+        if [[ "$PREBUILT_CHECK" == "1" && ! -f "/data/openpilot/prebuilt" ]]; then
+            touch /data/openpilot/prebuilt
+        fi
+    fi
+fi
+
 ALIAS_CHECK=$(/usr/bin/grep gitpull /system/comma/home/.bash_profile)
 # GET_PROP1=$(getprop persist.sys.locale)
 # GET_PROP2=$(getprop persist.sys.local)

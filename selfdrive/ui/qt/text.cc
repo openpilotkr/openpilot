@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
   main_layout->addWidget(label2, 0, 0, 1, 4, Qt::AlignRight | Qt::AlignTop);
   btn->setText(QObject::tr("Update"));
   btn2->setText(QObject::tr("MixPlorer"));
-  btn3->setText(QObject::tr("Restore"));
+  btn3->setText(QObject::tr("Rollback"));
   btn4->setText(QObject::tr("Reset"));
   QObject::connect(btn, &QPushButton::clicked, [=]() {
     QProcess::execute("pkill -f thermald");
-    QProcess::execute("rm -f /data/openpilot/prebuilt");
+    QProcess::execute("touch /data/opkr_compiling");
     QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/gitpull.sh");
     QProcess::execute("reboot");
   });
@@ -68,12 +68,14 @@ int main(int argc, char *argv[]) {
   });
   QObject::connect(btn3, &QPushButton::clicked, [=]() {
     btn3->setEnabled(false);
+    QProcess::execute("touch /data/opkr_compiling");
     QString cmd = "git reset --hard " + QString::fromStdString(Params().get("GitCommit"));
     QProcess::execute(cmd);
     QProcess::execute("reboot");
   });
   QObject::connect(btn4, &QPushButton::clicked, [=]() {
     btn4->setEnabled(false);
+    QProcess::execute("touch /data/opkr_compiling");
     QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_reset.sh");
   });
   btn2->setFixedSize(400, 150);

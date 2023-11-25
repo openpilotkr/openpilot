@@ -23,10 +23,8 @@ if [ "$?" == "0" ]; then
   /data/data/com.termux/files/usr/bin/git reset --hard origin/$CURRENT_BRANCH
   /data/data/com.termux/files/usr/bin/git pull origin $CURRENT_BRANCH
 
-  if [ -f "/data/openpilot/prebuilt" ]; then
-    pkill -f thermald
-    rm -f /data/openpilot/prebuilt
-  fi
+  touch /data/opkr_compiling
+  sleep 1
 
   reboot
 fi

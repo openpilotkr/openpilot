@@ -446,6 +446,7 @@ GitPullCancel::GitPullCancel(const QString &confirm_text, const QString &cancel_
           QString cmd0 = "git reset --hard " + hash[0];
           QProcess::execute("pkill -f thermald");
           QProcess::execute("rm -f /data/openpilot/prebuilt");
+          QProcess::execute("touch /data/opkr_compiling");
           QProcess::execute("git clean -d -f -f");
           QProcess::execute(cmd0);
           QProcess::execute("reboot");

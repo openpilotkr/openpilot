@@ -198,6 +198,7 @@ CGitGroup::CGitGroup(void *p) : CGroupWidget( tr("Git Branch Change") )
   auto gitresetbtn = new ButtonControl(tr("Git Reset"), tr("RUN"));
   QObject::connect(gitresetbtn, &ButtonControl::clicked, [=]() {
     if (ConfirmationDialog::confirm(tr("Apply the latest commitment details of Remote Git after forced initialization of local changes. Do you want to proceed?"), this)){
+      std::system("touch /data/opkr_compiling");
       std::system(git_reset);
     }
   });
@@ -378,9 +379,11 @@ SwitchOpenpilot::SwitchOpenpilot() : ButtonControl(tr("Change Repo/Branch"), "",
               QString cmd1 = "mv /data/openpilot /data/openpilot_" + as;
               QString tcmd = "git clone --progress -b " + githubbranch + " --single-branch https://github.com/" + githubid + "/" + githubrepo + ".git /data/openpilot";
               QString cmd3 = "rm -f /data/openpilot_" + as + "/prebuilt";
+              QString cmd4 = "touch /data/opkr_compiling";
               QProcess::execute("pkill -f thermald");
               QProcess::execute(cmd1);
               QProcess::execute(cmd3);
+              QProcess::execute(cmd4);
               textMsgProcess = new QProcess(this);
               outbox = new QMessageBox(this);
               outbox->setStyleSheet("QLabel{min-width:800px; font-size: 50px;}");
@@ -727,6 +730,7 @@ BranchSelectCombo::BranchSelectCombo() : AbstractControl("", "", "")
         QString cmd1 = "git -C /data/openpilot remote set-branches --add origin " + branch_name1;
         QString tcmd1 = "git -C /data/openpilot fetch --progress origin";
         QProcess::execute("pkill -f thermald");
+        QProcess::execute("touch /data/opkr_compiling");
         QProcess::execute("git -C /data/openpilot clean -d -f -f");
         QProcess::execute(cmd1);
         QProcess::execute("/data/openpilot/selfdrive/assets/addon/script/git_remove.sh");

@@ -24,10 +24,8 @@ if [ "$?" == "0" ]; then
   /data/data/com.termux/files/usr/bin/git pull origin $BRANCH
 
   if [ "$HASH" != "$REMOTE_HASH" ]; then
-    if [ -f "/data/openpilot/prebuilt" ]; then
-      pkill -f thermald
-      rm -f /data/openpilot/prebuilt
-    fi
+    touch /data/opkr_compiling
+    sleep 1
     reboot
   fi
 fi
