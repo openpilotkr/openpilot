@@ -54,6 +54,7 @@ class CAR:
   K5_JF = "KIA K5 (JF)"
   K5_HEV_JF = "KIA K5 HYBRID (JF)"
   K5_DL3 = "KIA K5 (DL3)"
+  K5_HEV_DL3 = "KIA K5 HYBRID (DL3)"
   SPORTAGE_QL = "KIA SPORTAGE (QL)"
   SORENTO_UM = "KIA SORENTO (UM)"
   STINGER_CK = "KIA STINGER (CK)"
@@ -118,6 +119,7 @@ CAR_INFO: Dict[str, Union[HyundaiCarInfo, List[HyundaiCarInfo]]] = {
   CAR.K5_JF: HyundaiCarInfo("Kia K5 2021-22", "SCC + LFA", harness=Harness.hyundai_a),
   CAR.K5_HEV_JF: HyundaiCarInfo("Kia K5 Hybrid 2017"),
   CAR.K5_DL3: HyundaiCarInfo("Kia K5 2021"),
+  CAR.K5_HEV_DL3: HyundaiCarInfo("Kia K5 Hybrid 2021"),
   CAR.SPORTAGE_QL: HyundaiCarInfo("Kia Sportage"),
   CAR.SORENTO_UM: HyundaiCarInfo("Kia Sorento 2018-19", video_link="https://www.youtube.com/watch?v=Fkh3s6WHJz8"),
   CAR.STINGER_CK: HyundaiCarInfo("Kia Stinger 2018", video_link="https://www.youtube.com/watch?v=MJ94qoofYw0", harness=Harness.hyundai_c),
@@ -736,7 +738,7 @@ if Params().get_bool("FingerprintTwoSet"):
   }
 
 CHECKSUM = {
-  "crc8": [CAR.SANTAFE_TM, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SELTOS_SP2, CAR.AVANTE_CN7, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM, CAR.K5_DL3],
+  "crc8": [CAR.SANTAFE_TM, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SELTOS_SP2, CAR.AVANTE_CN7, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM, CAR.K5_DL3, CAR.K5_HEV_DL3],
   "6B": [CAR.SORENTO_UM, CAR.GENESIS_DH],
 }
 
@@ -747,13 +749,13 @@ FEATURES = {
   "use_tcu_gears": {CAR.K5_JF, CAR.SONATA_LF, CAR.VELOSTER_JS, CAR.SONATA_TURBO_LF, CAR.STINGER_CK},
   # Use E_GEAR Message for Gear Selection
   "use_elect_gears": {CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.KONA_EV_OS, CAR.KONA_HEV_OS, CAR.IONIQ_EV_AE, CAR.IONIQ_HEV_AE, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NEXO_FE,
-                      CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.NIRO_EV_DE, CAR.NIRO_HEV_DE, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM},
+                      CAR.K5_HEV_JF, CAR.K7_HEV_YG, CAR.NIRO_EV_DE, CAR.NIRO_HEV_DE, CAR.SOUL_EV_SK3, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM, CAR.K5_HEV_DL3},
 
   # send LFA MFA message for new HKG models
   # Insert your car in this if you want turn LFA icon on.
   # need to add lfa modded cars which are changed from lkas to lfa cam
   "send_lfahda_mfa": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.PALISADE_LX2, CAR.SONATA_HEV_DN8, CAR.SANTAFE_TM, CAR.KONA_EV_OS, CAR.NIRO_EV_DE, CAR.KONA_HEV_OS,
-                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.SANTAFE_HEV_TM, CAR.GENESIS_G70_IK},
+                      CAR.SELTOS_SP2, CAR.SOUL_EV_SK3, CAR.NEXO_FE, CAR.MOHAVE_HM, CAR.STINGER_CK, CAR.AVANTE_CN7, CAR.AVANTE_HEV_CN7, CAR.K5_DL3, CAR.K5_HEV_DL3, CAR.SANTAFE_HEV_TM, CAR.GENESIS_G70_IK},
 
   "send_hda_mfa": {CAR.GRANDEUR_IG, CAR.GRANDEUR_HEV_IG},
   # these cars use the FCA11 message for the AEB and FCW signals, all others use SCC12
@@ -761,7 +763,7 @@ FEATURES = {
   "use_fca": {CAR.GRANDEUR_HEV_FL_IG, CAR.GRANDEUR_FL_IG, CAR.SONATA_DN8, CAR.AVANTE_CN7, CAR.I30_PD, CAR.PALISADE_LX2, CAR.GENESIS_G70_IK, CAR.GENESIS_G70_2020, CAR.GENESIS_G90_HI, CAR.KONA_HEV_OS, CAR.KONA_EV_OS, CAR.SELTOS_SP2, CAR.MOHAVE_HM, CAR.KIA_FORTE},
 }
 
-HYBRID_CAR = {CAR.K5_HEV_JF, CAR.IONIQ_HEV_AE, CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NIRO_HEV_DE, CAR.KONA_HEV_OS, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM}
+HYBRID_CAR = {CAR.K5_HEV_JF, CAR.IONIQ_HEV_AE, CAR.SONATA_HEV_DN8, CAR.SONATA_HEV_LF, CAR.K7_HEV_YG, CAR.GRANDEUR_HEV_IG, CAR.GRANDEUR_HEV_FL_IG, CAR.NIRO_HEV_DE, CAR.KONA_HEV_OS, CAR.AVANTE_HEV_CN7, CAR.SANTAFE_HEV_TM, CAR.K5_HEV_DL3}
 EV_CAR = {CAR.IONIQ_EV_AE, CAR.KONA_EV_OS, CAR.NIRO_EV_DE, CAR.NEXO_FE, CAR.SOUL_EV_SK3}
 
 if Params().get_bool("UseRadarTrack"):
@@ -804,6 +806,7 @@ if Params().get_bool("UseRadarTrack"):
     CAR.K5_JF: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5_HEV_JF: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.K5_DL3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
+    CAR.K5_HEV_DL3: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SPORTAGE_QL: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.SORENTO_UM: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
     CAR.STINGER_CK: dbc_dict('hyundai_kia_generic', 'hyundai_kia_mando_front_radar'),
@@ -855,6 +858,7 @@ else:
     CAR.K5_JF: dbc_dict('hyundai_kia_generic', None),
     CAR.K5_HEV_JF: dbc_dict('hyundai_kia_generic', None),
     CAR.K5_DL3: dbc_dict('hyundai_kia_generic', None),
+    CAR.K5_HEV_DL3: dbc_dict('hyundai_kia_generic', None),
     CAR.SPORTAGE_QL: dbc_dict('hyundai_kia_generic', None),
     CAR.SORENTO_UM: dbc_dict('hyundai_kia_generic', None),
     CAR.STINGER_CK: dbc_dict('hyundai_kia_generic', None),
