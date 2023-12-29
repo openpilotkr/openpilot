@@ -1427,6 +1427,7 @@ BO_ 512 EMS20: 6 EMS
  SG_ FCO : 0|16@1+ (0.128,0.0) [0.0|8388.48] "ul"  CLU,CUBIS,FPCM,IBOX
  SG_ CF_Ems_PumpTPres : 16|8@1+ (3.137254902,0.0) [0.0|800.0] "kPa"  FPCM,IBOX
  SG_ Split_Stat : 32|1@1+ (1.0,0.0) [0.0|1.0] ""  FPCM
+ SG_ Elect_Gear_Shifter_NEXO : 11|4@1+ (1,0) [0|7] "" XXX
 
 BO_ 909 FCA11: 8 FCA
  SG_ CF_VSM_Prefill : 0|1@1+ (1,0) [0|1] "" ESC
@@ -1674,3 +1675,4 @@ VAL_ 882 Elect_Gear_Shifter_NEXO  1546 "D" 2314 "N" 2566 "R" 2569 "P";
 VAL_ 905 ACCMode 0 "off" 1 "enabled" 2 "driver_override" 3 "off_maybe_fault" 4 "cancelled";
 VAL_ 1057 ACCMode 0 "off" 1 "enabled" 2 "driver_override" 3 "off_maybe_fault";
 VAL_ 1322 CF_Clu_Gear 1 "P" 2 "R" 4 "N" 8 "D";
+VAL_ 512 Elect_Gear_Shifter_NEXO 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
