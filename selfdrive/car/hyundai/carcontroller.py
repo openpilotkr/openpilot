@@ -1003,13 +1003,10 @@ class CarController():
         if self.joystick_debug_mode:
           accel = actuators.accel
         elif self.radar_helper_option == 0: # Vision Only
-          if 0 < CS.lead_distance <= 4.0: # use radar by force to stop anyway below 4.0m if lead car is detected.
-            stock_weight = interp(CS.lead_distance, [2.5, 4.0], [1., 0.])
-            accel = accel * (1. - stock_weight) + aReqValue * stock_weight
-          elif 0.1 < self.dRel < 6.0 and self.vRel < 0:
+          if 0.1 < self.dRel < 6.0 and self.vRel < 0:
             accel = self.accel - (DT_CTRL * interp(CS.out.vEgo, [0.9, 3.0], [1.0, 3.0]))
             self.stopped = False
-          elif 0.1 < self.dRel < 6.0:
+          elif 0.1 < self.dRel < 5.0:
             accel = min(-0.5, faccel*0.3)
             if stopping:
               self.stopped = True
@@ -1020,7 +1017,6 @@ class CarController():
             pass
           else:
             self.stopped = False
-            accel = aReqValue
         elif self.radar_helper_option == 1: # Radar Only
           accel = aReqValue
         elif self.radar_helper_option >= 2: # OPKR Custom(Radar+Vision), more smooth slowdown for cut-in or encountering being decellerated car.
