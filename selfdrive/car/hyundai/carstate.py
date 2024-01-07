@@ -343,7 +343,7 @@ class CarState(CarStateBase):
       ret.gearStep = 0
     elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
       if self.CP.carFingerprint == CAR.NEXO_FE:
-        gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter_NEXO"] # NEXO's gear info from neokii. If someone can send me a cabana, I will find more clear info.
+        gear = cp.vl["EMS20"]["Elect_Gear_Shifter_NEXO"] # NEXO gear by multikyd
       else:
         gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
       ret.gearStep = cp.vl["ELECT_GEAR"]["Elect_Gear_Step"] # opkr
@@ -606,11 +606,13 @@ class CarState(CarStateBase):
     elif CP.carFingerprint in FEATURES["use_elect_gears"]:
       signals += [
         ("Elect_Gear_Shifter", "ELECT_GEAR"),
-        ("Elect_Gear_Shifter_NEXO", "ELECT_GEAR"),
         ("Elect_Gear_Step", "ELECT_GEAR"),
         ("Elect_Motor_Speed", "ELECT_GEAR")
       ]
       checks += [("ELECT_GEAR", 20)]
+      if CP.carFingerprint == CAR.NEXO_FE:
+        signals += [("Elect_Gear_Shifter_NEXO", "EMS20")]
+        checks += [("EMS20", 20)]
     else:
       signals += [
         ("CF_Lvr_Gear", "LVR12"),
