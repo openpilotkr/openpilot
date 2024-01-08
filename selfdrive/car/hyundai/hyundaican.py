@@ -142,7 +142,7 @@ def create_scc11(packer, frame, set_speed, lead_visible, scc_live, lead_dist, le
 def create_scc12(packer, apply_accel, enabled, scc_live, gaspressed, brakepressed, aebcmdact, car_fingerprint, speed, stopping, standstill, radar_recognition, cnt, scc12):
   values = scc12
   if not aebcmdact:
-    if enabled and car_fingerprint == CAR.NIRO_EV_DE:
+    if enabled and car_fingerprint in (CAR.NIRO_EV_DE, CAR.AVANTE_AD):
       values["ACCMode"] = 2 if gaspressed and (apply_accel > -0.2) else 1
       values["aReqRaw"] = apply_accel
       values["aReqValue"] = apply_accel
@@ -185,7 +185,7 @@ def create_scc13(packer, scc13):
 
 def create_scc14(packer, enabled, scc14, aebcmdact, lead_visible, lead_dist, v_ego, standstill, car_fingerprint):
   values = scc14
-  if enabled and not aebcmdact and car_fingerprint == CAR.NIRO_EV_DE:
+  if enabled and not aebcmdact and car_fingerprint in (CAR.NIRO_EV_DE, CAR.AVANTE_AD):
     if standstill:
       values["JerkUpperLimit"] = 0.5
       values["JerkLowerLimit"] = 10.
