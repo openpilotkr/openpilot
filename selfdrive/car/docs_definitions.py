@@ -132,6 +132,7 @@ class Harness(Enum):
   hyundai_m = "Hyundai M"
   hyundai_n = "Hyundai N"
   hyundai_o = "Hyundai O"
+  kgm = "KGM"
   custom = "Developer"
   obd_ii = "OBD-II"
   nissan_a = "Nissan A"

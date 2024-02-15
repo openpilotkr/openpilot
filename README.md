@@ -25,7 +25,7 @@ Join The OPKR Server!
 About This Fork
 ================
 
-This fork is focused on Hyundai, Kia, and Genesis Vehicles and for all people who love Comma's Openpilot.
+This fork is focused on Hyundai, Kia, and Genesis and KGM Vehicles and for all people who love Comma's Openpilot.
 
 Main Features
 ==============
@@ -322,7 +322,7 @@ Running in a car
 
 To use openpilot in a car, you need four things
 * This software. It's free and available right here.
-* One of [the 150+ supported cars](docs/CARS.md). We support Honda, Toyota, Hyundai, Nissan, Kia, Chrysler, Lexus, Acura, Audi, VW, and more. If your car is not supported, but has adaptive cruise control and lane keeping assist, it's likely able to run openpilot.
+* One of [the 150+ supported cars](docs/CARS.md). We support Honda, Toyota, Hyundai, Nissan, Kia, KGM, Chrysler, Lexus, Acura, Audi, VW, and more. If your car is not supported, but has adaptive cruise control and lane keeping assist, it's likely able to run openpilot.
 * A supported device to run this software. This can be a [comma two](https://comma.ai/shop/products/two), [comma three](https://comma.ai/shop/products/three), or if you like to experiment, a [Ubuntu computer with webcams](https://github.com/commaai/openpilot/tree/master/tools/webcam).
 * A way to connect to your car. With a comma two or three, you need only a [car harness](https://comma.ai/shop/products/car-harness). With an EON Gold or PC, you also need a [black panda](https://comma.ai/shop/products/panda).
 

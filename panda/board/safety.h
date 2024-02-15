@@ -7,7 +7,7 @@
 //#include "safety/safety_tesla.h"
 //#include "safety/safety_gm.h"
 //#include "safety/safety_ford.h"
-#include "safety/safety_hyundai.h"
+//#include "safety/safety_hyundai.h"
 //#include "safety/safety_chrysler.h"
 //#include "safety/safety_subaru.h"
 //#include "safety/safety_mazda.h"
@@ -16,7 +16,8 @@
 //#include "safety/safety_volkswagen_pq.h"
 #include "safety/safety_elm327.h"
 //#include "safety/safety_body.h"
-#include "safety/safety_hyundai_community.h"
+//#include "safety/safety_hyundai_community.h"
+#include "safety/safety_kgm.h"
 
 //#ifdef STM32H7
 //#define CANFD
@@ -54,6 +55,7 @@
 #define SAFETY_STELLANTIS 25U
 #define SAFETY_FAW 26U
 #define SAFETY_BODY 27U
+#define SAFETY_KGM 28U
 
 uint16_t current_safety_mode = SAFETY_SILENT;
 uint16_t current_safety_param = 0;
@@ -262,9 +264,10 @@ const safety_hook_config safety_hook_registry[] = {
   //{SAFETY_MAZDA, &mazda_hooks},
   //{SAFETY_BODY, &body_hooks},
   {SAFETY_NOOUTPUT, &nooutput_hooks},
-  {SAFETY_HYUNDAI, &hyundai_hooks},
-  {SAFETY_HYUNDAI_LEGACY, &hyundai_legacy_hooks},
-  {SAFETY_HYUNDAI_COMMUNITY, &hyundai_community_hooks},
+  //{SAFETY_HYUNDAI, &hyundai_hooks},
+  //{SAFETY_HYUNDAI_LEGACY, &hyundai_legacy_hooks},
+  //{SAFETY_HYUNDAI_COMMUNITY, &hyundai_community_hooks},
+  {SAFETY_KGM, &kgm_hooks},
 #ifdef ALLOW_DEBUG
   //{SAFETY_TESLA, &tesla_hooks},
   //{SAFETY_SUBARU_LEGACY, &subaru_legacy_hooks},

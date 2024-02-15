@@ -128,6 +128,13 @@ selfdrive/car/hyundai/radar_interface.py
 selfdrive/car/hyundai/values.py
 selfdrive/car/hyundai/carcontroller.py
 selfdrive/car/hyundai/hyundaican.py
+selfdrive/car/kgm/__init__.py
+selfdrive/car/kgm/carstate.py
+selfdrive/car/kgm/interface.py
+selfdrive/car/kgm/radar_interface.py
+selfdrive/car/kgm/values.py
+selfdrive/car/kgm/carcontroller.py
+selfdrive/car/kgm/kgmcan.py
 selfdrive/car/toyota/__init__.py
 selfdrive/car/toyota/carstate.py
 selfdrive/car/toyota/tunes.py
@@ -592,6 +599,8 @@ opendbc/acura_ilx_2016_nidec.dbc
 
 opendbc/hyundai_kia_generic.dbc
 opendbc/hyundai_kia_mando_front_radar.dbc
+
+opendbc/kgm_generic.dbc
 
 opendbc/mazda_2017.dbc
 

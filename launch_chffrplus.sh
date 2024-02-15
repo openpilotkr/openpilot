@@ -220,7 +220,7 @@ function launch {
     python /data/openpilot/common/spinner.py &
   fi
 
-  cat /data/openpilot/selfdrive/car/hyundai/values.py | grep ' = "' | awk -F'"' '{print $2}' > /data/params/d/CarList
+  cat /data/openpilot/selfdrive/car/kgm/values.py | grep ' = "' | awk -F'"' '{print $2}' > /data/params/d/CarList
 
   # start manager  
   cd selfdrive/manager
